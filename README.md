@@ -1,50 +1,43 @@
-# React + TypeScript + Vite
+<div align="center">
+  <h1 align="center">Share Space</h1>
+  
+  ![version](https://img.shields.io/badge/version-1.0.0-blue.svg?cacheSeconds=2592000)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+  <p align="center">
+    React.js + TypeScript + Vite
+    <br>
+    <h3 align="center">쉐어스페이스는 좁은 주거 공간, 계절 용품의 보관 문제, 취미 장비 관리 등</h3>
+    <h3 align="center">공간 부족 문제를 해결해 줄 수 있는 이웃 간의 공간 공유 플랫폼입니다.</h3>
+  </p>
+</div>
 
-Currently, two official plugins are available:
+## 바로가기
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- [사용버전](#사용버전)
+- [설치 및 실행방법](#설치및실행방법)
+- [프로젝트 구조](#프로젝트구조)
 
-## Expanding the ESLint configuration
+## Start
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## 사용버전
 
-- Configure the top-level `parserOptions` property like this:
+```sh
+npm -v
+# 10.7.0
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-});
+node -v
+# v22.1.0
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## 설치 및 실행
+```sh
+git clone # 클론
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react';
+npm install # 해주세요
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-});
+npm run dev # 실행
 ```
+
+## 프로젝트 구조
+```text
+> 추후 설정
