@@ -40,4 +40,14 @@ npm run dev # 실행
 
 ## 프로젝트 구조
 ```text
-> 추후 설정
+> src
+    > guest                # Guest 관련 폴더
+    > host                 # Host 관련 폴더
+    > api                  # api 핸들러 함수 폴더
+    > component            # 반복적으로 쓰이는 컴포넌트 폴더
+    > hooks                # 커스텀 훅 폴더
+    > interface            # 반복적으로 사용되는 인터페이스 폴더
+    > layout               # 반복적으로 쓰이는 레이아웃 폴더
+    > pages                # 화면별 폴더
+    > utils                # 공통적으로 쓰이는 함수 모음 유틸 폴더       
+       
