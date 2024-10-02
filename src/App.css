@@ -1,6 +1,18 @@
+html,
+body,
 #root {
-  max-width: 1280px;
+  height: 100%;
+}
+
+.commonLayoutContainer {
+  height: 100%; /* Will now take 100% of the parent's height */
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ccc;
+}
+
+#root {
+  max-width: 600px;
   margin: 0 auto;
-  padding: 2rem;
   text-align: center;
 }

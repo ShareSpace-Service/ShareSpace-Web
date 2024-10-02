@@ -1,10 +1,11 @@
 import './App.css';
+import Landing from './pages/Landing';
 
 function App() {
   return (
-    <>
-      <div>시작하기</div>
-    </>
+    <div className="commonLayoutContainer">
+      <Landing />
+    </div>
   );
 }
 
