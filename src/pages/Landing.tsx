@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import frameImage from '../assets/Frame.svg';
 import CenteredLayout from '../layout/CenterLayout';
 import { Button } from '@/components/ui/button';
@@ -16,9 +17,11 @@ function Landing() {
           </p>
         </div>
         <div className="pb-10">
-          <Button size="custom" variant="custom">
-            Get Started
-          </Button>
+          <Link to="/login">
+            <Button size="custom" variant="custom">
+              Get Started
+            </Button>
+          </Link>
         </div>
       </CenteredLayout>
     </>
