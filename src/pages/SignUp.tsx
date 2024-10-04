@@ -1,6 +1,7 @@
 import HostImage from '@/assets/HostImage.svg';
 import GuestImage from '@/assets/GuestImage.svg';
 import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 
 interface RoleType {
   role: string;
@@ -43,6 +44,9 @@ const RoleCard = ({ role }: { role: RoleType }) => (
 );
 
 function SignUp() {
+  const handleClick = () => {
+    alert('역할을 선택해주세요!');
+  };
   return (
     <div className="h-full flex flex-col justify-center gap-5">
       <div>
@@ -50,11 +54,18 @@ function SignUp() {
       </div>
       <div className="flex flex-col justify-center gap-7">
         {RoleInfo.map((role) => (
-          <RoleCard key={role.role} role={role} />
+          <Link to="/createaccount" key={role.role}>
+            <RoleCard role={role} />
+          </Link>
         ))}
       </div>
       <div className="pt-5">
-        <Button size="custom" variant="custom" className="w-full">
+        <Button
+          size="custom"
+          variant="custom"
+          className="w-full"
+          onClick={handleClick}
+        >
           Next
         </Button>
       </div>
