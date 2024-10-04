@@ -99,7 +99,12 @@ function DaumPost({
           value={zoneCode}
           readOnly
         />
-        <Button size="lg" onClick={handleClick} className="h-14">
+        <Button
+          size="lg"
+          variant="color"
+          onClick={handleClick}
+          className="h-14"
+        >
           검색
         </Button>
       </div>

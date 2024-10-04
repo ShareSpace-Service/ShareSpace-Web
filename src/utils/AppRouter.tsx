@@ -4,6 +4,7 @@ import ErrorPage from './ErrorPage';
 import Login from '@/pages/Login';
 import SignUp from '@/pages/SignUp';
 import SignInfo from '@/pages/SignInfo';
+import EmailVerify from '@/pages/EmailVerify';
 
 const router = createBrowserRouter([
   {
@@ -24,6 +25,11 @@ const router = createBrowserRouter([
   {
     path: '/createaccount',
     element: <SignInfo />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: '/emailverify',
+    element: <EmailVerify />,
     errorElement: <ErrorPage />,
   },
 ]);
