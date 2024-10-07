@@ -1,6 +1,6 @@
 import SignUpForm from '@/component/SignUpForm';
 import LoginTitle from '@/component/text/LoginTitle';
-import { Button } from '@/components/ui/button';
+import ButtonProps from '@/component/ui/ButtonProps';
 import HeaderBack from '@/layout/HeaderBack';
 import { Link } from 'react-router-dom';
 
@@ -15,9 +15,7 @@ function SignInfo() {
       <SignUpForm />
       <div className="pt-10">
         <Link to="/emailverify">
-          <Button size="login" variant="custom">
-            Next
-          </Button>
+          <ButtonProps size="login" variant="custom" title="Next" />
         </Link>
       </div>
     </div>

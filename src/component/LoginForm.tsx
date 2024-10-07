@@ -1,6 +1,6 @@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
+import ButtonProps from './ui/ButtonProps';
 
 function LoginForm() {
   return (
@@ -19,9 +19,7 @@ function LoginForm() {
           <Input type="password" id="password" placeholder="password" />
         </div>
         <div className="pt-10">
-          <Button size="login" variant="custom">
-            Sign In
-          </Button>
+          <ButtonProps size="login" variant="custom" title="Sign Up" />
         </div>
       </form>
     </>

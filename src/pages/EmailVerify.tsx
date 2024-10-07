@@ -1,5 +1,5 @@
 import LoginTitle from '@/component/text/LoginTitle';
-import { Button } from '@/components/ui/button';
+import ButtonProps from '@/component/ui/ButtonProps';
 import InputValidation from '@/components/ui/InputValidation';
 import HeaderBack from '@/layout/HeaderBack';
 
@@ -29,9 +29,7 @@ function EmailVerify() {
       />
       <EmailBox />
       <div className="flex justify-center pt-20">
-        <Button size="login" variant="custom">
-          접수
-        </Button>
+        <ButtonProps size="login" variant="custom" title="접수" />
       </div>
     </div>
   );

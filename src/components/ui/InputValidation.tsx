@@ -5,8 +5,8 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from '@/components/ui/input-otp';
-import { Button } from './button';
 import { useState } from 'react';
+import ButtonProps from '@/component/ui/ButtonProps';
 
 function InputValidation() {
   const [otp, setOtp] = useState<string>('');
@@ -61,9 +61,12 @@ function InputValidation() {
         </InputOTP>
       </div>
       <div className="pt-10 flex justify-center">
-        <Button size="lg" variant="color" onClick={handleSubmit}>
-          Confirm
-        </Button>
+        <ButtonProps
+          size="lg"
+          variant="color"
+          title="Confirm"
+          onClick={handleSubmit}
+        />
       </div>
     </>
   );
