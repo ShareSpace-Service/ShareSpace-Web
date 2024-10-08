@@ -1,6 +1,6 @@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import ButtonProps from './ui/ButtonProps';
+import ButtonProps from '../ui/ButtonProps';
 
 function LoginForm() {
   return (

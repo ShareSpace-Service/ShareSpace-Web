@@ -1,4 +1,4 @@
-import SignUpForm from '@/component/SignUpForm';
+import SignUpForm from '@/component/form/SignUpForm';
 import LoginTitle from '@/component/text/LoginTitle';
 import ButtonProps from '@/component/ui/ButtonProps';
 import HeaderBack from '@/layout/HeaderBack';

@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 
 interface ButtonProps {
-  size: 'custom' | 'login' | 'lg' | 'sm' | 'icon' | 'default';
+  size: 'custom' | 'login' | 'lg' | 'sm' | 'icon' | 'default' | 'full';
   variant: 'custom' | 'color';
   title: string;
   className?: string;

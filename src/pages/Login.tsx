@@ -1,6 +1,6 @@
 import HeaderBack from '@/layout/HeaderBack';
 import logo from '@/assets/space_logo.svg';
-import LoginForm from '@/component/LoginForm';
+import LoginForm from '@/component/form/LoginForm';
 import { Link } from 'react-router-dom';
 
 function Login() {

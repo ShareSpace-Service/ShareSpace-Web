@@ -30,6 +30,7 @@ const buttonVariants = cva(
         icon: 'h-10 w-10',
         custom: 'h-16 px-8 w-[400px]',
         login: 'w-full w-[512px] h-14',
+        full: 'w-full h-14',
       },
     },
     defaultVariants: {

@@ -7,6 +7,7 @@ import SignInfo from '@/pages/SignInfo';
 import EmailVerify from '@/pages/EmailVerify';
 import GuestHome from '@/guest/pages/GuestHome';
 import Layout from '@/layout/Layout';
+import GuestProductRegist from '@/guest/pages/GuestProductRegist';
 
 const router = createBrowserRouter([
   {
@@ -39,6 +40,15 @@ const router = createBrowserRouter([
     element: (
       <Layout>
         <GuestHome />
+      </Layout>
+    ),
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: '/productregist',
+    element: (
+      <Layout>
+        <GuestProductRegist />
       </Layout>
     ),
     errorElement: <ErrorPage />,
