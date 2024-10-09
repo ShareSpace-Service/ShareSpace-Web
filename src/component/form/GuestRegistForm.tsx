@@ -3,6 +3,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import ButtonProps from '../ui/ButtonProps';
 import SelectProps from '../ui/SelectProps';
+import { useState } from 'react';
 
 function FormGroup({
   children,
@@ -24,12 +25,75 @@ function FormGroup({
 }
 
 function GuestRegistForm() {
+  const [showImages, setShowImages] = useState<string[]>([]); // 이미지 URL 상태
+
+  // 이미지 추가 처리
+  const handleAddImages = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const imageLists = event.target.files;
+
+    console.log('FileList:', imageLists); // FileList 로그 출력
+
+    // 이미지 목록이 존재할 때
+    if (imageLists) {
+      let imagesUrlLists: string[] = [...showImages]; // 기존 이미지 URL 복사
+
+      for (let i = 0; i < imageLists.length; i++) {
+        const currentImageUrl = URL.createObjectURL(imageLists[i]); // URL 생성
+        imagesUrlLists.push(currentImageUrl); // URL 추가
+      }
+
+      // 최대 10개의 이미지로 제한
+      if (imagesUrlLists.length > 10) {
+        imagesUrlLists = imagesUrlLists.slice(0, 10);
+      }
+
+      // 상태 업데이트
+      setShowImages(imagesUrlLists); // 이미지 URL 상태 업데이트
+      console.log(imagesUrlLists); // 전체 이미지 URL 로그 출력
+    }
+  };
+
+  // 이미지 삭제 처리
+  const handleDeleteImage = (id: number) => {
+    setShowImages(
+      (prevImages) => prevImages.filter((_, index) => index !== id) // 삭제된 이미지 제외
+    );
+  };
   return (
     <div className="flex flex-col h-full">
-      <form className="space-y-6">
+      <form className="space-y-6 h-full">
         {/* 파일 선택 */}
-        <div>
-          <Input type="file" multiple />
+        <div className="h-42">
+          <Input
+            type="file"
+            accept=".jpeg, .png"
+            multiple
+            onChange={handleAddImages}
+          />
+          {showImages.length > 0 && (
+            <div className="grid grid-cols-3 gap-4 pt-2">
+              {showImages.map((preview, id) => (
+                <div
+                  key={id}
+                  className="relative w-full h-28 bg-gray-300 rounded-lg overflow-hidden"
+                >
+                  <img
+                    src={preview}
+                    alt="preview"
+                    className="absolute inset-0 w-full h-full object-cover"
+                    style={{ aspectRatio: '4 / 3' }}
+                  />
+                  <button
+                    type="button"
+                    className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded"
+                    onClick={() => handleDeleteImage(id)}
+                  >
+                    X
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* 제목 */}
