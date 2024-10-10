@@ -24,6 +24,7 @@ export default {
         customColor: '#F5F5F7',
         fontColor: '#4280EF',
         backColor: '#F5F5F5',
+        baseColor: '#5669ff',
         card: {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',

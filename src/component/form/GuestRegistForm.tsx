@@ -4,6 +4,7 @@ import { Textarea } from '@/components/ui/textarea';
 import ButtonProps from '../ui/ButtonProps';
 import SelectProps from '../ui/SelectProps';
 import { useState } from 'react';
+import ImageUpload from './ImageUpload';
 
 function FormGroup({
   children,
@@ -59,42 +60,16 @@ function GuestRegistForm() {
       (prevImages) => prevImages.filter((_, index) => index !== id) // 삭제된 이미지 제외
     );
   };
+
   return (
     <div className="flex flex-col h-full">
       <form className="space-y-6 h-full">
         {/* 파일 선택 */}
-        <div className="h-42">
-          <Input
-            type="file"
-            accept=".jpeg, .png"
-            multiple
-            onChange={handleAddImages}
-          />
-          {showImages.length > 0 && (
-            <div className="grid grid-cols-3 gap-4 pt-2">
-              {showImages.map((preview, id) => (
-                <div
-                  key={id}
-                  className="relative w-full h-28 bg-gray-300 rounded-lg overflow-hidden"
-                >
-                  <img
-                    src={preview}
-                    alt="preview"
-                    className="absolute inset-0 w-full h-full object-cover"
-                    style={{ aspectRatio: '4 / 3' }}
-                  />
-                  <button
-                    type="button"
-                    className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded"
-                    onClick={() => handleDeleteImage(id)}
-                  >
-                    X
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        <ImageUpload
+          handleAddImages={handleAddImages}
+          showImages={showImages}
+          handleDeleteImage={handleDeleteImage}
+        />
 
         {/* 제목 */}
         <FormGroup label="제목" htmlFor="title">
