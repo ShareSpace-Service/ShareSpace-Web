@@ -10,7 +10,7 @@ function SignUpForm() {
 
   return (
     <>
-      <form className="flex flex-col items-center gap-5 pt-14">
+      <form className="flex flex-col items-center gap-5 pt-12">
         <div className="grid w-full max-w-lg items-center gap-2">
           <Label htmlFor="email" className="text-start font-bold text-base">
             Email

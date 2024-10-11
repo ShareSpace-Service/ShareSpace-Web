@@ -17,6 +17,8 @@ body {
   flex-direction: column;
   margin: 0 auto;
   max-width: 600px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); /* Thicker box-shadow */
+  filter: drop-shadow(0 6px 15px rgba(0, 0, 0, 0.2)); /* Thicker drop-shadow */
 }
 
 .signUpBg {
@@ -35,6 +37,6 @@ footer {
 
 .contentContainer {
   flex-grow: 1;
-  padding: 16px;
+  padding: 16px 32px;
   background: #f5f5f5;
 }

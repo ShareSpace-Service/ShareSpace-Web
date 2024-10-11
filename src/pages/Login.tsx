@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 function Login() {
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full px-8">
       <HeaderBack />
       <div className="pt-10 flex flex-col items-start">
         <img src={logo} alt="logo" />

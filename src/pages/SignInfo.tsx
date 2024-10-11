@@ -13,7 +13,7 @@ function SignInfo() {
         subTitle="회원 가입에 필요한 정보를 입력해주세요"
       />
       <SignUpForm />
-      <div className="pt-10">
+      <div className="pt-8 flex justify-center">
         <Link to="/emailverify">
           <ButtonProps size="login" variant="custom" title="Next" />
         </Link>

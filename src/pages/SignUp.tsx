@@ -52,7 +52,7 @@ function SignUp() {
   };
 
   return (
-    <div className="h-full flex flex-col justify-center gap-5">
+    <div className="h-full flex flex-col justify-center gap-5 px-8">
       <div>
         <h2 className="font-bold text-3xl">역할을 선택해주세요</h2>
       </div>
