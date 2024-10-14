@@ -2,23 +2,15 @@ import ButtonProps from '@/component/ui/ButtonProps';
 import { Link } from 'react-router-dom';
 
 function GuestPlaceChoice({
-  closeModal,
   title,
   productId,
 }: {
-  closeModal: () => void;
   title: string;
   productId: number | null;
 }) {
   return (
     <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50">
       <div className="signUpBg w-[500px] h-[300px] p-6 rounded-lg relative">
-        <button
-          onClick={closeModal}
-          className="absolute top-3 right-3 text-xl font-bold text-gray-600 hover:text-gray-800"
-        >
-          &times;
-        </button>
         <div className="flex flex-col h-full justify-around">
           <div>
             <h2 className="text-2xl font-bold mb-2 text-center">

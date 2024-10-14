@@ -36,10 +36,6 @@ function GuestRegistForm() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [productId, setProductId] = useState<number | null>(null);
 
-  const closeModal = () => {
-    setIsOpen(false);
-  };
-
   // 이미지 추가 처리
   const handleAddImages = (event: React.ChangeEvent<HTMLInputElement>) => {
     const imageLists = event.target.files;
@@ -196,11 +192,7 @@ function GuestRegistForm() {
         </div>
       </form>
       {isOpen && productId !== null && (
-        <GuestPlaceChoice
-          closeModal={closeModal}
-          title={title}
-          productId={productId}
-        />
+        <GuestPlaceChoice title={title} productId={productId} />
       )}
     </div>
   );
