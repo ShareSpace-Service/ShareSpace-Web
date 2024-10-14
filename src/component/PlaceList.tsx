@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { ApiResponse, Place } from './ui/GuestProductList';
+import { Place, ApiResponse } from '@/interface/Place';
 
 async function getPlaceList(productId: number): Promise<Place[] | null> {
   try {
