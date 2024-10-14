@@ -31,6 +31,7 @@ const buttonVariants = cva(
         custom: 'h-16 px-8 w-[400px]',
         login: 'w-full w-[512px] h-14',
         full: 'w-full h-14',
+        check: 'w-40 h-12',
       },
     },
     defaultVariants: {

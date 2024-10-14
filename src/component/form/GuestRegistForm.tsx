@@ -5,6 +5,7 @@ import ButtonProps from '../ui/ButtonProps';
 import SelectProps from '../ui/SelectProps';
 import { useState } from 'react';
 import ImageUpload from './ImageUpload';
+import GuestPlaceChoice from '@/modal/GuestPlaceChoice';
 
 function FormGroup({
   children,
@@ -32,6 +33,15 @@ function GuestRegistForm() {
   const [period, setPeriod] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [files, setFiles] = useState<File[]>([]);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+
+  const openModal = () => {
+    setIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsOpen(false);
+  };
 
   // 이미지 추가 처리
   const handleAddImages = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -119,6 +129,7 @@ function GuestRegistForm() {
       const data = await response.json();
       console.log('Success:', data);
       alert('상품이 등록되었습니다.');
+      setIsOpen(true);
     } catch (error) {
       console.error('Error:', error);
       alert('상품 등록에 실패했습니다.');
@@ -177,6 +188,7 @@ function GuestRegistForm() {
           <ButtonProps size="full" variant="custom" title="등록하기" />
         </div>
       </form>
+      {isOpen && <GuestPlaceChoice closeModal={closeModal} title={title} />}
     </div>
   );
 }

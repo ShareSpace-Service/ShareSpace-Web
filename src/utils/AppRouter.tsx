@@ -8,6 +8,7 @@ import EmailVerify from '@/pages/EmailVerify';
 import GuestHome from '@/guest/pages/GuestHome';
 import Layout from '@/layout/Layout';
 import GuestProductRegist from '@/guest/pages/GuestProductRegist';
+import GusetPlace from '@/guest/pages/GusetPlace';
 
 const router = createBrowserRouter([
   {
@@ -49,6 +50,15 @@ const router = createBrowserRouter([
     element: (
       <Layout>
         <GuestProductRegist />
+      </Layout>
+    ),
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: '/place/?productId=id',
+    element: (
+      <Layout>
+        <GusetPlace />
       </Layout>
     ),
     errorElement: <ErrorPage />,
