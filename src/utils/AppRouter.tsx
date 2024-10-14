@@ -55,7 +55,7 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
   },
   {
-    path: '/place/?productId=id',
+    path: '/place/:id',
     element: (
       <Layout>
         <GusetPlace />

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-interface Place {
+export interface Place {
   placeId: number;
   title: string;
   category: string;
@@ -9,7 +9,7 @@ interface Place {
 }
 
 // API Response
-interface ApiResponse {
+export interface ApiResponse {
   message: string;
   status: string;
   data: Place[];

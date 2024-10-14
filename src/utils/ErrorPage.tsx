@@ -4,7 +4,7 @@ function ErrorPage() {
   const error = useRouteError() as { statusText: string; message: string };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 text-center">
       <div className="flex items-center justify-center mb-4">
         <div className="text-6xl font-bold text-blue-600">404</div>
       </div>

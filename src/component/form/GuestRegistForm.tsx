@@ -34,10 +34,7 @@ function GuestRegistForm() {
   const [description, setDescription] = useState<string>('');
   const [files, setFiles] = useState<File[]>([]);
   const [isOpen, setIsOpen] = useState<boolean>(false);
-
-  const openModal = () => {
-    setIsOpen(true);
-  };
+  const [productId, setProductId] = useState<number | null>(null);
 
   const closeModal = () => {
     setIsOpen(false);
@@ -126,10 +123,20 @@ function GuestRegistForm() {
         throw new Error(`Server error: ${response.status}`);
       }
 
-      const data = await response.json();
-      console.log('Success:', data);
-      alert('상품이 등록되었습니다.');
-      setIsOpen(true);
+      const responseData = await response.json();
+      console.log('Success:', responseData);
+
+      const productId = responseData.data.productId;
+
+      if (productId) {
+        console.log('id', productId);
+        setProductId(productId);
+        alert('상품이 등록되었습니다.');
+        setIsOpen(true);
+      } else {
+        console.error('productId response 실패', responseData);
+        alert('상품 등록에 실패했습니다.');
+      }
     } catch (error) {
       console.error('Error:', error);
       alert('상품 등록에 실패했습니다.');
@@ -188,7 +195,13 @@ function GuestRegistForm() {
           <ButtonProps size="full" variant="custom" title="등록하기" />
         </div>
       </form>
-      {isOpen && <GuestPlaceChoice closeModal={closeModal} title={title} />}
+      {isOpen && productId !== null && (
+        <GuestPlaceChoice
+          closeModal={closeModal}
+          title={title}
+          productId={productId}
+        />
+      )}
     </div>
   );
 }

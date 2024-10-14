@@ -17,7 +17,7 @@ function SelectProps({
   return (
     <>
       <Select onValueChange={onChange} value={value}>
-        <SelectTrigger className="w-full h-14">
+        <SelectTrigger id="category" className="w-full h-14">
           <SelectValue placeholder="카테고리를 선택해 주세요" />
         </SelectTrigger>
         <SelectContent>
