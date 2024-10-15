@@ -2,7 +2,7 @@ import PlaceList from '@/component/PlaceList';
 import Address from '@/component/ui/Address';
 import { useParams } from 'react-router-dom';
 
-function GusetPlace() {
+function GuestPlace() {
   const { id } = useParams<{ id: string }>();
   console.log(id);
   const productId = Number(id);
@@ -18,4 +18,4 @@ function GusetPlace() {
   );
 }
 
-export default GusetPlace;
+export default GuestPlace;

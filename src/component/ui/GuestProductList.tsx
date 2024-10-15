@@ -1,7 +1,7 @@
 import { ApiResponse, Place } from '@/interface/Place';
 import { useEffect, useState } from 'react';
 
-const DummyData: Place[] = [
+export const DummyData: Place[] = [
   {
     placeId: 1,
     title: '민우의 침실',

@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { Place, ApiResponse } from '@/interface/Place';
+import { DummyData } from './ui/GuestProductList';
 
 async function getPlaceList(productId: number): Promise<Place[] | null> {
   try {
@@ -43,7 +44,33 @@ function PlaceList({ productId }: { productId: number }) {
         console.log('error Fetching Places:', error);
       });
   }, [productId]);
-  return <div>PlaceList</div>;
+
+  return (
+    <div className="flex flex-col items-center gap-4">
+      {DummyData.map((place) => (
+        <div
+          key={place.placeId}
+          className="flex flex-col rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 w-full h-[180px] cursor-pointer"
+        >
+          {/* 상단 이미지 및 Title, description */}
+          <div className="flex items-start m-4 gap-3 pb-5 border-b border-solid border-gray-200">
+            <img
+              src={place.imageUrl}
+              className="w-[100px] h-[100px] object-contain rounded-lg"
+            />
+            <div className="flex flex-col w-60 gap-3">
+              <h2 className="font-extrabold text-2xl">{place.title}</h2>
+              <p className="text-gray-400 font-bold">{place.category}</p>
+            </div>
+          </div>
+          {/* 하단 거리 */}
+          <div className="flex flex-col items-start pl-4 h-full">
+            <p className="text-black font-bold">{place.distance}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 }
 
 export default PlaceList;
