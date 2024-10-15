@@ -1,6 +1,9 @@
 import { Place, ApiResponse } from '@/interface/Place';
+import GuestRentalModal from '@/modal/GuestRentalModal';
 import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
 
+// API 요청 함수 추후에 API 디렉토리로 이동 예정
 async function getPlaceList(productId: number): Promise<Place[]> {
   try {
     const response = await fetch(
@@ -25,6 +28,14 @@ async function getPlaceList(productId: number): Promise<Place[]> {
 }
 
 function PlaceList({ productId }: { productId: number }) {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [placeId, setPlaceId] = useState<number | null>(null);
+
+  const handleClick = (placeId: number) => {
+    setIsOpen(true);
+    setPlaceId(placeId);
+  };
+
   console.log(productId);
   // productId는 URL 파라미터로 전달받은 값
   // 이 값은 GusetPlace 컴포넌트에서 useParams를 사용
@@ -49,7 +60,6 @@ function PlaceList({ productId }: { productId: number }) {
   if (error) {
     return <div>에러 발생: {error.message}</div>; // 에러 발생 시 UI
   }
-
   console.log('fetched places', places);
 
   return (
@@ -58,6 +68,7 @@ function PlaceList({ productId }: { productId: number }) {
         <div
           key={place.placeId}
           className="flex flex-col rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 w-full h-[180px] cursor-pointer"
+          onClick={() => handleClick(place.placeId)}
         >
           {/* 상단 이미지 및 Title, description */}
           <div className="flex items-start m-4 gap-3 pb-5 border-b border-solid border-gray-200">
@@ -76,6 +87,11 @@ function PlaceList({ productId }: { productId: number }) {
           </div>
         </div>
       ))}
+      <GuestRentalModal
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        placeId={placeId}
+      />
     </div>
   );
 }

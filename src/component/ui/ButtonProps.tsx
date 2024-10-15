@@ -9,7 +9,8 @@ interface ButtonProps {
     | 'icon'
     | 'default'
     | 'full'
-    | 'check';
+    | 'check'
+    | 'Rental';
   variant: 'custom' | 'color';
   title: string;
   className?: string;
