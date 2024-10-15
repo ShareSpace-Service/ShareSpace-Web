@@ -6,6 +6,16 @@ import SelectProps from '../ui/SelectProps';
 import { useState } from 'react';
 import ImageUpload from './ImageUpload';
 import GuestPlaceChoice from '@/modal/GuestPlaceChoice';
+import { useMutation } from '@tanstack/react-query';
+
+interface RegisterResponse {
+  message: string;
+  status: string;
+  data: {
+    productId: number;
+  };
+  success: boolean;
+}
 
 function FormGroup({
   children,
@@ -84,9 +94,46 @@ function GuestRegistForm() {
     );
   };
 
+  // 제품 등록 API 호출 함수
+  const registProduct = async (
+    formData: FormData
+  ): Promise<RegisterResponse> => {
+    const response = await fetch('http://localhost:8080/product/register', {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Server error: ${response.status}`);
+    }
+
+    const responseData = await response.json(); // JSON 형태로 응답 데이터 가져오기
+    return responseData as RegisterResponse; // RegisterResponse 타입으로 반환
+  };
+
+  const mutation = useMutation<RegisterResponse, Error, FormData>({
+    mutationFn: (formData: FormData) => registProduct(formData),
+    onSuccess: (data) => {
+      // 요청 성공 시
+      const newProductId = data.data.productId; // 새로 등록된 제품 ID 가져오기
+      if (newProductId) {
+        setProductId(newProductId); // 제품 ID 상태 업데이트
+        alert('상품이 등록되었습니다.');
+        setIsOpen(true);
+      } else {
+        console.error('productId response 실패', data);
+        alert('상품 등록에 실패했습니다.');
+      }
+    },
+    onError: (error) => {
+      console.error('Error:', error);
+      alert('상품 등록에 실패했습니다.');
+    },
+  });
+
   // 폼 제출
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+    event.preventDefault(); // 기본 폼 제출 방지
 
     if (!title || !category || !period || !description) {
       alert('항목을 입력해주세요.');
@@ -101,42 +148,7 @@ function GuestRegistForm() {
     files.forEach(
       (file) => formData.append('imageUrl', file) // 이미지 파일 추가
     );
-
-    for (const [key, value] of formData.entries()) {
-      // formData.entries()는 [key, value] 배열을 반환
-      console.log(key, value);
-    }
-    console.log('formData:', formData);
-
-    try {
-      const response = await fetch('http://localhost:8080/product/register', {
-        method: 'POST',
-        body: formData,
-        // header 생략한 이유는 fetch API가 자동으로 multipart/form-data로 설정하기 때문
-      });
-
-      if (!response.ok) {
-        throw new Error(`Server error: ${response.status}`);
-      }
-
-      const responseData = await response.json();
-      console.log('Success:', responseData);
-
-      const productId = responseData.data.productId;
-
-      if (productId) {
-        console.log('id', productId);
-        setProductId(productId);
-        alert('상품이 등록되었습니다.');
-        setIsOpen(true);
-      } else {
-        console.error('productId response 실패', responseData);
-        alert('상품 등록에 실패했습니다.');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      alert('상품 등록에 실패했습니다.');
-    }
+    mutation.mutate(formData); // mutate 호출로 제품 등록 요청
   };
 
   return (

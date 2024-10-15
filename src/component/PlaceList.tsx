@@ -1,8 +1,7 @@
-import { useEffect } from 'react';
 import { Place, ApiResponse } from '@/interface/Place';
-import { DummyData } from './ui/GuestProductList';
+import { useQuery } from '@tanstack/react-query';
 
-async function getPlaceList(productId: number): Promise<Place[] | null> {
+async function getPlaceList(productId: number): Promise<Place[]> {
   try {
     const response = await fetch(
       `http://localhost:8080/place/searchByProduct?productId=${productId}`
@@ -17,11 +16,11 @@ async function getPlaceList(productId: number): Promise<Place[] | null> {
       return result.data;
     } else {
       console.error('API 요청 실패', result);
-      return null;
+      return [];
     }
   } catch (error) {
     console.log('error fetch', error);
-    return null;
+    return [];
   }
 }
 
@@ -30,24 +29,32 @@ function PlaceList({ productId }: { productId: number }) {
   // productId는 URL 파라미터로 전달받은 값
   // 이 값은 GusetPlace 컴포넌트에서 useParams를 사용
 
-  useEffect(() => {
-    console.log('API 요청');
-    getPlaceList(productId)
-      .then((places) => {
-        if (places) {
-          console.log('fetched places', places);
-        } else {
-          console.log('API 요청 실패');
-        }
-      })
-      .catch((error) => {
-        console.log('error Fetching Places:', error);
-      });
-  }, [productId]);
+  // React Query를 사용하여 데이터 요청 및 상태 관리
+  const {
+    data: places,
+    error,
+    isLoading,
+  } = useQuery<Place[], Error>({
+    queryKey: ['places', productId], // 쿼리 키
+    queryFn: () => getPlaceList(productId), // 데이터 가져오기 함수
+    enabled: !!productId, // productId가 있을 때만 쿼리 실행
+    staleTime: 1000 * 60 * 5, // 5분 동안 데이터를 신선하게 유지
+  });
+  // 로딩 상태 처리
+  if (isLoading) {
+    return <div>로딩 중...</div>; // 로딩 중일 때의 UI
+  }
+
+  // 에러 처리
+  if (error) {
+    return <div>에러 발생: {error.message}</div>; // 에러 발생 시 UI
+  }
+
+  console.log('fetched places', places);
 
   return (
     <div className="flex flex-col items-center gap-4">
-      {DummyData.map((place) => (
+      {places?.map((place) => (
         <div
           key={place.placeId}
           className="flex flex-col rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 w-full h-[180px] cursor-pointer"

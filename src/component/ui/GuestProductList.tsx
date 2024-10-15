@@ -1,5 +1,5 @@
 import { ApiResponse, Place } from '@/interface/Place';
-import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 
 export const DummyData: Place[] = [
   {
@@ -45,29 +45,34 @@ export const DummyData: Place[] = [
     distance: 12312,
   },
 ];
-function GuestProductList() {
-  const [data, setData] = useState<Place[]>([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('http://localhost:8080/place');
-        if (!response.ok) {
-          throw new Error('서버 상태가 그냥 미누그앗!');
-        }
-        const result: ApiResponse = await response.json();
-        setData(result.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchData();
-  }, []);
-  console.log(data);
+// API 요청 추후에 API 디렉토리로 이동 예정
+const fetchProductList = async () => {
+  const response = await fetch('http://localhost:8080/place');
+  if (!response.ok) {
+    throw new Error('서버 상태가 그냥 미누그앗!');
+  }
+  const result: ApiResponse = await response.json();
+  return result.data;
+};
+
+function GuestProductList() {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['places'],
+    queryFn: fetchProductList,
+  });
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error fetching data: {error.message}</div>;
+  }
 
   return (
     <div className="flex flex-col items-center gap-4">
-      {DummyData.map((place) => (
+      {data?.map((place) => (
         <div
           key={place.placeId}
           className="flex flex-col rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 w-full h-[180px] cursor-pointer"
