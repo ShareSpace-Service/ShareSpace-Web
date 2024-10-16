@@ -91,6 +91,7 @@ function PlaceList({ productId }: { productId: number }) {
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         placeId={placeId}
+        productId={productId}
       />
     </div>
   );

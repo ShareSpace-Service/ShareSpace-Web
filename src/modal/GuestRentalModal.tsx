@@ -1,10 +1,15 @@
 import ButtonProps from '@/component/ui/ButtonProps';
-import { useQuery } from '@tanstack/react-query';
+import {
+  useMutation,
+  UseMutationResult,
+  useQuery,
+} from '@tanstack/react-query';
 
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   placeId: number | null;
+  productId: number;
 }
 interface PlaceData {
   placeId: number;
@@ -19,6 +24,13 @@ interface ApiResponse {
   status: string;
   data: PlaceData;
   success: boolean;
+}
+
+interface MatchingRequestResult {
+  isSuccess: boolean;
+  status: string;
+  data: null;
+  message: string;
 }
 
 async function getPlaceDetailList({ placeId }: { placeId: number }) {
@@ -39,11 +51,48 @@ async function getPlaceDetailList({ placeId }: { placeId: number }) {
   }
 }
 
-function GuestRentalModal({ isOpen, onClose, placeId }: ModalProps) {
+async function getMatchingRequest({
+  productId,
+  placeId,
+}: {
+  productId: number;
+  placeId: number;
+}): Promise<MatchingRequestResult> {
+  const response = await fetch('http://localhost:8080/matching/keep', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ productId, placeId }),
+  });
+  if (!response.ok) {
+    throw new Error('서버 상태가 그냥 미누그앗!' + response.status);
+  }
+  const result: MatchingRequestResult = await response.json();
+  console.log('POST 요청 결과', result);
+  return result;
+}
+
+function GuestRentalModal({ isOpen, onClose, placeId, productId }: ModalProps) {
   const { data, error, isLoading } = useQuery<PlaceData, Error>({
     queryKey: ['placeDetail', placeId],
     queryFn: () => getPlaceDetailList({ placeId: placeId! }), // Pass placeId properly
     enabled: !!placeId,
+  });
+
+  const matchingRequestMutation = useMutation<
+    MatchingRequestResult,
+    Error,
+    void
+  >({
+    mutationFn: () =>
+      getMatchingRequest({ productId: productId!, placeId: placeId! }),
+    onSuccess: (data: MatchingRequestResult) => {
+      console.log('요청 성공', data);
+    },
+    onError: (error: Error) => {
+      console.error('요청 실패', error);
+    },
   });
   if (isLoading) {
     return <div>Loading...</div>;
@@ -54,12 +103,18 @@ function GuestRentalModal({ isOpen, onClose, placeId }: ModalProps) {
   }
 
   if (!isOpen) return null; // isOpen이 false일 때는 모달을 렌더링하지 않음
+  console.log('productId', productId);
 
   return (
     <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50">
       <div className="signUpBg w-[500px] h-[400px] rounded-lg relative">
         <CloseButton onClose={onClose} />
-        {data && <ModalContent data={data} />}
+        {data && (
+          <ModalContent
+            data={data}
+            matchingRequestMutation={matchingRequestMutation}
+          />
+        )}
       </div>
     </div>
   );
@@ -76,7 +131,17 @@ function CloseButton({ onClose }: { onClose: () => void }) {
   );
 }
 
-function ModalContent({ data }: { data: PlaceData }) {
+function ModalContent({
+  data,
+  matchingRequestMutation,
+}: {
+  data: PlaceData;
+  matchingRequestMutation: UseMutationResult<
+    MatchingRequestResult,
+    Error,
+    void
+  >;
+}) {
   return (
     <div className="flex flex-col h-full">
       <Header title="대여 요청" />
@@ -84,7 +149,12 @@ function ModalContent({ data }: { data: PlaceData }) {
         <PlaceDetails data={data} />
       </div>
       <div className="px-4">
-        <ButtonProps size="Rental" title="대여 요청" variant="custom" />
+        <ButtonProps
+          size="Rental"
+          title="대여 요청"
+          variant="custom"
+          onClick={() => matchingRequestMutation.mutate()}
+        />
       </div>
     </div>
   );
