@@ -9,6 +9,8 @@ import GuestHome from '@/guest/pages/GuestHome';
 import Layout from '@/layout/Layout';
 import GuestProductRegist from '@/guest/pages/GuestProductRegist';
 import GuestPlace from '@/guest/pages/GuestPlace';
+import Profile from '@/pages/Profile';
+import Product from '@/pages/Product';
 
 const router = createBrowserRouter([
   {
@@ -59,6 +61,24 @@ const router = createBrowserRouter([
     element: (
       <Layout>
         <GuestPlace />
+      </Layout>
+    ),
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: '/profile',
+    element: (
+      <Layout>
+        <Profile />
+      </Layout>
+    ),
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: '/product',
+    element: (
+      <Layout>
+        <Product />
       </Layout>
     ),
     errorElement: <ErrorPage />,

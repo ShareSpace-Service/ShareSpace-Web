@@ -1,4 +1,5 @@
 import { Place, ApiResponse } from '@/interface/Place';
+import { ModalPortal } from '@/lib/ModalPortal';
 import GuestRentalModal from '@/modal/GuestRentalModal';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
@@ -87,12 +88,14 @@ function PlaceList({ productId }: { productId: number }) {
           </div>
         </div>
       ))}
-      <GuestRentalModal
-        isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
-        placeId={placeId}
-        productId={productId}
-      />
+      <ModalPortal>
+        <GuestRentalModal
+          isOpen={isOpen}
+          onClose={() => setIsOpen(false)}
+          placeId={placeId}
+          productId={productId}
+        />
+      </ModalPortal>
     </div>
   );
 }

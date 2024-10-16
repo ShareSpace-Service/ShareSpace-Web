@@ -17,10 +17,10 @@ function ErrorPage() {
         자세한 내용은 사이트 소유자에게 문의하시기 바랍니다.
       </p>
       <a
-        href="/"
+        href="/home"
         className="px-4 py-2 text-white transition duration-300 bg-blue-600 rounded hover:bg-blue-700"
       >
-        처음으로 돌아가기
+        메인페이지로 돌아가기
       </a>
       <p className="mt-4 text-sm text-gray-400">
         <i>{error.statusText || error.message}</i>
