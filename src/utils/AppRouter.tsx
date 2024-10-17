@@ -77,7 +77,7 @@ const router = createBrowserRouter([
   {
     path: '/product',
     element: (
-      <Layout>
+      <Layout noPadding={true}>
         <Product />
       </Layout>
     ),

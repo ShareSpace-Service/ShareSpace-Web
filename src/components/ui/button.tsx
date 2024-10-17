@@ -33,6 +33,7 @@ const buttonVariants = cva(
         full: 'w-full h-14',
         check: 'w-40 h-12',
         Rental: 'w-[468px] h-12',
+        status: 'w-16 h-10 px-4 rounded-full',
       },
     },
     defaultVariants: {

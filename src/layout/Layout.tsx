@@ -1,12 +1,20 @@
 import React from 'react';
 import Header from './Header';
 import Footer from './Footer';
+import clsx from 'clsx';
 
-function Layout({ children }: { children: React.ReactNode }) {
+interface LayoutProps {
+  children: React.ReactNode;
+  noPadding?: boolean;
+}
+
+function Layout({ children, noPadding }: LayoutProps) {
   return (
     <div className="layoutContainer">
       <Header />
-      <main className="contentContainer">{children}</main>
+      <main className={clsx('contentContainer', { 'no-padding': noPadding })}>
+        {children}
+      </main>
       <Footer />
     </div>
   );

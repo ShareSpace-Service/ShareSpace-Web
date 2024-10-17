@@ -24,6 +24,9 @@ body {
 .signUpBg {
   background-color: #f5f5f7;
 }
+.blueBg {
+  background-color: #5669ff;
+}
 
 .layoutContainer {
   display: flex;
@@ -32,11 +35,15 @@ body {
 }
 
 footer {
-  height: 60px; /* Keep footer height fixed */
+  height: 60px;
 }
 
 .contentContainer {
   flex-grow: 1;
   padding: 16px 32px;
   background: #f5f5f5;
+}
+
+.no-padding {
+  padding: 0;
 }
