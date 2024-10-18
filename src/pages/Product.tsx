@@ -61,7 +61,13 @@ function Product() {
         setSelectStatus={setSelectedMenu}
       />
       <div className="px-4">
-        <ProductStatusList filteredData={filteredData} />
+        {filteredData && filteredData.length > 0 ? (
+          <ProductStatusList filteredData={filteredData} />
+        ) : (
+          <div className="text-center font-bold text-lg mt-4">
+            해당 물품이 없습니다.
+          </div>
+        )}
       </div>
     </>
   );
