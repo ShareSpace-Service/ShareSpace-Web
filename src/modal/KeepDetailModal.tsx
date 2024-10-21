@@ -24,7 +24,7 @@ interface PlaceDetails {
   title: string;
 }
 
-async function fetchKeepDetail(
+export async function fetchKeepDetail(
   matchingId: number
 ): Promise<ApiResponse['data'] | null> {
   const response = await fetch(
@@ -109,7 +109,7 @@ function KeepDetailModal({
 
 export default KeepDetailModal;
 
-function DetailItem({
+export function DetailItem({
   label,
   value,
 }: {

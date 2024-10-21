@@ -26,8 +26,8 @@ interface ApiResponse {
   success: boolean;
 }
 
-interface MatchingRequestResult {
-  isSuccess: boolean;
+export interface MatchingRequestResult {
+  success: boolean;
   status: string;
   data: null;
   message: string;

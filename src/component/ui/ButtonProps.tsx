@@ -12,10 +12,11 @@ interface ButtonProps {
     | 'check'
     | 'Rental'
     | 'status';
-  variant: 'custom' | 'color';
+  variant: 'custom' | 'color' | 'gray';
   title: string;
   className?: string;
   onClick?: () => void;
+  disabled?: boolean;
 }
 
 function ButtonProps({
@@ -24,6 +25,7 @@ function ButtonProps({
   title,
   className,
   onClick,
+  disabled,
 }: ButtonProps) {
   return (
     <Button
@@ -31,6 +33,7 @@ function ButtonProps({
       variant={variant}
       className={className}
       onClick={onClick}
+      disabled={disabled}
     >
       {title}
     </Button>
