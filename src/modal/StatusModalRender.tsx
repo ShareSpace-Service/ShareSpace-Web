@@ -1,4 +1,5 @@
 import KeepDetailModal from './KeepDetailModal';
+import RequestModal from './RequestModal';
 import WaitDetailModal from './WaitDetailModal';
 
 interface StatusModalRendererProps {
@@ -21,6 +22,8 @@ function StatusModalRender({
       return <KeepDetailModal matchingId={matchingId} onClose={onClose} />;
     case 'PENDING':
       return <WaitDetailModal matchingId={matchingId} onClose={onClose} />;
+    case 'REQUESTED':
+      return <RequestModal matchingId={matchingId} onClose={onClose} />;
     default:
       return null;
   }
