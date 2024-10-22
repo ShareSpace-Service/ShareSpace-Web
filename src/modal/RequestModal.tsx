@@ -1,4 +1,3 @@
-import { AiOutlineArrowLeft } from 'react-icons/ai';
 import { DetailItem } from './KeepDetailModal';
 import { useQuery } from '@tanstack/react-query';
 import ModalHeader from '@/component/ui/ModalHeader';
