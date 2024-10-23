@@ -4,9 +4,9 @@ import ButtonProps from '../ui/ButtonProps';
 import { Input } from '@/components/ui/input';
 import React, { useEffect, useState } from 'react';
 import DaumPostcode, { Address } from 'react-daum-postcode';
-import { fetchProfileUpdate } from '@/api/Notification';
+import { fetchProfile, fetchProfileUpdate } from '@/api/UserProfile';
 
-interface ApiResponse {
+export interface ApiResponse {
   message: string;
   status: string;
   data: UserData;
@@ -38,21 +38,6 @@ const titles: Title[] = [
   { label: 'Question', path: '/question' },
   { label: 'Logout', path: '/logout' },
 ];
-
-async function fetchProfile() {
-  const response = await fetch(`http://localhost:8080/user/detail`);
-  if (!response.ok) {
-    throw new Error('서버 상태가 그냥 미누그앗!' + response.status);
-  }
-  const result: ApiResponse = await response.json();
-  console.log('성공했습니다.', result);
-  if (response.ok && result.success) {
-    console.log('성공', result.message);
-    return result;
-  } else {
-    throw new Error(result.message || '실패');
-  }
-}
 
 function MyPageCard() {
   const { data } = useQuery({
