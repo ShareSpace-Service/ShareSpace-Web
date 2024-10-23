@@ -15,8 +15,9 @@ interface ButtonProps {
   variant: 'custom' | 'color' | 'gray';
   title: string;
   className?: string;
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   disabled?: boolean;
+  type?: 'button' | 'submit' | 'reset';
 }
 
 function ButtonProps({
@@ -26,6 +27,7 @@ function ButtonProps({
   className,
   onClick,
   disabled,
+  type = 'button',
 }: ButtonProps) {
   return (
     <Button
@@ -34,6 +36,7 @@ function ButtonProps({
       className={className}
       onClick={onClick}
       disabled={disabled}
+      type={type}
     >
       {title}
     </Button>

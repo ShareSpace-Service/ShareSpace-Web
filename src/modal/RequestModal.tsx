@@ -19,8 +19,8 @@ interface Place {
 }
 
 interface ApiResponseData {
-  productRequestedDetailResponse: Product;
-  placeRequestedDetailResponse: Place;
+  product: Product;
+  place: Place;
 }
 
 interface ApiResponse {
@@ -76,22 +76,16 @@ function RequestModal({
         <div className="flex flex-col bg-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 w-full h-[28rem] cursor-pointer">
           <div className="flex items-start m-4 gap-3 pb-2">
             <img
-              src={data?.productRequestedDetailResponse.image[0]}
+              src={data?.product.image[0]}
               className="w-[150px] h-[150px] object-contain rounded-lg"
-              alt={data?.productRequestedDetailResponse.title}
+              alt={data?.product.title}
             />
             <div className="flex flex-col w-80 gap-3">
-              <DetailItem
-                label="물품 Title"
-                value={data?.productRequestedDetailResponse.title}
-              />
-              <DetailItem
-                label="카테고리"
-                value={data?.productRequestedDetailResponse.category}
-              />
+              <DetailItem label="물품 Title" value={data?.product.title} />
+              <DetailItem label="카테고리" value={data?.product.category} />
               <DetailItem
                 label="보관기간"
-                value={`${data?.productRequestedDetailResponse.period}일`}
+                value={`${data?.product.period}일`}
               />
             </div>
           </div>
@@ -100,34 +94,28 @@ function RequestModal({
               요청사항
             </p>
             <p className="text-gray-400 font-bold flex-grow">
-              {data?.productRequestedDetailResponse.description}
+              {data?.product.description}
             </p>
           </div>
           <div className="flex items-start m-4 gap-3 pb-2">
             <img
-              src={data?.placeRequestedDetailResponse.image[0]}
+              src={data?.place.image[0]}
               className="w-[150px] h-[150px] object-contain rounded-lg"
-              alt={data?.placeRequestedDetailResponse.title}
+              alt={data?.place.title}
             />
             <div className="flex flex-col w-80 gap-3">
-              <DetailItem
-                label="장소 Title"
-                value={data?.placeRequestedDetailResponse.title}
-              />
-              <DetailItem
-                label="카테고리"
-                value={data?.placeRequestedDetailResponse.category}
-              />
+              <DetailItem label="장소 Title" value={data?.place.title} />
+              <DetailItem label="카테고리" value={data?.place.category} />
               <DetailItem
                 label="최대보관일수"
-                value={`${data?.placeRequestedDetailResponse.period}일`}
+                value={`${data?.place.period}일`}
               />
             </div>
           </div>
           <div className="flex items-start gap-3 pl-4 h-full w-full">
             <p className="text-black font-extrabold whitespace-nowrap">비고</p>
             <p className="text-gray-400 font-bold flex-grow">
-              {data?.placeRequestedDetailResponse.description}
+              {data?.place.description}
             </p>
           </div>
         </div>

@@ -1,9 +1,10 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import ButtonProps from '../ui/ButtonProps';
 import { Input } from '@/components/ui/input';
 import React, { useEffect, useState } from 'react';
-import DaumPost from '@/api/DaumPost';
+import DaumPostcode, { Address } from 'react-daum-postcode';
+import { fetchProfileUpdate } from '@/api/Notification';
 
 interface ApiResponse {
   message: string;
@@ -18,6 +19,13 @@ interface UserData {
   image: string | null;
   role: string;
   location: string;
+}
+
+export interface ApiUpdateResponse {
+  message: string;
+  status: string;
+  data: null;
+  success: boolean;
 }
 
 interface Title {
@@ -49,24 +57,42 @@ async function fetchProfile() {
 function MyPageCard() {
   const { data } = useQuery({
     queryKey: ['profile'],
-    queryFn: () => fetchProfile(),
+    queryFn: fetchProfile,
   });
 
-  const [disabled, setDisabled] = useState<boolean>(true);
+  const [isEdit, setIsEdit] = useState<boolean>(false);
   const [formData, setFormData] = useState<UserData | null>(null);
   const [image, setImage] = useState<File | null>(null);
 
   // location 선택
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [zoneCode, setZoneCode] = useState<string>('');
-  const [address, setAddress] = useState<string>('');
+
+  const mutation = useMutation<ApiUpdateResponse, Error, FormData>({
+    mutationFn: (formData: FormData) => fetchProfileUpdate(formData),
+    onSuccess: (data: any) => {
+      console.log('Profile updated successfully:', data);
+    },
+    onError: (error: any) => {
+      console.error('Error updating profile:', error);
+    },
+  });
 
   // API가 호출 성공이 되면 데이터를 formData에 저장
   useEffect(() => {
     if (data && data.success) {
+      console.log('fetching data', data);
       setFormData(data.data);
     }
   }, [data]);
+
+  if (mutation.isError) {
+    return <p>Error: {mutation.error.message}</p>;
+  }
+
+  if (mutation.isSuccess) {
+    return <p>Profile updated successfully!</p>;
+  }
 
   // input 값이 변경될 때마다 formData 업데이트
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -101,39 +127,77 @@ function MyPageCard() {
   };
 
   // DaumPost에서 주소를 선택했을 때의 처리
-  const handleAddressSelect = (selectedAddress: string) => {
-    setAddress(selectedAddress);
+  const handleAddressSelect = (addressData: Address) => {
+    const fullAddress = addressData.address;
     if (formData) {
-      setFormData({ ...formData, location: selectedAddress });
+      setFormData({ ...formData, location: fullAddress });
     }
+    setZoneCode(addressData.zonecode);
     setIsOpen(false);
   };
 
   // 저장 버튼 클릭 시 API 호출
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData) {
+    console.log('Form submitted!');
+    if (formData && isEdit) {
       const formDataSubmit = new FormData();
       formDataSubmit.append('nickName', formData.nickName);
+      formDataSubmit.append('location', formData.location);
       if (image) {
         formDataSubmit.append('image', image);
       }
+      mutation.mutate(formDataSubmit);
     }
   };
-  console.log('formData', formData);
+
+  // 주소 검색 버튼 클릭 시 DaumPostCode 모달 열기
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setIsOpen(true);
+  };
+
+  const handleEditClick = () => {
+    setIsEdit(true);
+  };
+
+  const handleCancelEdit = () => {
+    setIsEdit(false);
+  };
 
   return (
     <>
-      {/* 수정 버튼 */}
-      <div className="flex items-center justify-end pb-4">
-        <ButtonProps
-          size="sm"
-          variant="custom"
-          title={disabled ? '수정' : '저장'}
-          onClick={() => setDisabled(!disabled)}
-        />
-      </div>
-      <form className="flex flex-col gap-10">
+      <form className="flex flex-col gap-10" onSubmit={handleSubmit}>
+        {/* 수정 버튼 */}
+        <div className="flex items-center justify-end">
+          {!isEdit && (
+            <ButtonProps
+              size="sm"
+              variant="custom"
+              title="수정"
+              type="button"
+              onClick={handleEditClick}
+            />
+          )}
+          {/* 수정 버튼 클릭시 저장 , 취소 버튼 등장 */}
+          {isEdit && (
+            <div className="flex gap-3">
+              <ButtonProps
+                size="sm"
+                variant="custom"
+                title="취소"
+                type="button"
+                onClick={handleCancelEdit}
+              />
+              <ButtonProps
+                size="sm"
+                variant="custom"
+                title="저장"
+                type="submit"
+              />
+            </div>
+          )}
+        </div>
         <div className="flex flex-col bg-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 w-full h-80 cursor-pointer ">
           {/* 유저 정보 카드 */}
           <div className="flex items-start m-4 gap-10 pb-2">
@@ -151,7 +215,7 @@ function MyPageCard() {
                   id="input-file"
                   accept=".jpeg, .png"
                   onChange={handleImageChange}
-                  disabled={disabled}
+                  disabled={!isEdit}
                   className="hidden"
                 />
               </label>
@@ -160,8 +224,8 @@ function MyPageCard() {
                 name="nickName"
                 value={formData?.nickName || ''}
                 onChange={handleInputChange}
-                disabled={disabled}
-                className={`font-extrabold text-xl border-none p-0 flex-1 text-center ${disabled ? 'text-gray-300' : 'text-black'} `}
+                disabled={!isEdit}
+                className={`font-extrabold text-xl border-none p-0 flex-1 text-center ${isEdit ? 'text-gray-300' : 'text-black'} `}
               />
             </div>
             {/* 우측 회원 정보 */}
@@ -180,22 +244,29 @@ function MyPageCard() {
               />
               <ProfileDetailItem
                 label="Location"
-                value={data?.data.location}
-                disabled={disabled}
+                value={formData?.location || ''}
+                disabled={!isEdit}
                 onChange={handleInputChange}
                 name="location"
               />
-              {!disabled && (
+              {isEdit && (
                 <ButtonProps
                   size="sm"
                   variant="custom"
                   title="주소 검색"
-                  onClick={() => setIsOpen(true)}
+                  onClick={handleClick}
                 />
               )}
             </div>
           </div>
         </div>
+        {isOpen && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+            <div className="bg-white p-5 rounded-lg shadow-lg">
+              <DaumPostcode onComplete={handleAddressSelect} />
+            </div>
+          </div>
+        )}
         {/* 히스토리, Question, 로그아웃 */}
 
         {titles.map((title) => (
@@ -241,7 +312,7 @@ function ProfileDetailItem({
         value={value || ''}
         name={name}
         className={`font-extrabold text-lg flex-1 ${
-          disabled ? 'text-gray-300' : 'text-black'
+          disabled ? 'text-black' : 'text-gray-300'
         } border-none p-0`}
         disabled={disabled}
         onChange={onChange}

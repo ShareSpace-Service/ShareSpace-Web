@@ -1,4 +1,5 @@
-import { getRequest } from './Request'; // getRequest 함수 사용
+import { ApiUpdateResponse } from '@/component/card/MyPageCard';
+import { getRequest, putRequest } from './Request'; // getRequest 함수 사용
 
 /**
  * 서버에서 알림 데이터를 GET 요청으로 불러오는 함수
@@ -9,4 +10,24 @@ import { getRequest } from './Request'; // getRequest 함수 사용
 export async function fetchNotifications(): Promise<any> {
   const result = await getRequest('http://localhost:8080/notification');
   return result.data;
+}
+
+export async function fetchProfileUpdate(
+  formData: FormData
+): Promise<ApiUpdateResponse> {
+  const response = await putRequest('http://localhost:8080/user/update', {
+    method: 'PUT',
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error('서버 상태 !' + response.status);
+  }
+  const result: ApiUpdateResponse = await response.json();
+  if (response.ok && result.success) {
+    console.log('성공', result.message);
+    return result;
+  } else {
+    throw new Error(result.message || '실패');
+  }
 }
