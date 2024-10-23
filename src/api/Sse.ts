@@ -15,13 +15,11 @@ export function connectSSE(
 
   // 일반적인 메시지(onmessage) 처리 (기본적으로 명명되지 않은 이벤트)
   eventSource.onmessage = (event) => {
-    console.log('기본 이벤트 수신:', event.data); // 기본 이벤트 로그 출력
     onMessage(event); // 외부에서 전달된 onMessage 콜백 함수 호출
   };
 
   // 명명된 이벤트 처리 (예: 'NOTIFICATION' 이벤트)
   eventSource.addEventListener('NOTIFICATION', (event) => {
-    console.log('명명된 이벤트 수신:', event.data); // 명명된 이벤트 로그 출력
     onMessage(event); // 외부에서 전달된 onMessage 콜백 함수 호출
   });
 

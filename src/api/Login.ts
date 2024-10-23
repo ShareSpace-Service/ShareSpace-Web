@@ -8,25 +8,38 @@
  * @returns {Promise<Response>} 서버 응답을 반환하는 Promise
  * @throws {Error} 서버 응답이 성공적이지 않을 경우 에러를 발생
  */
-export async function login(username: string, password: string): Promise<Response> {
-    // FormData에 username과 password 추가
-    const formData = new FormData();
-    formData.append('username', username);
-    formData.append('password', password);
-  
-    // 로그인 요청을 POST 방식으로 보내며, credentials: 'include' 옵션을 통해 쿠키 포함
-    const response = await fetch('http://localhost:8080/user/login', {
-      method: 'POST',
-      body: formData,
-      credentials: 'include',
-    });
-  
-    // 응답이 성공적이지 않으면 에러를 던짐
-    if (!response.ok) {
-      throw new Error(`서버 상태가 그냥 미누갓! ${response.status}`);
-    }
-  
-    // 서버 응답 반환
-    return response;
+export async function login(
+  username: string,
+  password: string
+): Promise<Response> {
+  // FormData에 username과 password 추가
+  const formData = new FormData();
+  formData.append('username', username);
+  formData.append('password', password);
+
+  // 로그인 요청을 POST 방식으로 보내며, credentials: 'include' 옵션을 통해 쿠키 포함
+  const response = await fetch('http://localhost:8080/user/login', {
+    method: 'POST',
+    body: formData,
+    credentials: 'include',
+  });
+
+  // 응답이 성공적이지 않으면 에러를 던짐
+  if (!response.ok) {
+    throw new Error(`서버 상태가 그냥 미누갓! ${response.status}`);
   }
-  
+
+  // 서버 응답 반환
+  return response;
+}
+
+/**
+ * 주어진 쿠키 이름에 해당하는 값을 반환하는 함수
+ * @param {string} name - 가져올 쿠키의 이름
+ * @returns {string | undefined} 쿠키 값 또는 undefined (undefined일 경우, 토큰이 없는 것)
+ */
+export function getCookieValue(name: string): string | undefined {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop()?.split(';').shift();
+}

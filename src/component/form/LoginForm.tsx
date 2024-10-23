@@ -32,7 +32,8 @@ function LoginForm(): JSX.Element {
       const result = await login(email, password);
 
       if (result.ok) {
-        const userId = 1 // 로그인 성공 시 반환된 사용자 ID
+        const data = await result.json();
+        const userId = data.userId; // 로그인 성공 시 반환된 사용자 ID
 
         // SSE 연결
         const eventSource = connectSSE(userId, (event) => {

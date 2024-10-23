@@ -28,7 +28,6 @@ function AlarmBox({ onClick }: AlarmBoxProps): JSX.Element {
     // 알림 이벤트 처리
     eventSource.addEventListener('NOTIFICATION', (event) => {
       const parsedData = JSON.parse(event.data);
-      console.log('알림 수신:', parsedData.message); // 수신된 알림 콘솔 출력
       setHasNewNotification(true);
       setLatestNotification(parsedData.message);
     });
