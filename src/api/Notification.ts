@@ -1,4 +1,4 @@
-import { getRequest } from './Request'; // getRequest 함수 사용
+import { getRequest, deleteRequest } from '@/api/Request';
 
 /**
  * 서버에서 알림 데이터를 GET 요청으로 불러오는 함수
@@ -9,4 +9,17 @@ import { getRequest } from './Request'; // getRequest 함수 사용
 export async function fetchNotifications(): Promise<any> {
   const result = await getRequest('http://localhost:8080/notification');
   return result.data;
+}
+
+/**
+ * 알림을 삭제하는 요청을 처리하는 함수
+ * @param {number} notificationId - 삭제할 알림의 ID
+ * @returns {Promise<any>} 서버로부터의 응답 데이터를 포함한 Promise
+ */
+export async function fetchDeleteNotifications(
+  notificationId: number
+): Promise<any> {
+  const url = `http://localhost:8080/notification?notificationId=${notificationId}`;
+  const result = await deleteRequest(url);
+  return result;
 }

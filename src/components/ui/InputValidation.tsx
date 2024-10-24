@@ -7,9 +7,12 @@ import {
 } from '@/components/ui/input-otp';
 import { useState } from 'react';
 import ButtonProps from '@/component/ui/ButtonProps';
+import { validateEmail } from '@/api/RegisterUser';
+import { useNavigate } from 'react-router-dom';
 
-function InputValidation() {
+function InputValidation({ userId }: { userId: number }) {
   const [otp, setOtp] = useState<string>('');
+  const navigate = useNavigate(); // useNavigate 훅 사용
 
   const handleChange = (value: string) => {
     const numericValue = value.replace(/\D/g, '');
@@ -18,9 +21,18 @@ function InputValidation() {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (otp.length === 6) {
-      console.log('OTP:', otp);
+      try {
+        console.log(userId);
+        const result = await validateEmail(userId, parseInt(otp, 10));
+        console.log('이메일 인증 성공:', result);
+
+        // 이메일 인증 성공 후 /login 페이지로 리디렉션
+        navigate('/login');
+      } catch (error) {
+        console.error('이메일 인증 실패:', error);
+      }
     } else {
       console.log('Invalid OTP');
     }
