@@ -5,7 +5,7 @@ import ProductMenu from '@/component/ui/ProductMenu';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 
-interface ApiResponse {
+export interface ApiResponse {
   message: string;
   status: string;
   data: MatchingData[];
@@ -21,13 +21,14 @@ export interface MatchingData {
   distance: number | null;
 }
 async function getMatchingProduct() {
-  const data = await fetchMatchingProducts();
-  // if (!response.ok) {
-  //   throw new Error('서버 상태가 그냥 미누그앗!' + response.status);
-  // }
-  // const result: ApiResponse = await response.json();
-  // console.log('result', result);
-  return data;
+  try {
+    const data = await fetchMatchingProducts();
+    console.log('Fetched Data:', data);
+    return data;
+  } catch (error) {
+    console.error('Error in getMatchingProduct:', error);
+    throw error;
+  }
 }
 
 function Product() {
@@ -46,11 +47,13 @@ function Product() {
 
   // 로딩 상태 처리
   if (isLoading) {
+    console.log('Loading state active'); // 로딩 중일 때의 UI
     return <div>로딩 중...</div>; // 로딩 중일 때의 UI
   }
 
   // 에러 처리
   if (error) {
+    console.log('Error state active:', error);
     return <div>에러 발생: {error.message}</div>; // 에러 발생 시 UI
   }
 
