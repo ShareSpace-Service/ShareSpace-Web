@@ -1,13 +1,12 @@
 import HostImage from '@/assets/HostImage.svg';
 import GuestImage from '@/assets/GuestImage.svg';
-import { Link } from 'react-router-dom';
-import ButtonProps from '@/component/ui/ButtonProps';
-import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface RoleType {
   role: string;
   description: string;
   image: string;
+  roleStatus: string;
 }
 
 const RoleInfo: RoleType[] = [
@@ -15,11 +14,13 @@ const RoleInfo: RoleType[] = [
     role: '호스트',
     description: '호스트에 대한 설명이 들어갑니다.',
     image: HostImage,
+    roleStatus: 'ROLE_HOST',
   },
   {
     role: '게스트',
     description: '게스트에 대한 설명이 들어갑니다.',
     image: GuestImage,
+    roleStatus: 'ROLE_GUEST',
   },
 ];
 
@@ -44,11 +45,12 @@ const RoleCard = ({ role }: { role: RoleType }) => (
   </div>
 );
 
-function SignUp() {
-  const [isOpen, setIsOpen] = useState(false);
 
-  const handleClick = () => {
-    setIsOpen((prev) => !prev);
+function SignUp() {
+  const navigate = useNavigate();
+
+  const handleRoleClick = (roleStatus: string) => {
+    navigate('/createaccount', { state: { roleStatus } });
   };
 
   return (
@@ -58,19 +60,10 @@ function SignUp() {
       </div>
       <div className="flex flex-col justify-center gap-7">
         {RoleInfo.map((role) => (
-          <Link to="/createaccount" key={role.role}>
+          <div key={role.role} onClick={() => handleRoleClick(role.roleStatus)}>
             <RoleCard role={role} />
-          </Link>
+          </div>
         ))}
-      </div>
-      <div className="pt-5">
-        <ButtonProps
-          size="login"
-          variant="custom"
-          title="Next"
-          className="w-full"
-          onClick={handleClick}
-        />
       </div>
     </div>
   );
