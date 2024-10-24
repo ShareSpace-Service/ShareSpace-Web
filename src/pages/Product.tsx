@@ -1,3 +1,4 @@
+import { fetchMatchingProducts } from '@/api/Matching';
 import ProductStatusList from '@/component/ProductStatusList';
 
 import ProductMenu from '@/component/ui/ProductMenu';
@@ -20,13 +21,13 @@ export interface MatchingData {
   distance: number | null;
 }
 async function getMatchingProduct() {
-  const response = await fetch('http://localhost:8080/matching');
-  if (!response.ok) {
-    throw new Error('서버 상태가 그냥 미누그앗!' + response.status);
-  }
-  const result: ApiResponse = await response.json();
-  console.log('result', result);
-  return result.data;
+  const data = await fetchMatchingProducts();
+  // if (!response.ok) {
+  //   throw new Error('서버 상태가 그냥 미누그앗!' + response.status);
+  // }
+  // const result: ApiResponse = await response.json();
+  // console.log('result', result);
+  return data;
 }
 
 function Product() {
