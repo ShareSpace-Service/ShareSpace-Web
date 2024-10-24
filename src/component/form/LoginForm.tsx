@@ -84,7 +84,7 @@ function LoginForm(): JSX.Element {
 
       {/* 로그인 버튼 */}
       <div className="pt-10">
-        <ButtonProps size="login" variant="custom" title="Login" />
+        <ButtonProps size="login" variant="custom" title="Login" onClick={handleSubmit} />
       </div>
     </form>
   );
