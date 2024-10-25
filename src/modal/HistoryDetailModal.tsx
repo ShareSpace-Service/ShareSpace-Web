@@ -1,6 +1,5 @@
 import { AiOutlineArrowLeft } from 'react-icons/ai';
 import { DetailItem } from './KeepDetailModal';
-import ButtonProps from '@/component/ui/ButtonProps';
 import { useQuery } from '@tanstack/react-query';
 import { fetchDetailHistory } from '@/api/History';
 
@@ -16,7 +15,6 @@ function HistoryDetailModal({
     queryFn: () => fetchDetailHistory({ matchingId: matchingId! }),
     enabled: !!matchingId,
   });
-  console.log('matchingId', matchingId);
 
   return (
     <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50 z-20">

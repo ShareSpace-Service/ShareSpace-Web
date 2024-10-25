@@ -1,25 +1,62 @@
-import { fetchHistory } from '@/api/History';
-import { useQuery } from '@tanstack/react-query';
+import { fetchHistory, fetchHistoryComplete } from '@/api/History';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import ButtonProps from './ui/ButtonProps';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import HistoryDetailModal from '@/modal/HistoryDetailModal';
+import { ApiResponse, MatchingItem } from '@/interface/HistoryInterface';
 
 function HistoryList() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [matchingId, setMatchingId] = useState<number | null>(null);
-  const { data } = useQuery({
+  const [historyData, setHistoryData] = useState<MatchingItem[]>([]);
+
+  const { data, error, isLoading } = useQuery<ApiResponse>({
     queryKey: ['history'],
     queryFn: fetchHistory,
   });
 
+  useEffect(() => {
+    if (data) {
+      setHistoryData(data.data || []);
+    }
+  }, [data]);
+
+  const mutation = useMutation<Error, unknown, { matchingId: number }>({
+    mutationFn: ({ matchingId }) => fetchHistoryComplete({ matchingId }),
+    onSuccess: () => {
+      console.log('성공');
+    },
+    onError: (error) => {
+      console.error('실패', error);
+    },
+  });
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error loading data</div>;
+
+  // 히스토리 디테일 열기
   const handleClick = (matchingId: number) => {
     setIsOpen(true);
     setMatchingId(matchingId);
   };
+
+  const handleComplete = (matchingId: number) => {
+    mutation.mutate(
+      { matchingId },
+      {
+        onSuccess: () => {
+          setHistoryData((prev) =>
+            prev.filter((item) => item.matchingId !== matchingId)
+          );
+        },
+      }
+    );
+  };
+
   console.log('data', data);
   return (
     <div className="flex flex-col items-center gap-4">
-      {data?.data.map((history) => (
+      {historyData.map((history) => (
         <div
           key={history.matchingId}
           className="flex flex-col rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 w-full h-[180px] cursor-pointer"
@@ -41,6 +78,10 @@ function HistoryList() {
                 variant="custom"
                 size="status"
                 className="text-base"
+                onClick={(event) => {
+                  event.stopPropagation(); // 상위에 Link 이벤트 전파 방지
+                  handleComplete(history.matchingId);
+                }}
               />
             </div>
           </div>
