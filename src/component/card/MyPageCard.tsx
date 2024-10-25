@@ -47,6 +47,7 @@ function MyPageCard() {
 
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [formData, setFormData] = useState<UserData | null>(null);
+  const [originalData, setOriginalData] = useState<UserData | null>(null);
   const [image, setImage] = useState<File | null>(null);
 
   // location 선택
@@ -57,6 +58,8 @@ function MyPageCard() {
     mutationFn: (formData: FormData) => fetchProfileUpdate(formData),
     onSuccess: (data: any) => {
       console.log('Profile updated successfully:', data);
+      setOriginalData(formData); // 수정 후 데이터를 originalData에 저장 (수정 취소 시 사용)
+      setIsEdit(false);
     },
     onError: (error: any) => {
       console.error('Error updating profile:', error);
@@ -67,16 +70,13 @@ function MyPageCard() {
   useEffect(() => {
     if (data && data.success) {
       console.log('fetching data', data);
-      setFormData(data.data);
+      setFormData(data.data); // 데이터를 formData에 저장
+      setOriginalData(data.data); // 데이터를 originalData에 저장
     }
   }, [data]);
 
   if (mutation.isError) {
     return <p>Error: {mutation.error.message}</p>;
-  }
-
-  if (mutation.isSuccess) {
-    return <p>Profile updated successfully!</p>;
   }
 
   // input 값이 변경될 때마다 formData 업데이트
@@ -93,9 +93,9 @@ function MyPageCard() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
+      const reader = new FileReader();
       setImage(file);
 
-      const reader = new FileReader();
       reader.onload = (event) => {
         if (event.target) {
           setFormData((prev) => {
@@ -148,6 +148,7 @@ function MyPageCard() {
 
   const handleCancelEdit = () => {
     setIsEdit(false);
+    setFormData(originalData);
   };
 
   return (
@@ -183,7 +184,7 @@ function MyPageCard() {
             </div>
           )}
         </div>
-        <div className="flex flex-col bg-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 w-full h-80 cursor-pointer ">
+        <div className="flex flex-col bg-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 w-full h-70 cursor-pointer ">
           {/* 유저 정보 카드 */}
           <div className="flex items-start m-4 gap-10 pb-2">
             {/* 좌측 이미지 및 닉네임 */}
@@ -230,7 +231,7 @@ function MyPageCard() {
               <ProfileDetailItem
                 label="Location"
                 value={formData?.location || ''}
-                disabled={!isEdit}
+                disabled={true}
                 onChange={handleInputChange}
                 name="location"
               />

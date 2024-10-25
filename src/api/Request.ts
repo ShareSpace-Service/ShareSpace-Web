@@ -7,7 +7,7 @@ import { getCookieValue } from './Login';
  * @returns {Promise<Response>} - 서버 응답을 포함한 Promise 객체
  * @throws {Error} - 토큰이 없거나 요청 실패 시 에러 발생
  */
-async function fetchWithToken(
+export async function fetchWithToken(
   url: string,
   options: RequestInit
 ): Promise<Response> {
@@ -100,9 +100,6 @@ export async function patchRequest(url: string, body: any): Promise<any> {
 export async function putRequest(url: string, body: any): Promise<any> {
   const response = await fetchWithToken(url, {
     method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
     body: JSON.stringify(body),
   });
 
