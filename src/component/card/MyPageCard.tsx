@@ -271,25 +271,13 @@ function MyPageCard() {
         )}
         {/* 히스토리, Question, 로그아웃 */}
         {titles.map((title) => (
-          <div
-            key={title.label}
-            onClick={title.label === 'Logout' ? handleLogout : undefined} // Logout의 경우 전체 클릭 가능하게
-            className="flex flex-col items-start justify-center bg-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 w-full h-20 cursor-pointer"
-          >
-            <div className="flex items-start m-4 gap-10">
-              {title.label === 'Logout' ? (
-                <span className="font-extrabold text-xl">{title.label}</span>
-              ) : (
-                <Link
-                  key={title.label}
-                  to={title.path}
-                  className="font-extrabold text-xl"
-                >
-                  {title.label}
-                </Link>
-              )}
+          <Link to={title.path} key={title.label}>
+            <div className="flex flex-col items-start justify-center bg-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 w-full h-20 cursor-pointer">
+              <div className="flex items-start m-4 gap-10">
+                <h2 className="font-extrabold text-xl">{title.label}</h2>
+              </div>
             </div>
-          </div>
+          </Link>
         ))}
       </form>
     </>

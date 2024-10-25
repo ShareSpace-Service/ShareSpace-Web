@@ -11,6 +11,7 @@ import GuestProductRegist from '@/guest/pages/GuestProductRegist';
 import GuestPlace from '@/guest/pages/GuestPlace';
 import Profile from '@/pages/Profile';
 import Product from '@/pages/Product';
+import History from '@/pages/History';
 
 const router = createBrowserRouter([
   {
@@ -79,6 +80,15 @@ const router = createBrowserRouter([
     element: (
       <Layout noPadding={true}>
         <Product />
+      </Layout>
+    ),
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: '/history',
+    element: (
+      <Layout>
+        <History />
       </Layout>
     ),
     errorElement: <ErrorPage />,
