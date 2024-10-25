@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import React, { useEffect, useState } from 'react';
 import DaumPostcode, { Address } from 'react-daum-postcode';
 import { fetchProfile, fetchProfileUpdate } from '@/api/UserProfile';
+import { userLogout } from '@/api/Login';
 
 export interface ApiResponse {
   message: string;
@@ -39,6 +40,22 @@ const titles: Title[] = [
   { label: 'Logout', path: '/logout' },
 ];
 
+// 로그아웃 핸들러 함수 추가
+const handleLogout = async () => {
+  try {
+    const response = await userLogout();
+    if (response.success) {
+      console.log('Logout successful');
+      // 로그아웃 후 리다이렉트할 페이지 경로 지정 (예: 로그인 페이지)
+      window.location.href = '/login';
+    } else {
+      console.error('Logout failed:', response.message);
+    }
+  } catch (error) {
+    console.error('Error during logout:', error);
+  }
+};
+
 function MyPageCard() {
   const { data } = useQuery({
     queryKey: ['profile'],
@@ -47,7 +64,6 @@ function MyPageCard() {
 
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [formData, setFormData] = useState<UserData | null>(null);
-  const [originalData, setOriginalData] = useState<UserData | null>(null);
   const [image, setImage] = useState<File | null>(null);
 
   // location 선택
@@ -58,8 +74,6 @@ function MyPageCard() {
     mutationFn: (formData: FormData) => fetchProfileUpdate(formData),
     onSuccess: (data: any) => {
       console.log('Profile updated successfully:', data);
-      setOriginalData(formData); // 수정 후 데이터를 originalData에 저장 (수정 취소 시 사용)
-      setIsEdit(false);
     },
     onError: (error: any) => {
       console.error('Error updating profile:', error);
@@ -70,13 +84,16 @@ function MyPageCard() {
   useEffect(() => {
     if (data && data.success) {
       console.log('fetching data', data);
-      setFormData(data.data); // 데이터를 formData에 저장
-      setOriginalData(data.data); // 데이터를 originalData에 저장
+      setFormData(data.data);
     }
   }, [data]);
 
   if (mutation.isError) {
     return <p>Error: {mutation.error.message}</p>;
+  }
+
+  if (mutation.isSuccess) {
+    return <p>Profile updated successfully!</p>;
   }
 
   // input 값이 변경될 때마다 formData 업데이트
@@ -93,9 +110,9 @@ function MyPageCard() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
-      const reader = new FileReader();
       setImage(file);
 
+      const reader = new FileReader();
       reader.onload = (event) => {
         if (event.target) {
           setFormData((prev) => {
@@ -148,7 +165,6 @@ function MyPageCard() {
 
   const handleCancelEdit = () => {
     setIsEdit(false);
-    setFormData(originalData);
   };
 
   return (
@@ -184,7 +200,7 @@ function MyPageCard() {
             </div>
           )}
         </div>
-        <div className="flex flex-col bg-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 w-full h-70 cursor-pointer ">
+        <div className="flex flex-col bg-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 w-full h-80 cursor-pointer ">
           {/* 유저 정보 카드 */}
           <div className="flex items-start m-4 gap-10 pb-2">
             {/* 좌측 이미지 및 닉네임 */}
@@ -231,7 +247,7 @@ function MyPageCard() {
               <ProfileDetailItem
                 label="Location"
                 value={formData?.location || ''}
-                disabled={true}
+                disabled={!isEdit}
                 onChange={handleInputChange}
                 name="location"
               />
@@ -254,20 +270,24 @@ function MyPageCard() {
           </div>
         )}
         {/* 히스토리, Question, 로그아웃 */}
-
         {titles.map((title) => (
           <div
             key={title.label}
+            onClick={title.label === 'Logout' ? handleLogout : undefined} // Logout의 경우 전체 클릭 가능하게
             className="flex flex-col items-start justify-center bg-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 w-full h-20 cursor-pointer"
           >
             <div className="flex items-start m-4 gap-10">
-              <Link
-                key={title.label}
-                to={title.path}
-                className="font-extrabold text-xl"
-              >
-                {title.label}
-              </Link>
+              {title.label === 'Logout' ? (
+                <span className="font-extrabold text-xl">{title.label}</span>
+              ) : (
+                <Link
+                  key={title.label}
+                  to={title.path}
+                  className="font-extrabold text-xl"
+                >
+                  {title.label}
+                </Link>
+              )}
             </div>
           </div>
         ))}
