@@ -270,15 +270,25 @@ function MyPageCard() {
           </div>
         )}
         {/* 히스토리, Question, 로그아웃 */}
-        {titles.map((title) => (
-          <Link to={title.path} key={title.label}>
-            <div className="flex flex-col items-start justify-center bg-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 w-full h-20 cursor-pointer">
-              <div className="flex items-start m-4 gap-10">
-                <h2 className="font-extrabold text-xl">{title.label}</h2>
+        {titles.map((title) =>
+          title.label === 'Logout' ? (
+            <Link to="/login" key={title.label} onClick={handleLogout}>
+              <div className="flex flex-col items-start justify-center bg-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 w-full h-20 cursor-pointer">
+                <div className="flex items-start m-4 gap-10">
+                  <h2 className="font-extrabold text-xl">{title.label}</h2>
+                </div>
               </div>
-            </div>
-          </Link>
-        ))}
+            </Link>
+          ) : (
+            <Link to={title.path} key={title.label}>
+              <div className="flex flex-col items-start justify-center bg-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 w-full h-20 cursor-pointer">
+                <div className="flex items-start m-4 gap-10">
+                  <h2 className="font-extrabold text-xl">{title.label}</h2>
+                </div>
+              </div>
+            </Link>
+          )
+        )}
       </form>
     </>
   );
