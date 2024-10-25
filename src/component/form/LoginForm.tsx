@@ -34,11 +34,6 @@ function LoginForm(): JSX.Element {
       if (result.ok) {
         const data = await result.json();
         const userId = data.userId; // 로그인 성공 시 반환된 사용자 ID
-
-        // SSE 연결
-        const eventSource = connectSSE(userId, (event) => {
-        });
-
         // 홈 페이지로 이동
         navigate('/home');
       }
@@ -84,7 +79,12 @@ function LoginForm(): JSX.Element {
 
       {/* 로그인 버튼 */}
       <div className="pt-10">
-        <ButtonProps size="login" variant="custom" title="Login" onClick={handleSubmit} />
+        <ButtonProps
+          size="login"
+          variant="custom"
+          title="Login"
+          onClick={handleSubmit}
+        />
       </div>
     </form>
   );
