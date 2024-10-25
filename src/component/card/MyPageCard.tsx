@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react';
 import DaumPostcode, { Address } from 'react-daum-postcode';
 import { fetchProfile, fetchProfileUpdate } from '@/api/UserProfile';
 import { userLogout } from '@/api/Login';
+import CustomModal from '@/component/ui/CustomModal';
 
 export interface ApiResponse {
   message: string;
@@ -40,22 +41,6 @@ const titles: Title[] = [
   { label: 'Logout', path: '/logout' },
 ];
 
-// 로그아웃 핸들러 함수 추가
-const handleLogout = async () => {
-  try {
-    const response = await userLogout();
-    if (response.success) {
-      console.log('Logout successful');
-      // 로그아웃 후 리다이렉트할 페이지 경로 지정 (예: 로그인 페이지)
-      window.location.href = '/login';
-    } else {
-      console.error('Logout failed:', response.message);
-    }
-  } catch (error) {
-    console.error('Error during logout:', error);
-  }
-};
-
 function MyPageCard() {
   const { data } = useQuery({
     queryKey: ['profile'],
@@ -65,6 +50,31 @@ function MyPageCard() {
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [formData, setFormData] = useState<UserData | null>(null);
   const [image, setImage] = useState<File | null>(null);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const handleLogoutClick = () => {
+    setShowLogoutModal(true); // 모달 열기
+  };
+
+  // 로그아웃 처리 함수
+  const handleLogoutConfirm = async () => {
+    try {
+      const response = await userLogout();
+      if (response.success) {
+        window.location.replace('/login')
+      } else {
+        console.error('Logout failed:', response.message);
+      }
+    } catch (error) {
+      console.error('Error during logout:', error);
+    } finally {
+      setShowLogoutModal(false); // 모달 닫기
+    }
+  };
+
+  // 로그아웃 취소 처리 함수
+  const handleLogoutCancel = () => {
+    setShowLogoutModal(false); // 모달 닫기
+  };
 
   // location 선택
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -272,13 +282,15 @@ function MyPageCard() {
         {/* 히스토리, Question, 로그아웃 */}
         {titles.map((title) =>
           title.label === 'Logout' ? (
-            <Link to="/login" key={title.label} onClick={handleLogout}>
+            <div key={title.label} onClick={handleLogoutClick}>
+              {' '}
+              {/* 로그아웃 클릭 시 모달 표시 */}
               <div className="flex flex-col items-start justify-center bg-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 w-full h-20 cursor-pointer">
                 <div className="flex items-start m-4 gap-10">
                   <h2 className="font-extrabold text-xl">{title.label}</h2>
                 </div>
               </div>
-            </Link>
+            </div>
           ) : (
             <Link to={title.path} key={title.label}>
               <div className="flex flex-col items-start justify-center bg-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 w-full h-20 cursor-pointer">
@@ -288,6 +300,15 @@ function MyPageCard() {
               </div>
             </Link>
           )
+        )}
+        {showLogoutModal && (
+          <CustomModal
+            title="정말로 로그아웃하시겠습니까?"
+            confirmText="예"
+            cancelText="아니오"
+            onConfirm={handleLogoutConfirm}
+            onCancel={handleLogoutCancel}
+          />
         )}
       </form>
     </>

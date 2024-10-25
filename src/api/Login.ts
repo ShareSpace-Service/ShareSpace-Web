@@ -1,5 +1,3 @@
-import { postRequest } from './Request';
-
 /**
  * 주어진 이메일(username)과 비밀번호(password)를 이용하여
  * 서버에 로그인 요청을 보내는 함수
@@ -14,24 +12,17 @@ export async function login(
   username: string,
   password: string
 ): Promise<Response> {
-  // FormData에 username과 password 추가
   const formData = new FormData();
   formData.append('username', username);
   formData.append('password', password);
 
-  // 로그인 요청을 POST 방식으로 보내며, credentials: 'include' 옵션을 통해 쿠키 포함
   const response = await fetch('http://localhost:8080/user/login', {
     method: 'POST',
     body: formData,
     credentials: 'include',
   });
 
-  // 응답이 성공적이지 않으면 에러를 던짐
-  if (!response.ok) {
-    throw new Error(`서버 상태가 그냥 미누갓! ${response.status}`);
-  }
-
-  // 서버 응답 반환
+  // 2024-10-25 에러가 발생해도 response를 그대로 반환하도록 수정
   return response;
 }
 
@@ -50,7 +41,7 @@ export function getCookieValue(name: string): string | undefined {
  * 사용자 로그아웃 요청을 서버에 보내는 함수.
  * 이 함수는 쿠키에서 accessToken과 refreshToken을 추출하여
  * 해당 토큰들을 포함한 로그아웃 요청을 서버로 보냄
- * 
+ *
  * @returns {Promise<any>} 서버의 응답 데이터가 담긴 Promise 객체
  * @throws {Error} 토큰이 없거나 요청이 실패할 경우 에러를 발생
  */
