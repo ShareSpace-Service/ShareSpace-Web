@@ -1,5 +1,5 @@
 import { ApiResponse, ApiUpdateResponse } from '@/component/card/MyPageCard';
-import { fetchWithToken, getRequest, putRequest } from './Request';
+import { fetchWithToken, getRequest } from './Request';
 import { UserData } from '@/components/ui/alarmbox';
 
 /**

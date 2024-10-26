@@ -1,19 +1,35 @@
-import { fetchNoteList } from '@/api/Note';
+import { fetchNoteDelete, fetchNoteList } from '@/api/Note';
 import { ApiNoteResponse } from '@/interface/NoteInterface';
 import { ModalPortal } from '@/lib/ModalPortal';
 import NoteDetailModal from '@/modal/NoteDetailModal';
-import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
 
 function NoteList() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [noteId, setNoteId] = useState<number | null>(null);
+  const [noteList, setNoteList] = useState<ApiNoteResponse['data']>([]);
 
   const { data } = useQuery<ApiNoteResponse>({
     queryKey: ['notes'],
     queryFn: fetchNoteList,
   });
+
+  useEffect(() => {
+    if (data) {
+      setNoteList(data.data);
+    }
+  }, [data]);
   console.log('data', data);
+
+  const mutation = useMutation<{ noteId: number }, unknown, { noteId: number }>(
+    {
+      mutationFn: ({ noteId }) => fetchNoteDelete(noteId),
+      onSuccess: (_, { noteId }) => {
+        setNoteList((prev) => prev.filter((note) => note.noteId !== noteId));
+      },
+    }
+  );
 
   const handleOpen = (noteId: number) => {
     setIsOpen(true);
@@ -24,16 +40,24 @@ function NoteList() {
     setNoteId(null);
   };
 
+  const handleDelete = (noteId: number, event: React.MouseEvent) => {
+    event.stopPropagation();
+    mutation.mutate({ noteId });
+  };
+
   return (
     <div className="flex flex-col items-center gap-4">
-      {data?.data.map((note) => (
+      {noteList.map((note) => (
         <div
           key={note.noteId}
           className="flex flex-col rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 w-full h-[180px] cursor-pointer"
           onClick={() => handleOpen(note.noteId)}
         >
           <div className="signUpBg w-full h-auto relative">
-            <button className="absolute top-3 right-3 text-3xl font-bold text-gray-600 hover:text-gray-800">
+            <button
+              onClick={(event) => handleDelete(note.noteId, event)}
+              className="absolute top-3 right-3 text-3xl font-bold text-gray-600 hover:text-gray-800"
+            >
               &times;
             </button>
           </div>

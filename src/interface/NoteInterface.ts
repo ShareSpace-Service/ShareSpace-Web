@@ -27,3 +27,8 @@ export interface ApiNoteDetailResponse {
   data: NoteDetail;
   success: boolean;
 }
+
+export interface ApiNoteDeleteResponse {
+  status: string;
+  message: string;
+}
