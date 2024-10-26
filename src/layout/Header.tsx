@@ -29,7 +29,9 @@ function Header() {
         <div className="flex gap-2">
           {/* NotificationBell 사용 */}
           <AlarmBox onClick={openModal} />
-          <HeaderIcon src={Message} alt="Message" />
+          <Link to="/message">
+            <HeaderIcon src={Message} alt="Message" />
+          </Link>
         </div>
       </div>
       {isOpen && (

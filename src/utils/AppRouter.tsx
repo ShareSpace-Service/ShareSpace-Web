@@ -12,6 +12,7 @@ import GuestPlace from '@/guest/pages/GuestPlace';
 import Profile from '@/pages/Profile';
 import Product from '@/pages/Product';
 import History from '@/pages/History';
+import Note from '@/pages/Note';
 
 const router = createBrowserRouter([
   {
@@ -92,6 +93,14 @@ const router = createBrowserRouter([
       </Layout>
     ),
     errorElement: <ErrorPage />,
+  },
+  {
+    path: '/message',
+    element: (
+      <Layout>
+        <Note />
+      </Layout>
+    ),
   },
 ]);
 
