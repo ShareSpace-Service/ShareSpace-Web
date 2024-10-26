@@ -17,7 +17,7 @@ interface RegisterResponse {
   success: boolean;
 }
 
-function FormGroup({
+export function FormGroup({
   children,
   label,
   htmlFor,
