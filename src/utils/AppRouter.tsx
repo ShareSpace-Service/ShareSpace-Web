@@ -13,6 +13,7 @@ import Profile from '@/pages/Profile';
 import Product from '@/pages/Product';
 import History from '@/pages/History';
 import Note from '@/pages/Note';
+import Question from '@/pages/Question';
 
 const router = createBrowserRouter([
   {
@@ -99,6 +100,15 @@ const router = createBrowserRouter([
     element: (
       <Layout>
         <Note />
+      </Layout>
+    ),
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: '/question',
+    element: (
+      <Layout>
+        <Question />
       </Layout>
     ),
   },
