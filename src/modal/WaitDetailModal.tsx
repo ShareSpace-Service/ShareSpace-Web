@@ -4,7 +4,7 @@ import { AiOutlineArrowLeft } from 'react-icons/ai';
 import ButtonProps from '@/component/ui/ButtonProps';
 import NoRegisterPhoto from '@/assets/Photo.svg';
 import { useState } from 'react';
-import { MatchingRequestResult } from './GuestRentalModal';
+import { MatchingRequestResult } from '@/interface/MatchingInterface';
 
 // 물품 보관 요청 수락 API
 async function fetchKeepAccept({ matchingId }: { matchingId: number }) {
@@ -117,8 +117,8 @@ function WaitDetailModal({
   };
 
   return (
-    <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50 z-20">
-      <div className="signUpBg w-full h-full px-4 flex flex-col">
+    <div className="w-full min-h-screen">
+      <div className="signUpBg w-full min-h-screen px-4 flex flex-col overflow-hidden">
         {/* 모달 헤더 */}
         <div className="h-[60px] w-full bg-blue flex items-center gap-3">
           <AiOutlineArrowLeft

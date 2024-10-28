@@ -68,8 +68,8 @@ function RequestModal({
   }
 
   return (
-    <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50 z-20">
-      <div className="signUpBg w-full h-full px-4 flex flex-col">
+    <div className="w-full min-h-screen">
+      <div className="signUpBg w-full min-h-screen px-4 flex flex-col overflow-hidden">
         {/* 모달 헤더 */}
         <ModalHeader onClose={onClose} title="요청됨" />
         {/* 모달 내용 */}
