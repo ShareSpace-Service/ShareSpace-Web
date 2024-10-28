@@ -1,32 +1,9 @@
-import { Place, ApiResponse } from '@/interface/Place';
+import { fetchPlaceList } from '@/api/Place';
+import { Place } from '@/interface/PlaceInterface';
 import { ModalPortal } from '@/lib/ModalPortal';
 import GuestRentalModal from '@/modal/GuestRentalModal';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
-
-// API 요청 함수 추후에 API 디렉토리로 이동 예정
-async function getPlaceList(productId: number): Promise<Place[]> {
-  try {
-    const response = await fetch(
-      `http://localhost:8080/place/searchByProduct?productId=${productId}`
-    );
-    if (!response.ok) {
-      throw new Error('서버 상태가 그냥 미누그앗!' + response.status);
-    }
-
-    const result: ApiResponse = await response.json();
-    console.log(result, 'result');
-    if (result.success && result.data) {
-      return result.data;
-    } else {
-      console.error('API 요청 실패', result);
-      return [];
-    }
-  } catch (error) {
-    console.log('error fetch', error);
-    return [];
-  }
-}
 
 function PlaceList({ productId }: { productId: number }) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -40,7 +17,6 @@ function PlaceList({ productId }: { productId: number }) {
   console.log(productId);
   // productId는 URL 파라미터로 전달받은 값
   // 이 값은 GusetPlace 컴포넌트에서 useParams를 사용
-
   // React Query를 사용하여 데이터 요청 및 상태 관리
   const {
     data: places,
@@ -48,7 +24,7 @@ function PlaceList({ productId }: { productId: number }) {
     isLoading,
   } = useQuery<Place[], Error>({
     queryKey: ['places', productId], // 쿼리 키
-    queryFn: () => getPlaceList(productId), // 데이터 가져오기 함수
+    queryFn: () => fetchPlaceList(productId), // 데이터 가져오기 함수
     enabled: !!productId, // productId가 있을 때만 쿼리 실행
     staleTime: 1000 * 60 * 5, // 5분 동안 데이터를 신선하게 유지
   });

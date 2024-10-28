@@ -1,4 +1,4 @@
-import { ApiResponse, Place } from '@/interface/Place';
+import { ApiResponse, Place } from '@/interface/PlaceInterface';
 import { useQuery } from '@tanstack/react-query';
 
 export const DummyData: Place[] = [
