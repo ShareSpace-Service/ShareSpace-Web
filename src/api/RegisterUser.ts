@@ -14,18 +14,20 @@ export async function registerUser(body: any): Promise<any> {
   });
 
   const result = await response.json();
+
   if (!response.ok) {
-    throw new Error(result.message || '회원가입 요청 실패');
+    throw result; // 서버에서 온 에러 메시지를 직접 던짐
   }
+
   return result;
 }
 
 /**
  * 이메일 인증을 수행하는 함수
- * 
+ *
  * 주어진 userId와 validationNumber를 사용하여 이메일 인증 요청을 서버로 보냄
  * 서버 응답을 JSON으로 파싱하고, 응답이 실패할 경우 예외를 던짐
- * 
+ *
  * @param {number} userId - 인증할 사용자의 고유 ID
  * @param {number} validationNumber - 사용자가 입력한 인증 번호
  * @returns {Promise<any>} - 서버 응답의 JSON 데이터
@@ -50,8 +52,10 @@ export async function validateEmail(
   });
 
   const result = await response.json();
+
   if (!response.ok) {
-    throw new Error(result.message || '이메일 인증 실패');
+    throw result; // 서버에서 온 에러 메시지를 직접 던짐
   }
+
   return result;
 }
