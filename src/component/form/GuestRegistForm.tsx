@@ -7,15 +7,8 @@ import { useState } from 'react';
 import ImageUpload from './ImageUpload';
 import GuestPlaceChoice from '@/modal/GuestPlaceChoice';
 import { useMutation } from '@tanstack/react-query';
-
-interface RegisterResponse {
-  message: string;
-  status: string;
-  data: {
-    productId: number;
-  };
-  success: boolean;
-}
+import { RegistResponse } from '@/interface/ProductRegistInterface';
+import { RegistProduct } from '@/api/ProductRegist';
 
 export function FormGroup({
   children,
@@ -45,6 +38,26 @@ function GuestRegistForm() {
   const [files, setFiles] = useState<File[]>([]);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [productId, setProductId] = useState<number | null>(null);
+
+  const mutation = useMutation<RegistResponse, Error, FormData>({
+    mutationFn: (formData: FormData) => RegistProduct(formData),
+    onSuccess: (data) => {
+      // 요청 성공 시
+      const newProductId = data.data.productId; // 새로 등록된 제품 ID 가져오기
+      if (newProductId) {
+        setProductId(newProductId); // 제품 ID 상태 업데이트
+        alert('상품이 등록되었습니다.');
+        setIsOpen(true);
+      } else {
+        console.error('productId response 실패', data);
+        alert('상품 등록에 실패했습니다.');
+      }
+    },
+    onError: (error) => {
+      console.error('Error:', error);
+      alert('상품 등록에 실패했습니다.');
+    },
+  });
 
   // 이미지 추가 처리
   const handleAddImages = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -93,43 +106,6 @@ function GuestRegistForm() {
       (prevImages) => prevImages.filter((_, index) => index !== id) // 삭제된 이미지 제외
     );
   };
-
-  // 제품 등록 API 호출 함수
-  const registProduct = async (
-    formData: FormData
-  ): Promise<RegisterResponse> => {
-    const response = await fetch('http://localhost:8080/product/register', {
-      method: 'POST',
-      body: formData,
-    });
-
-    if (!response.ok) {
-      throw new Error(`Server error: ${response.status}`);
-    }
-
-    const responseData = await response.json(); // JSON 형태로 응답 데이터 가져오기
-    return responseData as RegisterResponse; // RegisterResponse 타입으로 반환
-  };
-
-  const mutation = useMutation<RegisterResponse, Error, FormData>({
-    mutationFn: (formData: FormData) => registProduct(formData),
-    onSuccess: (data) => {
-      // 요청 성공 시
-      const newProductId = data.data.productId; // 새로 등록된 제품 ID 가져오기
-      if (newProductId) {
-        setProductId(newProductId); // 제품 ID 상태 업데이트
-        alert('상품이 등록되었습니다.');
-        setIsOpen(true);
-      } else {
-        console.error('productId response 실패', data);
-        alert('상품 등록에 실패했습니다.');
-      }
-    },
-    onError: (error) => {
-      console.error('Error:', error);
-      alert('상품 등록에 실패했습니다.');
-    },
-  });
 
   // 폼 제출
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -200,7 +176,12 @@ function GuestRegistForm() {
 
         {/* onSubmit */}
         <div className="mt-6 pt-4">
-          <ButtonProps size="full" variant="custom" title="등록하기" />
+          <ButtonProps
+            size="full"
+            variant="custom"
+            title="등록하기"
+            type="submit"
+          />
         </div>
       </form>
       {isOpen && productId !== null && (
