@@ -1,49 +1,43 @@
-import { fetchMatchingProducts } from '@/api/Matching';
+import {
+  fetchFilterMatchingProducts,
+  fetchMatchingProducts,
+} from '@/api/Matching';
 import ProductStatusList from '@/component/ProductStatusList';
-
 import ProductMenu from '@/component/ui/ProductMenu';
+import { MatchingData } from '@/interface/MatchingInterface';
 import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-export interface ApiResponse {
-  message: string;
-  status: string;
-  data: MatchingData[];
-  success: boolean;
-}
-
-export interface MatchingData {
-  matchingId: number | null;
-  title: string;
-  category: string;
-  imageUrl: string[];
-  status: string;
-  distance: number | null;
-}
-async function getMatchingProduct() {
-  try {
-    const data = await fetchMatchingProducts();
-    console.log('Fetched Data:', data);
-    return data;
-  } catch (error) {
-    console.error('Error in getMatchingProduct:', error);
-    throw error;
-  }
-}
+// 1. Get 요청을 통해 물품 목록을 가져오는 fetchMatchingProducts 함수를 작성합니다.
+// 2. 전체 데이터에서 Status를 추출해서 필터링 해주는 API를 호출한다.
 
 function Product() {
-  const { data, isLoading, error } = useQuery<MatchingData[], Error>({
+  const [selectedMenu, setSelectedMenu] = useState<string>('전체');
+  const [filteredData, setFilteredData] = useState<MatchingData[]>([]);
+
+  const {
+    data: allData,
+    isLoading,
+    error,
+  } = useQuery<MatchingData[], Error>({
     queryKey: ['matching'],
-    queryFn: getMatchingProduct,
+    queryFn: fetchMatchingProducts,
     staleTime: 1000 * 60 * 5,
   });
 
-  const [selectedMenu, setSelectedMenu] = useState<string>('전체');
+  const handleFilter = async (status: string) => {
+    if (selectedMenu === '전체') {
+      setFilteredData(allData || []); // 전체 데이터를 그대로 사용하고
+    } else {
+      const filtered = await fetchFilterMatchingProducts(status); // 필터링된 데이터를 가져옵니다.
+      setFilteredData(filtered); // 필터링된 데이터를 사용합니다.
+    }
+  };
 
-  const filteredData =
-    selectedMenu === '전체'
-      ? data
-      : data?.filter((item) => item.status === selectedMenu);
+  // 전체 데이터가 변경되면 필터링을 다시 수행합니다.
+  useEffect(() => {
+    handleFilter(selectedMenu);
+  }, [selectedMenu, allData]);
 
   // 로딩 상태 처리
   if (isLoading) {

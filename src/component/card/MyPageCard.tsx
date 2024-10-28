@@ -60,7 +60,7 @@ function MyPageCard() {
     try {
       const response = await userLogout();
       if (response.success) {
-        window.location.replace('/login')
+        window.location.replace('/login');
       } else {
         console.error('Logout failed:', response.message);
       }
@@ -100,10 +100,6 @@ function MyPageCard() {
 
   if (mutation.isError) {
     return <p>Error: {mutation.error.message}</p>;
-  }
-
-  if (mutation.isSuccess) {
-    return <p>Profile updated successfully!</p>;
   }
 
   // input 값이 변경될 때마다 formData 업데이트

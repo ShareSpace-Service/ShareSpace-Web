@@ -1,8 +1,8 @@
-import { MatchingData } from '@/pages/Product';
 import ButtonProps from './ui/ButtonProps';
 import { MenuTitle } from './ui/ProductMenu';
 import { useState } from 'react';
 import StatusModalRender from '@/modal/StatusModalRender';
+import { MatchingData } from '@/interface/MatchingInterface';
 
 function ProductStatusList({
   filteredData,
