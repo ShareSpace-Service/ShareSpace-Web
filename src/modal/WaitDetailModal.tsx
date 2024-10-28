@@ -1,10 +1,11 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { DetailItem, fetchKeepDetail } from './KeepDetailModal';
+import { DetailItem } from './KeepDetailModal';
 import { AiOutlineArrowLeft } from 'react-icons/ai';
 import ButtonProps from '@/component/ui/ButtonProps';
 import NoRegisterPhoto from '@/assets/Photo.svg';
 import { useState } from 'react';
 import { MatchingRequestResult } from '@/interface/MatchingInterface';
+import { fetchKeepModal } from '@/api/Matching';
 
 // 물품 보관 요청 수락 API
 async function fetchKeepAccept({ matchingId }: { matchingId: number }) {
@@ -63,7 +64,7 @@ function WaitDetailModal({
 }) {
   const { data, isLoading, error } = useQuery({
     queryKey: ['waitDetail', matchingId],
-    queryFn: () => fetchKeepDetail(matchingId),
+    queryFn: () => fetchKeepModal({ matchingId }),
     enabled: !!matchingId,
   });
 

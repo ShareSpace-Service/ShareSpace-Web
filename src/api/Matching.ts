@@ -1,4 +1,6 @@
 import {
+  ApiKeepModalResponse,
+  ApiRequestModalResponse,
   MatchingApiResponse,
   MatchingData,
   MatchingRequestResult,
@@ -76,5 +78,38 @@ export async function fetchFilterMatchingProducts(
   } catch (error) {
     console.error(':', error);
     throw new Error('Failed to fetch matching products');
+  }
+}
+
+/**
+ * RequestModal 디테일 데이터를 불러오는 함수
+ * @param {number} matchingId - 매칭 ID
+ * @throws {Error} 서버 응답이 성공적이지 않을 경우 에러 발생
+ */
+export async function fetchRequestModal({
+  matchingId,
+}: {
+  matchingId: number;
+}) {
+  const result: ApiRequestModalResponse = await getRequest(
+    `http://localhost:8080/matching/requestDetail?matchingId=${matchingId}`
+  );
+  if (result.success) {
+    console.log('Request Detail 요청 성공', result.message);
+    return result.data;
+  } else {
+    throw new Error(result.message || '요청 실패');
+  }
+}
+
+export async function fetchKeepModal({ matchingId }: { matchingId: number }) {
+  const result: ApiKeepModalResponse = await getRequest(
+    `http://localhost:8080/matching/keepDetail?matchingId=${matchingId}`
+  );
+  if (result.success) {
+    console.log('Keep, Waiting 요청 성공', result.message);
+    return result.data;
+  } else {
+    throw new Error(result.message || '요청 실패');
   }
 }

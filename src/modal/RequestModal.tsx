@@ -1,51 +1,7 @@
 import { DetailItem } from './KeepDetailModal';
 import { useQuery } from '@tanstack/react-query';
 import ModalHeader from '@/component/ui/ModalHeader';
-
-interface Product {
-  title: string;
-  image: string[];
-  category: string;
-  period: number;
-  description: string;
-}
-
-interface Place {
-  title: string;
-  image: string[];
-  category: string;
-  period: number;
-  description: string;
-}
-
-interface ApiResponseData {
-  product: Product;
-  place: Place;
-}
-
-interface ApiResponse {
-  message: string;
-  status: string;
-  data: ApiResponseData;
-  success: boolean;
-}
-
-async function fetchRequest({ matchingId }: { matchingId: number }) {
-  const response = await fetch(
-    `http://localhost:8080/matching/requestDetail?matchingId=${matchingId}`
-  );
-  if (!response.ok) {
-    throw new Error('서버 상태가 그냥 미누그앗!' + response.status);
-  }
-  const result: ApiResponse = await response.json();
-  console.log('요청 모달 API', result);
-  if (response.ok && result.success) {
-    console.log('요청에 성공하였습니다.', result.message);
-    return result.data;
-  } else {
-    throw new Error(result.message || '요청이 실패하였습니다.');
-  }
-}
+import { fetchRequestModal } from '@/api/Matching';
 
 function RequestModal({
   matchingId,
@@ -56,7 +12,7 @@ function RequestModal({
 }) {
   const { data, isLoading, error } = useQuery({
     queryKey: ['requestDetail', matchingId],
-    queryFn: () => fetchRequest({ matchingId }),
+    queryFn: () => fetchRequestModal({ matchingId }),
     enabled: !!matchingId,
   });
 

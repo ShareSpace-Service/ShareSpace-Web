@@ -1,49 +1,7 @@
+import { fetchKeepModal } from '@/api/Matching';
 import ButtonProps from '@/component/ui/ButtonProps';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect } from 'react';
 import { AiOutlineArrowLeft } from 'react-icons/ai';
-
-interface ApiResponse {
-  message: string;
-  status: string;
-  data: {
-    product: ProductDetails;
-    place: PlaceDetails;
-    imageUrl: string | null; // 이거 이미지가 Null이 들어갈 수가 없음 수정해야함
-  };
-  success: boolean;
-}
-
-interface ProductDetails {
-  title: string;
-  period: number;
-  description: string;
-  category: string;
-}
-
-interface PlaceDetails {
-  title: string;
-}
-
-export async function fetchKeepDetail(
-  matchingId: number
-): Promise<ApiResponse['data'] | null> {
-  const response = await fetch(
-    `http://localhost:8080/matching/keepDetail?matchingId=${matchingId}`
-  );
-  if (!response.ok) {
-    throw new Error('서버 상태가 그냥 미누그앗!' + response.status);
-  }
-
-  const result: ApiResponse = await response.json();
-  console.log('보관중 모달 API', result);
-  if (result.success && result.data) {
-    return result.data;
-  } else {
-    console.error('API 요청 실패', result);
-    return null;
-  }
-}
 
 function KeepDetailModal({
   matchingId,
@@ -54,7 +12,7 @@ function KeepDetailModal({
 }) {
   const { data, isLoading, error } = useQuery({
     queryKey: ['keepDetail', matchingId],
-    queryFn: () => fetchKeepDetail(matchingId),
+    queryFn: () => fetchKeepModal({ matchingId }),
     enabled: !!matchingId,
   });
 
