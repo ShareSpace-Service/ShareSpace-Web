@@ -1,4 +1,8 @@
+import { fetchMatchingRentalRequest } from '@/api/Matching';
+import { fetchPlaceDetailList } from '@/api/Place';
 import ButtonProps from '@/component/ui/ButtonProps';
+import { MatchingRequestResult } from '@/interface/MatchingInterface';
+import { PlaceData } from '@/interface/PlaceInterface';
 import {
   useMutation,
   UseMutationResult,
@@ -10,73 +14,19 @@ interface ModalProps {
   onClose: () => void;
   placeId: number | null;
   productId: number;
-}
-interface PlaceData {
-  placeId: number;
-  title: string;
-  category: string;
-  period: number;
-  imageUrl: string;
-  description: string;
-}
-interface ApiResponse {
-  message: string;
-  status: string;
-  data: PlaceData;
-  success: boolean;
+  matchingId: number;
 }
 
-export interface MatchingRequestResult {
-  success: boolean;
-  status: string;
-  data: null;
-  message: string;
-}
-
-async function getPlaceDetailList({ placeId }: { placeId: number }) {
-  const response = await fetch(
-    `http://localhost:8080/place/placeDetail?placeId=${placeId}`
-  );
-  if (!response.ok) {
-    throw new Error('서버 상태가 그냥 미누그앗!' + response.status);
-  }
-  const result: ApiResponse = await response.json();
-  console.log('first', result);
-
-  if (result.success && result.data) {
-    return result.data;
-  } else {
-    console.error('API 요청 실패', result);
-    throw new Error('Failed to fetch place detail');
-  }
-}
-
-async function getMatchingRequest({
-  productId,
+function GuestRentalModal({
+  isOpen,
+  onClose,
   placeId,
-}: {
-  productId: number;
-  placeId: number;
-}): Promise<MatchingRequestResult> {
-  const response = await fetch('http://localhost:8080/matching/keep', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ productId, placeId }),
-  });
-  if (!response.ok) {
-    throw new Error('서버 상태가 그냥 미누그앗!' + response.status);
-  }
-  const result: MatchingRequestResult = await response.json();
-  console.log('POST 요청 결과', result);
-  return result;
-}
-
-function GuestRentalModal({ isOpen, onClose, placeId, productId }: ModalProps) {
+  productId,
+  matchingId,
+}: ModalProps) {
   const { data, error, isLoading } = useQuery<PlaceData, Error>({
     queryKey: ['placeDetail', placeId],
-    queryFn: () => getPlaceDetailList({ placeId: placeId! }), // Pass placeId properly
+    queryFn: () => fetchPlaceDetailList({ placeId: placeId! }),
     enabled: !!placeId,
   });
 
@@ -86,9 +36,15 @@ function GuestRentalModal({ isOpen, onClose, placeId, productId }: ModalProps) {
     void
   >({
     mutationFn: () =>
-      getMatchingRequest({ productId: productId!, placeId: placeId! }),
+      fetchMatchingRentalRequest({
+        productId: productId!,
+        placeId: placeId!,
+        matchingId: matchingId!,
+      }),
     onSuccess: (data: MatchingRequestResult) => {
       console.log('요청 성공', data);
+      alert('대여 요청이 완료되었습니다.');
+      onClose();
     },
     onError: (error: Error) => {
       console.error('요청 실패', error);

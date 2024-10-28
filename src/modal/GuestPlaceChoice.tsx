@@ -4,9 +4,11 @@ import { Link } from 'react-router-dom';
 function GuestPlaceChoice({
   title,
   productId,
+  matchingId,
 }: {
   title: string;
   productId: number | null;
+  matchingId: number | null;
 }) {
   return (
     <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50">
@@ -19,7 +21,7 @@ function GuestPlaceChoice({
             <p className="text-gray-300 font-bold text-center">{title}</p>
           </div>
           <div className="flex items-center gap-3 justify-around">
-            <Link to={`/place/${productId}`}>
+            <Link to={`/place/${productId}`} state={{ matchingId }}>
               <ButtonProps title="네" size="check" variant="custom" />
             </Link>
             <Link to="/home">

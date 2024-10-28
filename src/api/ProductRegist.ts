@@ -19,5 +19,3 @@ export async function RegistProduct(
     throw new Error(result.message || '등록 실패');
   }
 }
-
-// return responseData as RegisterResponse;
