@@ -5,7 +5,12 @@ import {
   MatchingData,
   MatchingRequestResult,
 } from '@/interface/MatchingInterface';
-import { fetchWithToken, getRequest } from './Request';
+import {
+  fetchWithToken,
+  getRequest,
+  patchRequest,
+  postRequest,
+} from './Request';
 
 /**
  * 서버에서 Matching에 연결된 Product 데이터를 GET 요청으로 불러오는 함수
@@ -102,6 +107,12 @@ export async function fetchRequestModal({
   }
 }
 
+/**
+ * KeepModal, Waiting 디테일 데이터를 불러오는 함수
+ * @param {number} matchingId - 매칭 ID
+ * @throws {Error} 서버 응답이 성공적이지 않을 경우 에러 발생
+ * @returns {Promise<ApiKeepModalResponse>} KeepModal, Waiting 디테일 데이터를 반환하는 Promise
+ */
 export async function fetchKeepModal({ matchingId }: { matchingId: number }) {
   const result: ApiKeepModalResponse = await getRequest(
     `http://localhost:8080/matching/keepDetail?matchingId=${matchingId}`
@@ -111,5 +122,66 @@ export async function fetchKeepModal({ matchingId }: { matchingId: number }) {
     return result.data;
   } else {
     throw new Error(result.message || '요청 실패');
+  }
+}
+
+/**
+ * 물품 보관 요청 수락 API
+ * @param {number} matchingId - 매칭 ID
+ * @returns {Promise<MatchingRequestResult>} 물품 보관 요청 수락 결과를 반환하는 Promise
+ * @throws {Error} 서버 응답이 성공적이지 않을 경우 에러 발생
+ */
+export async function fetchKeepAccept({ matchingId }: { matchingId: number }) {
+  const response = await fetchWithToken(
+    'http://localhost:8080/matching/confirmStorage/guest',
+    {
+      method: 'PATCH',
+      body: JSON.stringify({ matchingId }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  );
+  if (!response.ok) {
+    throw new Error('서버 상태가 불안합니다!' + response.status);
+  }
+  const result: MatchingRequestResult = await response.json();
+  if (response.ok && result.success) {
+    console.log('성공', result.message);
+    return result;
+  } else {
+    throw new Error(result.message || '실패');
+  }
+}
+
+/**
+ * 물품 보관 요청 취소 API
+ * @param {number} matchingId - 매칭 ID
+ * @returns {Promise<MatchingRequestResult>} 물품 보관 요청 취소 결과를 반환하는 Promise
+ * @throws {Error} 서버 응답이 성공적이지 않을 경우 에러 발생
+ */
+export async function fetchCancelRequest({
+  matchingId,
+}: {
+  matchingId: number;
+}) {
+  const response = await fetchWithToken(
+    `http://localhost:8080/matching/cancelRequest?matchingId=${matchingId}`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  );
+  if (!response.ok) {
+    throw new Error('서버 상태가 불안합니다!' + response.status);
+  }
+  const result: MatchingRequestResult = await response.json();
+  if (response.ok && result.success) {
+    console.log('취소 성공', result.message);
+    return result;
+  } else {
+    throw new Error(result.message || '취소 실패');
   }
 }

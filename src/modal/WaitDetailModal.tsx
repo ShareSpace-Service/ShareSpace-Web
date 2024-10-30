@@ -1,59 +1,15 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { DetailItem } from './KeepDetailModal';
-import { AiOutlineArrowLeft } from 'react-icons/ai';
 import ButtonProps from '@/component/ui/ButtonProps';
 import NoRegisterPhoto from '@/assets/Photo.svg';
 import { useState } from 'react';
 import { MatchingRequestResult } from '@/interface/MatchingInterface';
-import { fetchKeepModal } from '@/api/Matching';
-
-// 물품 보관 요청 수락 API
-async function fetchKeepAccept({ matchingId }: { matchingId: number }) {
-  const response = await fetch(
-    'http://localhost:8080/matching/confirmStorage/guest',
-    {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ matchingId }),
-    }
-  );
-  if (!response.ok) {
-    throw new Error('서버 상태가 그냥 미누그앗!' + response.status);
-  }
-  const result: MatchingRequestResult = await response.json();
-  console.log('수락 API', result);
-  if (response.ok && result.success) {
-    console.log('요청에 성공하였습니다.', result.message);
-    return result;
-  } else {
-    throw new Error(result.message || '수락이 실패하였습니다.');
-  }
-}
-
-async function fetchCancelRequest({ matchingId }: { matchingId: number }) {
-  const response = await fetch(
-    `http://localhost:8080/matching/cancelRequest?matchingId=${matchingId}`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }
-  );
-  if (!response.ok) {
-    throw new Error('서버 상태가 그냥 미누그앗!' + response.status);
-  }
-  const result: MatchingRequestResult = await response.json();
-  console.log('요청 취소 API', result);
-  if (response.ok && result.success) {
-    console.log('요청이 취소되었습니다.', result.message);
-    return result;
-  } else {
-    throw new Error(result.message || '요청 취소에 실패하였습니다.');
-  }
-}
+import {
+  fetchCancelRequest,
+  fetchKeepAccept,
+  fetchKeepModal,
+} from '@/api/Matching';
+import ModalHeader from '@/component/ui/ModalHeader';
 
 function WaitDetailModal({
   matchingId,
@@ -78,7 +34,7 @@ function WaitDetailModal({
     mutationFn: ({ matchingId }) => fetchKeepAccept({ matchingId }),
     onSuccess: () => {
       console.log('수락 성공');
-      alert('수락됐다 민우야');
+      alert('요청이 수락되었습니다.');
       setIsCancel(false);
     },
     onError: (error) => {
@@ -121,13 +77,7 @@ function WaitDetailModal({
     <div className="w-full min-h-screen">
       <div className="signUpBg w-full min-h-screen px-4 flex flex-col overflow-hidden">
         {/* 모달 헤더 */}
-        <div className="h-[60px] w-full bg-blue flex items-center gap-3">
-          <AiOutlineArrowLeft
-            className="ml-2 text-2xl font-extrabold cursor-pointer hover:text-gray-500 transition-colors duration-200"
-            onClick={onClose}
-          />
-          <p className="font-bold">보관대기중</p>
-        </div>
+        <ModalHeader onClose={onClose} title="보관대기중" />
         {/* 모달 내용 */}
         <div className="flex flex-col bg-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 w-full h-80 cursor-pointer">
           <div className="flex items-start m-4 gap-3 pb-2">
@@ -170,7 +120,6 @@ function WaitDetailModal({
             title="요청 취소"
             variant={isCancel ? 'gray' : 'custom'}
             onClick={handleCancelClick}
-            // disabled={isCancel}
           />
         </div>
       </div>
