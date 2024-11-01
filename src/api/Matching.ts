@@ -1,16 +1,12 @@
 import {
   ApiKeepModalResponse,
   ApiRequestModalResponse,
+  Matching,
   MatchingApiResponse,
   MatchingData,
   MatchingRequestResult,
 } from '@/interface/MatchingInterface';
-import {
-  fetchWithToken,
-  getRequest,
-  patchRequest,
-  postRequest,
-} from './Request';
+import { fetchWithToken, getRequest } from './Request';
 
 /**
  * 서버에서 Matching에 연결된 Product 데이터를 GET 요청으로 불러오는 함수
@@ -18,14 +14,24 @@ import {
  * @returns {Promise<MatchingData[]>} 서버로부터 Prouduct 리스트 데이터를 반환하는 Promise
  * @throws {Error} 서버 응답이 성공적이지 않을 경우 에러 발생
  */
-export async function fetchMatchingProducts(): Promise<MatchingData[]> {
+export async function fetchMatchingProducts(): Promise<Matching> {
   try {
     const result: MatchingApiResponse = await getRequest(
       'http://localhost:8080/matching'
     );
     console.log('Fetch result:', result);
-    return result.data;
+
+    // result.data가 존재하는지 확인하고 products가 배열인지 확인
+    if (result.data && Array.isArray(result.data.products)) {
+      // 조건에 맞으면 return
+      return result.data;
+    } else {
+      // 예상 못하면 에러 발생
+      console.error('Unexpected response format:', result);
+      throw new Error('Invalid response format');
+    }
   } catch (error) {
+    // 네트워크나 서버 문제로 인한 에러 발생
     console.error('Fetch error:', error);
     throw new Error('Failed to fetch matching products');
   }
@@ -79,7 +85,12 @@ export async function fetchFilterMatchingProducts(
       `http://localhost:8080/matching?status=${status}`
     );
     console.log('필터링되고 있습니다.:', result);
-    return result.data;
+    if (result.data && Array.isArray(result.data.products)) {
+      return result.data.products;
+    } else {
+      console.error('예상치 못한 응답 형식:', result);
+      throw new Error('잘못된 응답 형식');
+    }
   } catch (error) {
     console.error(':', error);
     throw new Error('Failed to fetch matching products');

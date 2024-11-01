@@ -10,8 +10,13 @@ export interface MatchingRequestResult {
 export interface MatchingApiResponse {
   message: string;
   status: string;
-  data: MatchingData[];
+  data: Matching;
   success: boolean;
+}
+
+export interface Matching {
+  role: string;
+  products: MatchingData[];
 }
 
 // 물품 보관 현황 Data

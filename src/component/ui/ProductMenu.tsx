@@ -4,14 +4,15 @@ interface ProductStatusProps {
   noPadding?: boolean;
   selectedStatus: string;
   setSelectStatus: (status: string) => void;
+  userRole: string | null;
 }
 
-export const MenuTitle: { title: string; status: string }[] = [
+export const getMenuTitle = (userRole: string | null) => [
   { title: '전체', status: '전체' },
   { title: '보관중', status: 'STORED' },
   { title: '반려중', status: 'REJECTED' },
   { title: '대기중', status: 'PENDING' },
-  { title: '요청됨', status: 'REQUESTED' },
+  { title: userRole === 'HOST' ? '요청옴' : '요청됨', status: 'REQUESTED' }, // role이 'GUEST'면 요청됨 / 'HOST'면 요청옴
   { title: '미배정', status: 'UNASSIGNED' },
 ];
 
@@ -19,7 +20,9 @@ function ProductMenu({
   noPadding,
   selectedStatus,
   setSelectStatus,
+  userRole,
 }: ProductStatusProps) {
+  const MenuTitle = getMenuTitle(userRole);
   return (
     <div
       className={clsx(

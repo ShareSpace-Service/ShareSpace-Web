@@ -1,13 +1,15 @@
 import ButtonProps from './ui/ButtonProps';
-import { MenuTitle } from './ui/ProductMenu';
+import { getMenuTitle } from './ui/ProductMenu';
 import { useState } from 'react';
 import StatusModalRender from '@/modal/StatusModalRender';
 import { MatchingData } from '@/interface/MatchingInterface';
 
 function ProductStatusList({
   filteredData,
+  userRole,
 }: {
   filteredData: MatchingData[] | undefined;
+  userRole: string | null;
 }) {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
@@ -23,7 +25,7 @@ function ProductStatusList({
   };
 
   const getTitle = (status: string) => {
-    const menu = MenuTitle.find((menu) => menu.status === status);
+    const menu = getMenuTitle(userRole).find((menu) => menu.status === status);
     return menu ? menu.title : status;
   };
 
