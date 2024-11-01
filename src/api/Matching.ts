@@ -4,6 +4,7 @@ import {
   Matching,
   MatchingApiResponse,
   MatchingData,
+  MatchingPlaceResponse,
   MatchingRequestResult,
 } from '@/interface/MatchingInterface';
 import { fetchWithToken, getRequest } from './Request';
@@ -194,5 +195,59 @@ export async function fetchCancelRequest({
     return result;
   } else {
     throw new Error(result.message || '취소 실패');
+  }
+}
+
+/**
+ * 내 물품 현황 조회 (특정 장소 조회시)
+ * @param {number} placeId - 장소 ID
+ * @returns {Promise<MatchingPlaceResponse>} 내 물품 현황 조회 결과를 반환하는 Promise
+ */
+export async function fetchMatchingPlace({
+  placeId,
+}: {
+  placeId: number;
+}): Promise<MatchingPlaceResponse> {
+  const result: MatchingPlaceResponse = await getRequest(
+    `http://localhost:8080/matching/by-place?placeId=${placeId}`
+  );
+  if (result.success) {
+    console.log(result.message);
+    return result;
+  } else {
+    console.log(result.status);
+    throw new Error(result.message);
+  }
+}
+
+/**
+ * 물품 보관 요청(미배정 상태로 남겨진 물품을 요청) API
+ * @param {number} matchingId - 매칭 ID
+ * @returns {Promise<MatchingRequestResult>} 물품 보관 요청 결과를 반환하는 Promise
+ */
+export async function fetchKeepRequest({
+  placeId,
+}: {
+  placeId: number;
+}): Promise<MatchingRequestResult> {
+  const response = await fetchWithToken(
+    `http://localhost:8080/matching/${placeId}`,
+    {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ placeId }),
+    }
+  );
+  if (!response.ok) {
+    throw new Error('서버 상태 :' + response.status);
+  }
+  const result: MatchingRequestResult = await response.json();
+  if (response.ok && result.success) {
+    console.log('성공', result.message);
+    return result;
+  } else {
+    throw new Error(result.message || '실패');
   }
 }

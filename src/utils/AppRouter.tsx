@@ -14,6 +14,7 @@ import Product from '@/pages/Product';
 import History from '@/pages/History';
 import Note from '@/pages/Note';
 import Question from '@/pages/Question';
+import GuestPlaceFilter from '@/guest/pages/GuestPlaceFilter';
 
 const router = createBrowserRouter([
   {
@@ -64,6 +65,15 @@ const router = createBrowserRouter([
     element: (
       <Layout>
         <GuestPlace />
+      </Layout>
+    ),
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: '/matching/by-place',
+    element: (
+      <Layout>
+        <GuestPlaceFilter />
       </Layout>
     ),
     errorElement: <ErrorPage />,

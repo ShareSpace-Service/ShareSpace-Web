@@ -1,11 +1,22 @@
 import { fetchProductList } from '@/api/Place';
+import { ModalPortal } from '@/lib/ModalPortal';
+import GuestKeepRequestModal from '@/modal/GuestKeepRequestModal';
 import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
 
 function GuestProductList() {
   const { data, isLoading, error } = useQuery({
     queryKey: ['places'],
     queryFn: fetchProductList,
   });
+
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [placeId, setPlaceId] = useState<number | null>(null);
+
+  const handleClick = (placeId: number) => {
+    setIsOpen(true);
+    setPlaceId(placeId);
+  };
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -21,6 +32,7 @@ function GuestProductList() {
         <div
           key={place.placeId}
           className="flex flex-col rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 w-full h-[180px] cursor-pointer"
+          onClick={() => handleClick(place.placeId)}
         >
           {/* 상단 이미지 및 Title, description */}
           <div className="flex items-start m-4 gap-3 pb-5 border-b border-solid border-gray-200">
@@ -39,6 +51,13 @@ function GuestProductList() {
           </div>
         </div>
       ))}
+      <ModalPortal>
+        <GuestKeepRequestModal
+          isOpen={isOpen}
+          placeId={placeId}
+          onClose={() => setIsOpen(false)}
+        />
+      </ModalPortal>
     </div>
   );
 }

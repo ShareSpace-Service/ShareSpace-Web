@@ -29,6 +29,14 @@ export interface MatchingData {
   distance: number | null;
 }
 
+// 내 물품 현황 조회 특정 장소 선택시 Response
+export interface MatchingPlaceResponse {
+  message: string;
+  status: string;
+  data: MatchingData[];
+  success: boolean;
+}
+
 // 물품 보관 현황 요청됨 모달 API Response
 interface Product {
   title: string;

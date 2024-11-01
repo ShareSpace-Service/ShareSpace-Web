@@ -76,7 +76,7 @@ function GuestRentalModal({
   );
 }
 
-function CloseButton({ onClose }: { onClose: () => void }) {
+export function CloseButton({ onClose }: { onClose: () => void }) {
   return (
     <button
       onClick={onClose}
@@ -116,7 +116,7 @@ function ModalContent({
   );
 }
 
-function Header({ title }: { title: string }) {
+export function Header({ title }: { title: string }) {
   return (
     <div className="flex items-center justify-start pl-4 py-3 border-b border-solid border-gray-300">
       <h2 className="text-2xl font-bold text-center">{title}</h2>
@@ -124,7 +124,7 @@ function Header({ title }: { title: string }) {
   );
 }
 
-function PlaceDetails({ data }: { data: PlaceData }) {
+export function PlaceDetails({ data }: { data: PlaceData }) {
   return (
     <div className="flex flex-col bg-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 w-full h-60 cursor-pointer">
       <div className="flex items-start m-4 gap-3 pb-2">
