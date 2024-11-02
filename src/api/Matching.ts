@@ -227,11 +227,13 @@ export async function fetchMatchingPlace({
  */
 export async function fetchKeepRequest({
   placeId,
+  matchingId,
 }: {
   placeId: number;
+  matchingId: number;
 }): Promise<MatchingRequestResult> {
   const response = await fetchWithToken(
-    `http://localhost:8080/matching/${placeId}`,
+    `http://localhost:8080/matching/${matchingId}`,
     {
       method: 'PATCH',
       headers: {

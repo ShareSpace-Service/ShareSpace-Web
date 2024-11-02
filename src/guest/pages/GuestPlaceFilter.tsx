@@ -21,6 +21,7 @@ function GuestPlaceFilter() {
     data: placeResponse,
     isLoading,
     error,
+    refetch,
   } = useQuery<MatchingPlaceResponse, Error>({
     queryKey: ['matchingPlace', placeId],
     queryFn: () => fetchMatchingPlace({ placeId: Number(placeId!) }), // placeId를 number 타입으로 변환
@@ -77,6 +78,7 @@ function GuestPlaceFilter() {
             title={selectedProps.title}
             onClose={() => setSelectedProps(null)}
             placeId={Number(placeId)}
+            refetch={refetch}
           />
         </ModalPortal>
       )}

@@ -8,20 +8,25 @@ function GuestSelectModal({
   title,
   onClose,
   placeId,
+  matchingId,
+  refetch,
 }: {
   matchingId: number;
   title: string;
   onClose: () => void;
+  refetch: () => void;
   placeId: number;
 }) {
   const mutation = useMutation<
     MatchingRequestResult,
     Error,
-    { placeId: number }
+    { placeId: number; matchingId: number }
   >({
-    mutationFn: ({ placeId }) => fetchKeepRequest({ placeId }),
+    mutationFn: ({ placeId, matchingId }) =>
+      fetchKeepRequest({ placeId, matchingId }),
     onSuccess: (data) => {
       console.log('요청 성공', data);
+      refetch(); // 성공시 데이터 GuestPlaceFilter 데이터 새로고침
       onClose();
       alert('보관 요청이 완료되었습니다.');
     },
@@ -31,7 +36,7 @@ function GuestSelectModal({
   });
 
   const handleClick = () => {
-    mutation.mutate({ placeId });
+    mutation.mutate({ placeId, matchingId });
   };
   return (
     <>
