@@ -60,7 +60,7 @@ function Product() {
         setSelectStatus={setSelectedMenu}
         userRole={role}
       />
-      <div className="px-4">
+      <div className="pt-4 px-4">
         {filteredData && filteredData.length > 0 ? (
           <ProductStatusList filteredData={filteredData} userRole={role} />
         ) : (

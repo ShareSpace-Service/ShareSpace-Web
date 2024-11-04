@@ -43,11 +43,11 @@ function ProductStatusList({
               src={data.imageUrl[0]}
               className="w-[100px] h-[100px] object-full rounded-lg"
             />
-            <div className="flex flex-col w-60 gap-3 h-full justify-center">
+            <div className="flex flex-col w-80 gap-3 h-full justify-start">
               <h2 className="font-extrabold text-2xl">{data.title}</h2>
               <p className="text-gray-400 font-bold">{data.category}</p>
             </div>
-            <div className="w-40 flex flex-col h-full items-end">
+            <div className="w-20 flex flex-col h-full items-end">
               <ButtonProps
                 title={getTitle(data.status)}
                 variant="custom"
