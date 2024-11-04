@@ -37,22 +37,20 @@ function GuestRegistForm() {
   const [description, setDescription] = useState<string>('');
   const [files, setFiles] = useState<File[]>([]);
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [productId, setProductId] = useState<number | null>(null);
   const [matchingId, setMatchingId] = useState<number | null>(null);
 
   const mutation = useMutation<RegistResponse, Error, FormData>({
     mutationFn: (formData: FormData) => RegistProduct(formData),
     onSuccess: (data) => {
       // 요청 성공 시
-      const newProductId = data.data.productId; // 새로 등록된 제품 ID 가져오기
+
       const newMatchingId = data.data.matchingId; // 새로 등록된 매칭 ID 가져오기
-      if (newProductId && newMatchingId) {
-        setProductId(newProductId); // 제품 ID 상태 업데이트
+      if (newMatchingId) {
         setMatchingId(newMatchingId); // 매칭 ID 상태 업데이트
         alert('상품이 등록되었습니다.');
         setIsOpen(true);
       } else {
-        console.error('productId response 실패', data);
+        console.error('newMatchingId response 실패', data);
         alert('상품 등록에 실패했습니다.');
       }
     },
@@ -187,12 +185,8 @@ function GuestRegistForm() {
           />
         </div>
       </form>
-      {isOpen && productId !== null && (
-        <GuestPlaceChoice
-          title={title}
-          productId={productId}
-          matchingId={matchingId}
-        />
+      {isOpen && matchingId !== null && (
+        <GuestPlaceChoice title={title} matchingId={matchingId} />
       )}
     </div>
   );

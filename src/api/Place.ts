@@ -26,10 +26,10 @@ export async function fetchProductList() {
  *
  * @returns {Promise<Place[]>} 서버로부터 Place 리스트 데이터를 반환하는 Promise
  */
-export async function fetchPlaceList(productId: number): Promise<Place[]> {
+export async function fetchPlaceList(matchingId: number): Promise<Place[]> {
   try {
     const result: ApiResponse = await getRequest(
-      `http://localhost:8080/place/searchByProduct?productId=${productId}`
+      `http://localhost:8080/place/searchByProduct?matchingId=${matchingId}`
     );
     if (result.success && result.data) {
       return result.data;

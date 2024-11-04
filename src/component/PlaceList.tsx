@@ -5,13 +5,7 @@ import GuestRentalModal from '@/modal/GuestRentalModal';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 
-function PlaceList({
-  productId,
-  matchingId,
-}: {
-  productId: number;
-  matchingId: number;
-}) {
+function PlaceList({ matchingId }: { matchingId: number }) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [placeId, setPlaceId] = useState<number | null>(null);
 
@@ -20,7 +14,6 @@ function PlaceList({
     setPlaceId(placeId);
   };
 
-  console.log(productId);
   console.log(matchingId);
   // productId는 URL 파라미터로 전달받은 값
   // 이 값은 GuestPlace 컴포넌트에서 useParams를 사용
@@ -30,9 +23,9 @@ function PlaceList({
     error,
     isLoading,
   } = useQuery<Place[], Error>({
-    queryKey: ['places', productId], // 쿼리 키
-    queryFn: () => fetchPlaceList(productId), // 데이터 가져오기 함수
-    enabled: !!productId, // productId가 있을 때만 쿼리 실행
+    queryKey: ['places', matchingId], // 쿼리 키
+    queryFn: () => fetchPlaceList(matchingId), // 데이터 가져오기 함수
+    enabled: !!matchingId, // productId가 있을 때만 쿼리 실행
     staleTime: 1000 * 60 * 5, // 5분 동안 데이터를 신선하게 유지
   });
   // 로딩 상태 처리
@@ -76,7 +69,6 @@ function PlaceList({
           isOpen={isOpen}
           onClose={() => setIsOpen(false)}
           placeId={placeId}
-          productId={productId}
           matchingId={matchingId}
         />
       </ModalPortal>

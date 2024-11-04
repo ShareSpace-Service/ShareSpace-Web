@@ -61,7 +61,7 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
   },
   {
-    path: '/place/:id',
+    path: '/placelist',
     element: (
       <Layout>
         <GuestPlace />

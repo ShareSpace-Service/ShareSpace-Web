@@ -47,17 +47,15 @@ export async function fetchMatchingProducts(): Promise<Matching> {
  * @throws {Error} 서버 응답이 성공적이지 않을 경우 에러 발생
  */
 export async function fetchMatchingRentalRequest({
-  productId,
   placeId,
   matchingId,
 }: {
-  productId: number;
   placeId: number;
   matchingId: number;
 }): Promise<MatchingRequestResult> {
   const response = await fetchWithToken('http://localhost:8080/matching/keep', {
     method: 'PUT',
-    body: JSON.stringify({ productId, placeId, matchingId }),
+    body: JSON.stringify({ placeId, matchingId }),
     headers: {
       'Content-Type': 'application/json',
     },

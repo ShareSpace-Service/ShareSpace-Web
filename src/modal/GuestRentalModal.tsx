@@ -13,7 +13,6 @@ interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   placeId: number | null;
-  productId: number;
   matchingId: number;
 }
 
@@ -21,7 +20,6 @@ function GuestRentalModal({
   isOpen,
   onClose,
   placeId,
-  productId,
   matchingId,
 }: ModalProps) {
   const { data, error, isLoading } = useQuery<PlaceData, Error>({
@@ -37,7 +35,6 @@ function GuestRentalModal({
   >({
     mutationFn: () =>
       fetchMatchingRentalRequest({
-        productId: productId!,
         placeId: placeId!,
         matchingId: matchingId!,
       }),
@@ -59,7 +56,6 @@ function GuestRentalModal({
   }
 
   if (!isOpen) return null; // isOpen이 false일 때는 모달을 렌더링하지 않음
-  console.log('productId', productId);
 
   return (
     <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50">
