@@ -2,13 +2,13 @@ import { useLayoutEffect, useRef } from 'react';
 import KeepDetailModal from './KeepDetailModal';
 import RequestModal from './RequestModal';
 import WaitDetailModal from './WaitDetailModal';
+import UnassignedModal from './UnassignedModal';
 
 interface StatusModalRendererProps {
   matchingId: number | null;
   status: string | null;
   onClose: () => void;
 }
-
 function StatusModalRender({
   matchingId,
   status,
@@ -41,12 +41,21 @@ function StatusModalRender({
   }
   const modalContent = (() => {
     switch (status) {
-      case 'STORED':
+      case 'STORED': // 보관중
         return <KeepDetailModal matchingId={matchingId} onClose={onClose} />;
-      case 'PENDING':
+      case 'PENDING': // 보관대기중
         return <WaitDetailModal matchingId={matchingId} onClose={onClose} />;
-      case 'REQUESTED':
+      case 'REQUESTED': // 요청됨 / 요청옴
         return <RequestModal matchingId={matchingId} onClose={onClose} />;
+      case 'UNASSIGNED': // 미배정
+      case 'REJECTED': // 반력됨
+        return (
+          <UnassignedModal
+            matchingId={matchingId}
+            onClose={onClose}
+            status={status}
+          />
+        );
       default:
         return null;
     }
