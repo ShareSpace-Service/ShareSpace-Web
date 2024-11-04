@@ -1,8 +1,9 @@
 import { fetchProductList } from '@/api/Place';
 import { ModalPortal } from '@/lib/ModalPortal';
 import GuestKeepRequestModal from '@/modal/GuestKeepRequestModal';
+import { useModalStore } from '@/store/ModalState';
+import { usePlaceIdStore } from '@/store/PlaceId';
 import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
 
 function GuestProductList() {
   const { data, isLoading, error } = useQuery({
@@ -10,11 +11,11 @@ function GuestProductList() {
     queryFn: fetchProductList,
   });
 
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [placeId, setPlaceId] = useState<number | null>(null);
+  const { openModal } = useModalStore();
+  const { setPlaceId } = usePlaceIdStore();
 
   const handleClick = (placeId: number) => {
-    setIsOpen(true);
+    openModal();
     setPlaceId(placeId);
   };
 
@@ -52,11 +53,7 @@ function GuestProductList() {
         </div>
       ))}
       <ModalPortal>
-        <GuestKeepRequestModal
-          isOpen={isOpen}
-          placeId={placeId}
-          onClose={() => setIsOpen(false)}
-        />
+        <GuestKeepRequestModal />
       </ModalPortal>
     </div>
   );

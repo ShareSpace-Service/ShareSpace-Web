@@ -25,5 +25,5 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["src", "lib/components"]
+  "include": ["src", "lib/components", "src/store/.ts"]
 }
