@@ -2,21 +2,22 @@ import { fetchPlaceList } from '@/api/Place';
 import { Place } from '@/interface/PlaceInterface';
 import { ModalPortal } from '@/lib/ModalPortal';
 import GuestRentalModal from '@/modal/GuestRentalModal';
+import { useMatchingIdStore } from '@/store/MatchingId';
+import { useModalStore } from '@/store/ModalState';
+import { usePlaceIdStore } from '@/store/PlaceId';
 import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
 
-function PlaceList({ matchingId }: { matchingId: number }) {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [placeId, setPlaceId] = useState<number | null>(null);
+function PlaceList() {
+  const { matchingId } = useMatchingIdStore();
+  const { isOpen, openModal } = useModalStore();
+  const { setPlaceId } = usePlaceIdStore();
 
   const handleClick = (placeId: number) => {
-    setIsOpen(true);
+    openModal();
     setPlaceId(placeId);
   };
 
   console.log(matchingId);
-  // productId는 URL 파라미터로 전달받은 값
-  // 이 값은 GuestPlace 컴포넌트에서 useParams를 사용
   // React Query를 사용하여 데이터 요청 및 상태 관리
   const {
     data: places,
@@ -24,9 +25,13 @@ function PlaceList({ matchingId }: { matchingId: number }) {
     isLoading,
   } = useQuery<Place[], Error>({
     queryKey: ['places', matchingId], // 쿼리 키
-    queryFn: () => fetchPlaceList(matchingId), // 데이터 가져오기 함수
-    enabled: !!matchingId, // productId가 있을 때만 쿼리 실행
-    staleTime: 1000 * 60 * 5, // 5분 동안 데이터를 신선하게 유지
+    queryFn: () => {
+      if (matchingId === null) {
+        throw new Error('matchingId is null');
+      }
+      return fetchPlaceList(matchingId);
+    }, // 데이터 가져오기 함수
+    enabled: !!matchingId, // matchingId가 있을 때만 쿼리 실행
   });
   // 로딩 상태 처리
   if (isLoading) {
@@ -65,12 +70,7 @@ function PlaceList({ matchingId }: { matchingId: number }) {
         </div>
       ))}
       <ModalPortal>
-        <GuestRentalModal
-          isOpen={isOpen}
-          onClose={() => setIsOpen(false)}
-          placeId={placeId}
-          matchingId={matchingId}
-        />
+        <GuestRentalModal />
       </ModalPortal>
     </div>
   );

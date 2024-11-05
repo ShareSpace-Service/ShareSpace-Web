@@ -44,9 +44,13 @@ function GuestKeepRequestModal() {
 function ModalContent({ data }: { data: PlaceData }) {
   const navigate = useNavigate();
   const { placeId } = usePlaceIdStore();
+  const { closeModal } = useModalStore();
+
   const handleClick = () => {
     navigate(`/matching/by-place?placeId=${placeId}`);
+    closeModal();
   };
+
   return (
     <div className="flex flex-col h-full">
       <Header title="보관 요청" />

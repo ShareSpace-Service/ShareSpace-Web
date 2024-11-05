@@ -3,30 +3,34 @@ import { fetchPlaceDetailList } from '@/api/Place';
 import ButtonProps from '@/component/ui/ButtonProps';
 import { MatchingRequestResult } from '@/interface/MatchingInterface';
 import { PlaceData } from '@/interface/PlaceInterface';
+import { useMatchingIdStore } from '@/store/MatchingId';
+import { useModalStore } from '@/store/ModalState';
+import { usePlaceIdStore } from '@/store/PlaceId';
 import {
   useMutation,
   UseMutationResult,
   useQuery,
 } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 
-interface ModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  placeId: number | null;
-  matchingId: number;
-}
+function GuestRentalModal() {
+  const navigate = useNavigate();
+  const { placeId, clearPlaceId } = usePlaceIdStore();
+  const { isOpen, closeModal } = useModalStore();
+  const { matchingId, clearMatchingId } = useMatchingIdStore();
 
-function GuestRentalModal({
-  isOpen,
-  onClose,
-  placeId,
-  matchingId,
-}: ModalProps) {
   const { data, error, isLoading } = useQuery<PlaceData, Error>({
     queryKey: ['placeDetail', placeId],
     queryFn: () => fetchPlaceDetailList({ placeId: placeId! }),
     enabled: !!placeId,
   });
+
+  const handleSuccess = () => {
+    clearPlaceId();
+    clearMatchingId();
+    closeModal();
+    navigate('/home');
+  };
 
   const matchingRequestMutation = useMutation<
     MatchingRequestResult,
@@ -41,7 +45,7 @@ function GuestRentalModal({
     onSuccess: (data: MatchingRequestResult) => {
       console.log('요청 성공', data);
       alert('대여 요청이 완료되었습니다.');
-      onClose();
+      handleSuccess();
     },
     onError: (error: Error) => {
       console.error('요청 실패', error);
@@ -60,7 +64,7 @@ function GuestRentalModal({
   return (
     <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50">
       <div className="signUpBg w-[500px] h-[400px] rounded-lg relative">
-        <CloseButton onClose={onClose} />
+        <CloseButton onClose={closeModal} />
         {data && (
           <ModalContent
             data={data}
