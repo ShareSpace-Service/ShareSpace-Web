@@ -3,12 +3,14 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import ButtonProps from '../ui/ButtonProps';
 import SelectProps from '../ui/SelectProps';
-import { useState } from 'react';
 import ImageUpload from './ImageUpload';
 import GuestPlaceChoice from '@/modal/GuestPlaceChoice';
 import { useMutation } from '@tanstack/react-query';
 import { RegistResponse } from '@/interface/ProductRegistInterface';
 import { RegistProduct } from '@/api/ProductRegist';
+import { useModalStore } from '@/store/ModalState';
+import { useMatchingIdStore } from '@/store/MatchingId';
+import { useProductRegisterStore } from '@/store/ProductRegister';
 
 export function FormGroup({
   children,
@@ -30,25 +32,32 @@ export function FormGroup({
 }
 
 function GuestRegistForm() {
-  const [showImages, setShowImages] = useState<string[]>([]); // 이미지 URL 상태
-  const [title, setTitle] = useState<string>('');
-  const [category, setCategory] = useState<string>('');
-  const [period, setPeriod] = useState<string>('');
-  const [description, setDescription] = useState<string>('');
-  const [files, setFiles] = useState<File[]>([]);
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [matchingId, setMatchingId] = useState<number | null>(null);
+  const { isOpen, openModal } = useModalStore();
+  const { matchingId, setMatchingId } = useMatchingIdStore();
+  const {
+    title,
+    setTitle,
+    category,
+    setCategory,
+    period,
+    setPeriod,
+    description,
+    setDescription,
+    files,
+    setFiles,
+    showImages,
+    setShowImages,
+  } = useProductRegisterStore();
 
   const mutation = useMutation<RegistResponse, Error, FormData>({
     mutationFn: (formData: FormData) => RegistProduct(formData),
     onSuccess: (data) => {
       // 요청 성공 시
-
       const newMatchingId = data.data.matchingId; // 새로 등록된 매칭 ID 가져오기
       if (newMatchingId) {
         setMatchingId(newMatchingId); // 매칭 ID 상태 업데이트
         alert('상품이 등록되었습니다.');
-        setIsOpen(true);
+        openModal(); // 모달 열기
       } else {
         console.error('newMatchingId response 실패', data);
         alert('상품 등록에 실패했습니다.');
@@ -104,7 +113,8 @@ function GuestRegistForm() {
   // 이미지 삭제 처리
   const handleDeleteImage = (id: number) => {
     setShowImages(
-      (prevImages) => prevImages.filter((_, index) => index !== id) // 삭제된 이미지 제외
+      showImages.filter((_, index) => index !== id) // 삭제된 이미지 제외
+      // (prevImages) => prevImages.filter((_, index) => index !== id) // 삭제된 이미지 제외
     );
   };
 
@@ -185,9 +195,7 @@ function GuestRegistForm() {
           />
         </div>
       </form>
-      {isOpen && matchingId !== null && (
-        <GuestPlaceChoice title={title} matchingId={matchingId} />
-      )}
+      {isOpen && matchingId !== null && <GuestPlaceChoice />}
     </div>
   );
 }

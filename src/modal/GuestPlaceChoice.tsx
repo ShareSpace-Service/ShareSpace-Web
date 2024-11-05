@@ -1,13 +1,27 @@
 import ButtonProps from '@/component/ui/ButtonProps';
+import { useMatchingIdStore } from '@/store/MatchingId';
+import { useModalStore } from '@/store/ModalState';
+import { useProductRegisterStore } from '@/store/ProductRegister';
 import { Link } from 'react-router-dom';
 
-function GuestPlaceChoice({
-  title,
-  matchingId,
-}: {
-  title: string;
-  matchingId: number | null;
-}) {
+/**
+ * '네'를 클릭한 경우 장소 선택 페이지로 이동
+ * '아니오'를 클릭한 경우 /home으로 이동 매칭 ID 초기화
+ */
+
+function GuestPlaceChoice() {
+  const { clearMatchingId } = useMatchingIdStore();
+  const { title, clearForm } = useProductRegisterStore();
+  const { closeModal } = useModalStore();
+
+  const handleClick = (isYes: boolean) => {
+    closeModal();
+    clearForm();
+    if (!isYes) {
+      clearMatchingId();
+    }
+  };
+
   return (
     <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50">
       <div className="signUpBg w-[500px] h-[300px] p-6 rounded-lg relative">
@@ -19,10 +33,10 @@ function GuestPlaceChoice({
             <p className="text-gray-300 font-bold text-center">{title}</p>
           </div>
           <div className="flex items-center gap-3 justify-around">
-            <Link to={`/placelist`} state={{ matchingId }}>
+            <Link to={`/placelist`} onClick={() => handleClick(true)}>
               <ButtonProps title="네" size="check" variant="custom" />
             </Link>
-            <Link to="/home">
+            <Link to="/home" onClick={() => handleClick(false)}>
               <ButtonProps title="아니요" size="check" variant="custom" />
             </Link>
           </div>
