@@ -29,33 +29,48 @@ function AlarmBox({ onClick }: AlarmBoxProps): JSX.Element {
   const [latestNotification, setLatestNotification] = useState<string>(''); // 최근 알림 메시지 저장
 
   useEffect(() => {
+    let eventSource: EventSource | null = null;
+
     const setupSSE = async () => {
       try {
-        // SSE 연결 설정
-        const eventSource = connectSSE((event) => {
-          const newNotification = event.data; // 이벤트 데이터를 바로 할당
-          setHasNewNotification(true); // 새로운 알림이 있음을 표시
-          setLatestNotification(newNotification); // 최근 알림 메시지 저장
-        });
-
-        // 알림 이벤트 처리
-        eventSource.addEventListener('NOTIFICATION', (event) => {
-          const parsedData = JSON.parse(event.data); // 이벤트 데이터를 파싱
-          setHasNewNotification(true); // 새로운 알림이 있음을 표시
-          setLatestNotification(parsedData.message); // 최근 알림 메시지 저장
-        });
-
-        // 컴포넌트 언마운트 시 SSE 연결 종료
-        return () => {
-          eventSource.close();
+        console.log('SSE 설정 시작');  // 디버깅용 로그
+        
+        const handleMessage = (event: MessageEvent) => {
+          try {
+            const newNotification = event.data;
+            setHasNewNotification(true);
+            setLatestNotification(newNotification);
+          } catch (parseError) {
+          }
         };
+
+        eventSource = connectSSE(handleMessage);
+        console.log('SSE 연결 완료');  // 디버깅용 로그
       } catch (error) {
-        console.error('Failed to fetch user ID or connect to SSE:', error);
+        console.error('SSE 연결 실패:', error);
       }
     };
 
-    setupSSE(); // useEffect 안에서 비동기 함수 실행
+    setupSSE();
+
+    // return () => {
+    //   if (eventSource) {
+    //     console.log('SSE 연결 종료');
+    //     eventSource.close();
+    //   }
+    // };
   }, []);
+
+  useEffect(() => {
+    if (hasNewNotification) {
+      // 6초 후에 알림을 자동으로 닫음
+      const timer = setTimeout(() => {
+        setHasNewNotification(false);
+      }, 6000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [hasNewNotification]);
 
   // 알림창(모달)이 열릴 때, 알림 미리보기 박스 숨기기
   const handleIconClick = () => {
@@ -67,12 +82,38 @@ function AlarmBox({ onClick }: AlarmBoxProps): JSX.Element {
     <div className="relative">
       <HeaderIcon src={Alarm} alt="Alarm" onClick={handleIconClick} />
 
-      {/* 새로운 알림이 있을 때만 작은 박스를 표시 */}
-      {hasNewNotification && (
-        <div className="absolute top-0 mt-12 right-0 bg-white border border-gray-300 shadow-lg rounded-lg p-2 w-48">
-          <p className="text-sm text-gray-700">{latestNotification}</p>
+      {/* 알림 메시지 컨테이너 */}
+      <div
+        className={`fixed top-0 left-0 right-0 flex justify-center transition-transform duration-700 ease-in-out ${
+          hasNewNotification ? 'translate-y-0' : '-translate-y-full'
+        }`}
+      >
+        <div className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white border border-blue-600 shadow-lg rounded-b-lg px-6 py-4 mt-0 max-w-md transform hover:scale-102 transition-all">
+          <div className="flex items-center space-x-3">
+            {/* 알림 아이콘 */}
+            <div className="flex-shrink-0">
+              <svg
+                className="h-6 w-6 text-white animate-pulse"
+                fill="none"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+              </svg>
+            </div>
+            
+            {/* 알림 메시지 */}
+            <div className="flex-1">
+              <p className="text-sm font-bold tracking-wide">
+                {latestNotification}
+              </p>
+            </div>
+          </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }
