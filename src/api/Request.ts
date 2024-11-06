@@ -1,32 +1,26 @@
-import { getCookieValue } from './Login';
+import { getCookieValue} from './Login';
 
-/**
- * 공통으로 토큰을 실어서 fetch 요청을 처리하는 함수
- * @param {string} url - 요청할 URL
- * @param {RequestInit} options - fetch 옵션(메서드, 바디 등)
- * @returns {Promise<Response>} - 서버 응답을 포함한 Promise 객체
- * @throws {Error} - 토큰이 없거나 요청 실패 시 에러 발생
- */
 export async function fetchWithToken(
   url: string,
-  options: RequestInit
+  options: RequestInit = {}
 ): Promise<Response> {
   const token = getCookieValue('accessToken');
-
-  if (!token) {
-    throw new Error('토큰이 없습니다. 로그인을 확인하세요.');
-  }
-
-  // 공통적으로 Authorization 헤더 추가
   const headers = {
     ...options.headers,
     Authorization: `Bearer ${token}`,
+    Credential: 'include',
   };
 
-  const response = await fetch(url, {
+  let response = await fetch(url, {
     ...options,
-    headers, // 헤더를 위에서 설정한 토큰 포함 헤더로 덮어씀
+    headers,
   });
+
+  // accessToken 만료되면 로그인 페이지로 이동
+  if (response.status === 401) {
+    alert('세션이 만료되었습니다. 다시 로그인해주세요.');
+    window.location.href = '/login';
+  }
 
   if (!response.ok) {
     throw new Error(`요청에 실패했습니다: ${response.status}`);
@@ -46,8 +40,7 @@ export async function getRequest(url: string): Promise<any> {
     method: 'GET',
   });
 
-  const result = await response.json();
-  return result;
+  return await response.json();
 }
 
 /**
@@ -66,8 +59,7 @@ export async function postRequest(url: string, body: any): Promise<any> {
     body: JSON.stringify(body),
   });
 
-  const result = await response.json();
-  return result;
+  return await response.json();
 }
 
 /**
@@ -86,8 +78,7 @@ export async function patchRequest(url: string, body: any): Promise<any> {
     body: JSON.stringify(body),
   });
 
-  const result = await response.json();
-  return result;
+  return await response.json();
 }
 
 /**
@@ -100,11 +91,13 @@ export async function patchRequest(url: string, body: any): Promise<any> {
 export async function putRequest(url: string, body: any): Promise<any> {
   const response = await fetchWithToken(url, {
     method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
     body: JSON.stringify(body),
   });
 
-  const result = await response.json();
-  return result;
+  return await response.json();
 }
 
 /**
@@ -118,6 +111,5 @@ export async function deleteRequest(url: string): Promise<any> {
     method: 'DELETE',
   });
 
-  const result = await response.json();
-  return result;
+  return await response.json();
 }
