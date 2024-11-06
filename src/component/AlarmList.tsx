@@ -65,10 +65,20 @@ function AlarmList(): JSX.Element {
    */
   const fetchMoreNotifications = async () => {
     try {
-      const data = await fetchNotifications(page, size); // 페이지와 크기 전달
-      setNotifications((prev) => [...prev, ...data]);
+      const data = await fetchNotifications(page, size);
 
-      // 서버에서 받은 데이터가 size보다 작으면 더 이상 데이터가 없음
+      // 중복 제거를 위해 Set 사용
+      setNotifications((prev) => {
+        const uniqueNotifications = [...prev, ...data].filter(
+          (notification, index, self) =>
+            index ===
+            self.findIndex(
+              (n) => n.notificationId === notification.notificationId
+            )
+        );
+        return uniqueNotifications;
+      });
+
       if (data.length < size) setHasMore(false);
     } catch (error) {
       console.error('알림을 불러오는 중 오류 발생:', error);

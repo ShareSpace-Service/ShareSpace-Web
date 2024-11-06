@@ -47,7 +47,7 @@ function CustomModal({
   return (
     <div
       className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50"
-      onClick={handleBackdropClick} // 외부 클릭 시 닫기
+      onClick={handleBackdropClick}
     >
       <div className="signUpBg w-[500px] h-[300px] p-6 rounded-lg relative">
         <div className="flex flex-col h-full justify-around">
@@ -60,14 +60,20 @@ function CustomModal({
             )}
           </div>
           <div className="flex items-center gap-3 justify-around">
-            <button onClick={onConfirm}>
-              <ButtonProps title={confirmText} size="check" variant="custom" />
-            </button>
+            <ButtonProps 
+              title={confirmText} 
+              size="check" 
+              variant="custom" 
+              onClick={onConfirm}
+            />
             {cancelText && (
-              <button onClick={onCancel}>
-                <ButtonProps title={cancelText} size="check" variant="custom" />
-              </button>
-            )}{' '}
+              <ButtonProps 
+                title={cancelText} 
+                size="check" 
+                variant="custom" 
+                onClick={onCancel}
+              />
+            )}
           </div>
         </div>
       </div>
