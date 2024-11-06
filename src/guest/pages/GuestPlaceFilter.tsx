@@ -2,20 +2,24 @@ import { fetchMatchingPlace } from '@/api/Matching';
 import { MatchingPlaceResponse } from '@/interface/MatchingInterface';
 import { ModalPortal } from '@/lib/ModalPortal';
 import GuestSelectModal from '@/modal/GuestSelectModal';
+import { useModalStore } from '@/store/ModalState';
+import { usePlaceIdStore } from '@/store/PlaceId';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 function GuestPlaceFilter() {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const { isOpen, openModal } = useModalStore();
+  const { placeId } = usePlaceIdStore();
+
   const [selectedProps, setSelectedProps] = useState<{
     matchingId: number;
     title: string;
   } | null>(null);
 
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search); // URLSearchParams 객체 생성
-  const placeId = queryParams.get('placeId'); // URL 파라미터로 전달받은 placeId
+  // const location = useLocation();
+  // const queryParams = new URLSearchParams(location.search); // URLSearchParams 객체 생성
+  // const placeId = queryParams.get('placeId'); // URL 파라미터로 전달받은 placeId
 
   const {
     data: placeResponse,
@@ -24,8 +28,13 @@ function GuestPlaceFilter() {
     refetch,
   } = useQuery<MatchingPlaceResponse, Error>({
     queryKey: ['matchingPlace', placeId],
-    queryFn: () => fetchMatchingPlace({ placeId: Number(placeId!) }), // placeId를 number 타입으로 변환
-    enabled: !!placeId,
+    queryFn: () => {
+      if (placeId === null) {
+        throw new Error('placeId is null');
+      }
+      return fetchMatchingPlace({ placeId: placeId });
+    },
+    enabled: placeId !== null,
   });
 
   if (isLoading) {
@@ -38,7 +47,7 @@ function GuestPlaceFilter() {
   const places = placeResponse?.data || []; // 데이터가 없을 경우 빈 배열 반환
 
   const handleClick = (matchingId: number, title: string) => {
-    setIsOpen(true);
+    openModal();
     setSelectedProps({ matchingId, title });
   };
 
@@ -76,8 +85,6 @@ function GuestPlaceFilter() {
           <GuestSelectModal
             matchingId={selectedProps.matchingId}
             title={selectedProps.title}
-            onClose={() => setSelectedProps(null)}
-            placeId={Number(placeId)}
             refetch={refetch}
           />
         </ModalPortal>

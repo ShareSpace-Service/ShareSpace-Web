@@ -3,31 +3,38 @@ import ModalHeader from '@/component/ui/ModalHeader';
 import { Place } from '@/interface/PlaceInterface';
 import { ModalPortal } from '@/lib/ModalPortal';
 import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
 import GuestRentalModal from './GuestRentalModal';
+import { useModalStore } from '@/store/ModalState';
+import { useMatchingIdStore } from '@/store/MatchingId';
+import { useStatusStore } from '@/store/ProductStatus';
+import { usePlaceIdStore } from '@/store/PlaceId';
 
-function UnassignedModal({
-  onClose,
-  matchingId,
-  status,
-}: {
-  onClose: () => void;
-  matchingId: number;
-  status: string;
-}) {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [placeId, setPlaceId] = useState<number | null>(null);
+function UnassignedModal() {
+  const { openModal } = useModalStore();
+  const { matchingId, clearMatchingId } = useMatchingIdStore();
+  const { status, clearStatus } = useStatusStore();
+  const { setPlaceId } = usePlaceIdStore();
 
   const menuTitle = status === 'UNASSIGNED' ? '미배정' : '반려됨';
 
   const handleClick = (placeId: number) => {
-    setIsOpen(true);
+    openModal();
     setPlaceId(placeId);
+  };
+
+  const handleClose = () => {
+    clearMatchingId();
+    clearStatus();
   };
 
   const { data, error, isLoading } = useQuery<Place[], Error>({
     queryKey: ['places', matchingId],
-    queryFn: () => fetchPlaceList(matchingId),
+    queryFn: () => {
+      if (!matchingId) {
+        throw new Error('matchingId is null');
+      }
+      return fetchPlaceList(matchingId);
+    },
     enabled: !!matchingId,
   });
 
@@ -46,7 +53,7 @@ function UnassignedModal({
     <div className="w-full min-h-screen">
       <div className="signUpBg w-full min-h-screen px-4 flex flex-col overflow-hidden">
         {/* 모달 헤더 */}
-        <ModalHeader onClose={onClose} title={menuTitle} />
+        <ModalHeader onClose={handleClose} title={menuTitle} />
         <div className="flex flex-col items-center gap-4">
           {data?.map((place) => (
             <div
@@ -72,12 +79,7 @@ function UnassignedModal({
             </div>
           ))}
           <ModalPortal>
-            <GuestRentalModal
-              isOpen={isOpen}
-              onClose={() => setIsOpen(false)}
-              placeId={placeId}
-              matchingId={matchingId}
-            />
+            <GuestRentalModal />
           </ModalPortal>
         </div>
       </div>

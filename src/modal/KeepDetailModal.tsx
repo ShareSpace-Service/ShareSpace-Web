@@ -1,18 +1,27 @@
 import { fetchKeepModal } from '@/api/Matching';
 import ButtonProps from '@/component/ui/ButtonProps';
 import ModalHeader from '@/component/ui/ModalHeader';
+import { useMatchingIdStore } from '@/store/MatchingId';
+import { useStatusStore } from '@/store/ProductStatus';
 import { useQuery } from '@tanstack/react-query';
 
-function KeepDetailModal({
-  matchingId,
-  onClose,
-}: {
-  matchingId: number;
-  onClose: () => void;
-}) {
+function KeepDetailModal() {
+  const { matchingId, clearMatchingId } = useMatchingIdStore();
+  const { clearStatus } = useStatusStore();
+
+  const handleClose = () => {
+    clearMatchingId();
+    clearStatus();
+  };
+
   const { data, isLoading, error } = useQuery({
     queryKey: ['keepDetail', matchingId],
-    queryFn: () => fetchKeepModal({ matchingId }),
+    queryFn: () => {
+      if (!matchingId) {
+        throw new Error('matchingId is null');
+      }
+      return fetchKeepModal({ matchingId });
+    },
     enabled: !!matchingId,
   });
 
@@ -26,7 +35,7 @@ function KeepDetailModal({
     <div className="w-full min-h-screen">
       <div className="signUpBg w-full min-h-screen px-4 flex flex-col overflow-hidden">
         {/* 모달 헤더 */}
-        <ModalHeader onClose={onClose} title="보관중" />
+        <ModalHeader onClose={handleClose} title="보관중" />
         {/* 모달 내용 */}
         <div className="flex flex-col bg-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 w-full h-60 cursor-pointer">
           <div className="flex items-start m-4 gap-3 pb-2">
@@ -52,7 +61,7 @@ function KeepDetailModal({
             </p>
           </div>
         </div>
-        <div className="mt-auto pb-5" onClick={onClose}>
+        <div className="mt-auto pb-5" onClick={handleClose}>
           <ButtonProps size="full" title="완료" variant="custom" />
         </div>
       </div>

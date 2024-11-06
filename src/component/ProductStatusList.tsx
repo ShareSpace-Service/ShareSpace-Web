@@ -1,31 +1,35 @@
 import ButtonProps from './ui/ButtonProps';
 import { getMenuTitle } from './ui/ProductMenu';
-import { useState } from 'react';
 import StatusModalRender from '@/modal/StatusModalRender';
 import { MatchingData } from '@/interface/MatchingInterface';
+import { useProductStore } from '@/store/ProductState';
+import { useRoleStore } from '@/store/Role';
+import { useMatchingIdStore } from '@/store/MatchingId';
+import { useStatusStore } from '@/store/ProductStatus';
 
-function ProductStatusList({
-  filteredData,
-  userRole,
-}: {
-  filteredData: MatchingData[] | undefined;
-  userRole: string | null;
-}) {
-  const [selectedId, setSelectedId] = useState<number | null>(null);
-  const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
+function ProductStatusList() {
+  const { filteredData } = useProductStore();
+  const { role } = useRoleStore();
+  const { setMatchingId } = useMatchingIdStore();
+  const { setStatus } = useStatusStore();
+
+  // const [selectedId, setSelectedId] = useState<number | null>(null);
+  // const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
 
   const handleClick = (item: MatchingData) => {
-    setSelectedId(item.matchingId);
-    setSelectedStatus(item.status);
+    if (item.matchingId !== null) {
+      setMatchingId(item.matchingId);
+    }
+    setStatus(item.status);
   };
 
-  const closeModal = () => {
-    setSelectedId(null);
-    setSelectedStatus(null);
-  };
+  // const closeModal = () => {
+  //   setSelectedId(null);
+  //   setSelectedStatus(null);
+  // };
 
   const getTitle = (status: string) => {
-    const menu = getMenuTitle(userRole).find((menu) => menu.status === status);
+    const menu = getMenuTitle(role).find((menu) => menu.status === status);
     return menu ? menu.title : status;
   };
 
@@ -63,9 +67,9 @@ function ProductStatusList({
         </div>
       ))}
       <StatusModalRender
-        matchingId={selectedId}
-        status={selectedStatus}
-        onClose={closeModal}
+      // matchingId={selectedId}
+      // status={selectedStatus}
+      // onClose={closeModal}
       />
     </div>
   );

@@ -1,28 +1,25 @@
+import { useProductStore } from '@/store/ProductState';
+import { useRoleStore } from '@/store/Role';
 import clsx from 'clsx';
 
 interface ProductStatusProps {
   noPadding?: boolean;
-  selectedStatus: string;
-  setSelectStatus: (status: string) => void;
-  userRole: string | null;
 }
 
-export const getMenuTitle = (userRole: string | null) => [
+export const getMenuTitle = (role: string | null) => [
   { title: '전체', status: '전체' },
   { title: '보관중', status: 'STORED' },
   { title: '반려중', status: 'REJECTED' },
   { title: '대기중', status: 'PENDING' },
-  { title: userRole === 'HOST' ? '요청옴' : '요청됨', status: 'REQUESTED' }, // role이 'GUEST'면 요청됨 / 'HOST'면 요청옴
+  { title: role === 'HOST' ? '요청옴' : '요청됨', status: 'REQUESTED' }, // role이 'GUEST'면 요청됨 / 'HOST'면 요청옴
   { title: '미배정', status: 'UNASSIGNED' },
 ];
 
-function ProductMenu({
-  noPadding,
-  selectedStatus,
-  setSelectStatus,
-  userRole,
-}: ProductStatusProps) {
-  const MenuTitle = getMenuTitle(userRole);
+function ProductMenu({ noPadding }: ProductStatusProps) {
+  const { role } = useRoleStore();
+  const { selectedMenu, setSelectedMenu } = useProductStore();
+
+  const MenuTitle = getMenuTitle(role);
   return (
     <div
       className={clsx(
@@ -33,9 +30,9 @@ function ProductMenu({
       {MenuTitle.map((menu, index) => (
         <h2
           key={index}
-          onClick={() => setSelectStatus(menu.status)}
+          onClick={() => setSelectedMenu(menu.status)}
           className={clsx('cursor-pointer', {
-            'text-yellow-400': selectedStatus === menu.status,
+            'text-yellow-400': selectedMenu === menu.status,
           })}
         >
           {menu.title}
