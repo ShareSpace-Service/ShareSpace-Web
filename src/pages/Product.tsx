@@ -4,14 +4,15 @@ import {
 } from '@/api/Matching';
 import ProductStatusList from '@/component/ProductStatusList';
 import ProductMenu from '@/component/ui/ProductMenu';
-import { Matching, MatchingData } from '@/interface/MatchingInterface';
+import { Matching } from '@/interface/MatchingInterface';
+import { useProductStore } from '@/store/ProductState';
+import { useRoleStore } from '@/store/Role';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 function Product() {
-  const [selectedMenu, setSelectedMenu] = useState<string>('전체');
-  const [filteredData, setFilteredData] = useState<MatchingData[]>([]);
-  const [role, setRole] = useState<string | null>(null); // 역할 상태
+  const { selectedMenu, filteredData, setFilteredData } = useProductStore();
+  const { setRole } = useRoleStore();
 
   const {
     data: allData,
@@ -20,7 +21,6 @@ function Product() {
   } = useQuery<Matching, Error>({
     queryKey: ['matching'],
     queryFn: fetchMatchingProducts,
-    staleTime: 1000 * 60 * 5,
   });
 
   const handleFilter = async (status: string) => {
@@ -54,15 +54,10 @@ function Product() {
 
   return (
     <>
-      <ProductMenu
-        noPadding={true}
-        selectedStatus={selectedMenu}
-        setSelectStatus={setSelectedMenu}
-        userRole={role}
-      />
+      <ProductMenu noPadding={true} />
       <div className="pt-4 px-4">
         {filteredData && filteredData.length > 0 ? (
-          <ProductStatusList filteredData={filteredData} userRole={role} />
+          <ProductStatusList />
         ) : (
           <div className="text-center font-bold text-lg mt-4">
             해당 물품이 없습니다.

@@ -3,17 +3,13 @@ import KeepDetailModal from './KeepDetailModal';
 import RequestModal from './RequestModal';
 import WaitDetailModal from './WaitDetailModal';
 import UnassignedModal from './UnassignedModal';
+import { useMatchingIdStore } from '@/store/MatchingId';
+import { useStatusStore } from '@/store/ProductStatus';
 
-interface StatusModalRendererProps {
-  matchingId: number | null;
-  status: string | null;
-  onClose: () => void;
-}
-function StatusModalRender({
-  matchingId,
-  status,
-  onClose,
-}: StatusModalRendererProps) {
+function StatusModalRender() {
+  const { matchingId } = useMatchingIdStore();
+  const { status } = useStatusStore();
+
   const modalRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
@@ -42,20 +38,14 @@ function StatusModalRender({
   const modalContent = (() => {
     switch (status) {
       case 'STORED': // 보관중
-        return <KeepDetailModal matchingId={matchingId} onClose={onClose} />;
+        return <KeepDetailModal />;
       case 'PENDING': // 보관대기중
-        return <WaitDetailModal matchingId={matchingId} onClose={onClose} />;
+        return <WaitDetailModal />;
       case 'REQUESTED': // 요청됨 / 요청옴
-        return <RequestModal matchingId={matchingId} onClose={onClose} />;
+        return <RequestModal />;
       case 'UNASSIGNED': // 미배정
       case 'REJECTED': // 반력됨
-        return (
-          <UnassignedModal
-            matchingId={matchingId}
-            onClose={onClose}
-            status={status}
-          />
-        );
+        return <UnassignedModal />;
       default:
         return null;
     }

@@ -12,7 +12,10 @@ export const useMatchingIdStore = create<MatchingIdState>()(
     (set) => ({
       matchingId: null,
       setMatchingId: (id) => set({ matchingId: id }),
-      clearMatchingId: () => set({ matchingId: null }),
+      clearMatchingId: () => {
+        console.log('clearMatchingId');
+        set({ matchingId: null });
+      },
     }),
     { name: 'MatchingIdStore' }
   )

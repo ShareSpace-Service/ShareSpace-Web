@@ -9,7 +9,7 @@ import { useQuery } from '@tanstack/react-query';
 
 function PlaceList() {
   const { matchingId } = useMatchingIdStore();
-  const { isOpen, openModal } = useModalStore();
+  const { openModal } = useModalStore();
   const { setPlaceId } = usePlaceIdStore();
 
   const handleClick = (placeId: number) => {
