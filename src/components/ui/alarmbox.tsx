@@ -6,7 +6,7 @@ import { connectSSE } from '@/api/Sse';
 interface AlarmBoxProps {
   onClick: () => void;
 }
-
+// TODO : ApiResponse 및 UserData 삭제 예정
 export interface ApiResponse {
   message: string;
   status: string;
@@ -28,14 +28,9 @@ function AlarmBox({ onClick }: AlarmBoxProps): JSX.Element {
   const [hasNewNotification, setHasNewNotification] = useState<boolean>(false); // 새로운 알림이 있는지 여부
   const [latestNotification, setLatestNotification] = useState<string>(''); // 최근 알림 메시지 저장
 
-  // userId를 가져오고 SSE 연결을 설정하는 비동기 함수
   useEffect(() => {
     const setupSSE = async () => {
       try {
-        // userId를 비동기적으로 가져옴
-        // const userData = await fetchUserId();
-        // setUserId(userData.userId); // userId 저장
-
         // SSE 연결 설정
         const eventSource = connectSSE((event) => {
           const newNotification = event.data; // 이벤트 데이터를 바로 할당
