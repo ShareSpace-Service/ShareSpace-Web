@@ -1,25 +1,21 @@
-import { useProductStore } from '@/store/ProductState';
 import { useRoleStore } from '@/store/Role';
+import { ProductStatusProps } from './ProductMenu';
+import { useProductStore } from '@/store/ProductState';
 import clsx from 'clsx';
 
-export interface ProductStatusProps {
-  noPadding?: boolean;
-}
-
-export const getMenuTitle = (role: string | null) => [
+export const hostMenuTitle = (role: string | null) => [
   { title: '전체', status: '전체' },
   { title: '보관중', status: 'STORED' },
-  { title: '반려중', status: 'REJECTED' },
   { title: '대기중', status: 'PENDING' },
-  { title: role === 'HOST' ? '요청옴' : '요청됨', status: 'REQUESTED' }, // role이 'GUEST'면 요청됨 / 'HOST'면 요청옴
-  { title: '미배정', status: 'UNASSIGNED' },
+  { title: role === 'HOST' ? '요청옴' : '요청됨', status: 'REQUESTED' },
 ];
 
-function ProductMenu({ noPadding }: ProductStatusProps) {
+function HostProductMenu({ noPadding }: ProductStatusProps) {
   const { role } = useRoleStore();
   const { selectedMenu, setSelectedMenu } = useProductStore();
 
-  const MenuTitle = getMenuTitle(role);
+  const MenuTitle = hostMenuTitle(role);
+
   return (
     <div
       className={clsx(
@@ -31,9 +27,10 @@ function ProductMenu({ noPadding }: ProductStatusProps) {
         <h2
           key={index}
           onClick={() => setSelectedMenu(menu.status)}
-          className={clsx('cursor-pointer', {
-            'text-yellow-400': selectedMenu === menu.status,
-          })}
+          className={clsx(
+            { 'text-yellow-400': selectedMenu === menu.status },
+            'cursor-pointer'
+          )}
         >
           {menu.title}
         </h2>
@@ -42,4 +39,4 @@ function ProductMenu({ noPadding }: ProductStatusProps) {
   );
 }
 
-export default ProductMenu;
+export default HostProductMenu;

@@ -1,13 +1,13 @@
-import ButtonProps from './ui/ButtonProps';
-import { getMenuTitle } from './ui/ProductMenu';
-import StatusModalRender from '@/modal/StatusModalRender';
 import { MatchingData } from '@/interface/MatchingInterface';
-import { useProductStore } from '@/store/ProductState';
-import { useRoleStore } from '@/store/Role';
 import { useMatchingIdStore } from '@/store/MatchingId';
+import { useProductStore } from '@/store/ProductState';
 import { useStatusStore } from '@/store/ProductStatus';
+import { useRoleStore } from '@/store/Role';
+import { hostMenuTitle } from './ui/HostProductMenu';
+import ButtonProps from './ui/ButtonProps';
+import HostModalRender from '@/modal/HostModalRender';
 
-function ProductStatusList() {
+function HostStatusList() {
   const { filteredData } = useProductStore();
   const { role } = useRoleStore();
   const { setMatchingId } = useMatchingIdStore();
@@ -21,7 +21,7 @@ function ProductStatusList() {
   };
 
   const getTitle = (status: string) => {
-    const menu = getMenuTitle(role).find((menu) => menu.status === status);
+    const menu = hostMenuTitle(role).find((menu) => menu.status === status);
     return menu ? menu.title : status;
   };
 
@@ -58,9 +58,9 @@ function ProductStatusList() {
           </div>
         </div>
       ))}
-      <StatusModalRender />
+      <HostModalRender />
     </div>
   );
 }
 
-export default ProductStatusList;
+export default HostStatusList;

@@ -7,7 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 
 function GuestProductList() {
   const { data, isLoading, error } = useQuery({
-    queryKey: ['places'],
+    queryKey: ['place'],
     queryFn: fetchProductList,
   });
 
