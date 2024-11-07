@@ -1,34 +1,52 @@
-/**
- * SSE 연결을 설정하는 함수.
- * @param {number} userId - 로그인한 사용자의 ID
- * @param {(event: MessageEvent) => void} onMessage - 알림 메시지를 받을 때 호출되는 콜백 함수
- * @returns {EventSource} SSE 연결 객체를 반환
- */
+import { EventSourcePolyfill } from 'event-source-polyfill';
+import { getCookieValue } from '@/api/Login';
+
 export function connectSSE(
-  userId: number,
   onMessage: (event: MessageEvent) => void
 ): EventSource {
-  // SSE 연결 설정
-  const eventSource = new EventSource(
-    `http://localhost:8080/notification/sse/${userId}`
+  const accessToken = getCookieValue('accessToken');
+
+  if (!accessToken) {
+    console.error('인증 토큰이 없습니다.');
+    throw new Error('인증 토큰이 필요합니다.');
+  }
+
+  const eventSource = new EventSourcePolyfill(
+    `http://localhost:8080/notification/sse`,
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      withCredentials: true,
+    }
   );
 
-  // 일반적인 메시지(onmessage) 처리 (기본적으로 명명되지 않은 이벤트)
-  eventSource.onmessage = (event) => {
-    onMessage(event); // 외부에서 전달된 onMessage 콜백 함수 호출
+  eventSource.onopen = () => {
+    console.log('SSE 연결 성공');
   };
 
-  // 명명된 이벤트 처리 (예: 'NOTIFICATION' 이벤트)
+  // NOTIFICATION 이벤트에 대한 리스너 추가
   eventSource.addEventListener('NOTIFICATION', (event) => {
-    onMessage(event); // 외부에서 전달된 onMessage 콜백 함수 호출
+    console.log('알림 이벤트 수신:', event.data);
+    // 서버에서 온 데이터를 직접 사용
+    onMessage(new MessageEvent('message', { data: event.data }));
   });
 
-  // 오류 발생 시 처리
   eventSource.onerror = (error) => {
     console.error('SSE 연결 오류 발생:', error);
-    eventSource.close(); // 오류 발생 시 연결 종료
+
+    if (eventSource.readyState === EventSource.CLOSED) {
+      console.log('연결이 종료됨. 재연결 시도');
+      setTimeout(() => {
+        try {
+          eventSource.close();
+          connectSSE(onMessage);
+        } catch (reconnectError) {
+          console.error('재연결 실패:', reconnectError);
+        }
+      }, 3000);
+    }
   };
 
-  // SSE 연결 객체 반환
   return eventSource;
 }

@@ -66,6 +66,7 @@ export async function userLogout(): Promise<any> {
     const errorMessage = await response.text();
     throw new Error(`요청에 실패했습니다: ${response.status}, ${errorMessage}`);
   }
+  window.location.href = '/login';
 
   return response.json(); // 성공적으로 로그아웃 시 응답 데이터 반환
 }
