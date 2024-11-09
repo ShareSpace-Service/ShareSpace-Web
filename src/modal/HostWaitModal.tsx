@@ -4,10 +4,18 @@ import { useStatusStore } from '@/store/ProductStatus';
 import { useMatchingIdStore } from '@/store/MatchingId';
 import NoPhoto from '@/assets/PhotoWait.svg';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { fetchKeepModal, fetchMatchingUploadImage } from '@/api/Matching';
+import {
+  fetchCancelRequest,
+  fetchKeepModal,
+  fetchMatchingUploadImage,
+} from '@/api/Matching';
 import { Input } from '@/components/ui/input';
 import { useRef } from 'react';
 import ButtonProps from '@/component/ui/ButtonProps';
+import {
+  MatchingApiResponse,
+  MatchingRequestResult,
+} from '@/interface/MatchingInterface';
 
 function HostWaitModal() {
   const { matchingId, clearMatchingId } = useMatchingIdStore();
@@ -34,12 +42,25 @@ function HostWaitModal() {
     enabled: !!matchingId,
   });
 
+  // 이미지 업로드 Mutation
   const mutation = useMutation<unknown, Error, FormData>({
     mutationFn: (formData: FormData) => fetchMatchingUploadImage(formData),
     onSuccess: () => {
       alert('이미지가 업로드 되었습니다!');
       refetch();
       // 렌더링을 위해 새로고침
+    },
+  });
+
+  const mutationCancel = useMutation<
+    MatchingRequestResult,
+    Error,
+    { matchingId: number }
+  >({
+    mutationFn: () => fetchCancelRequest({ matchingId: matchingId as number }),
+    onSuccess: () => {
+      alert('요청이 취소되었습니다.');
+      handleClose();
     },
   });
 
@@ -70,6 +91,9 @@ function HostWaitModal() {
     return <div>에러 발생: {error.message}</div>;
   }
 
+  const handleCancelClick = () => {
+    mutationCancel.mutate({ matchingId: matchingId as number });
+  };
   return (
     <div className="w-full min-h-screen">
       <div className="signUpBg w-full min-h-screen px-4 flex flex-col overflow-hidden">
@@ -114,7 +138,12 @@ function HostWaitModal() {
         </div>
         {/* 요청하기 */}
         <div className="mt-auto pb-5">
-          <ButtonProps size="full" variant="custom" title="요청하기" />
+          <ButtonProps
+            size="full"
+            variant="custom"
+            title="요청하기"
+            onClick={handleCancelClick}
+          />
         </div>
       </div>
     </div>
