@@ -295,21 +295,14 @@ export async function fetchMatchingAccept({
  * @returns {Promise<MatchingRequestResult>} 이미지 업로드 결과를 반환하는 Promise
  * @throws {Error} 서버 응답이 성공적이지 않을 경우 에러 발생
  */
-export async function fetchMatchingUploadImage({
-  matchingId,
-  imageUrl,
-}: {
-  matchingId: number;
-  imageUrl: string;
-}): Promise<MatchingRequestResult> {
+export async function fetchMatchingUploadImage(
+  formData: FormData
+): Promise<MatchingRequestResult> {
   const response = await fetchWithToken(
     'http://localhost:8080/matching/uploadImage/host',
     {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ matchingId, imageUrl }),
+      body: formData,
     }
   );
   if (!response.ok) {

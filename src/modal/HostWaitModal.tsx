@@ -5,30 +5,62 @@ import { useMatchingIdStore } from '@/store/MatchingId';
 import NoPhoto from '@/assets/PhotoWait.svg';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { fetchKeepModal, fetchMatchingUploadImage } from '@/api/Matching';
+import { Input } from '@/components/ui/input';
+import { useRef } from 'react';
+import ButtonProps from '@/component/ui/ButtonProps';
 
 function HostWaitModal() {
   const { matchingId, clearMatchingId } = useMatchingIdStore();
   const { clearStatus } = useStatusStore();
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  // 이미지 업로드 클릭 시 ref를 사용한 이유
+  // input type="file"이 숨겨져 있어서 클릭 이벤트를 발생시키기 위함
+  // hidden 속성을 사용하면 직접 클릭 이벤트를 발생시킬 수 없음
 
   const handleClose = () => {
     clearMatchingId();
     clearStatus();
   };
 
-  const { data, isLoading, error } = useQuery({
+  const handleClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['waitDetail', matchingId],
     queryFn: () => fetchKeepModal({ matchingId: matchingId as number }),
     enabled: !!matchingId,
   });
 
-  const mutation = useMutation<
-    unknown,
-    Error,
-    { matchingId: number; imageUrl: string }
-  >({
-    mutationFn: ({ matchingId, imageUrl }) =>
-      fetchMatchingUploadImage({ matchingId, imageUrl }),
+  const mutation = useMutation<unknown, Error, FormData>({
+    mutationFn: (formData: FormData) => fetchMatchingUploadImage(formData),
+    onSuccess: () => {
+      alert('이미지가 업로드 되었습니다!');
+      refetch();
+      // 렌더링을 위해 새로고침
+    },
   });
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && matchingId) {
+      if (file.size > 1 * 1024 * 1024) {
+        alert('파일 사이즈는 1MB 이하여야 합니다.');
+        return;
+      }
+    }
+
+    const formData = new FormData();
+    if (file) {
+      formData.append('imageUrl', file);
+    }
+    if (matchingId !== null) {
+      formData.append('matchingId', matchingId.toString());
+    }
+    mutation.mutate(formData);
+  };
 
   if (isLoading) {
     return <div>로딩 중...</div>;
@@ -49,7 +81,17 @@ function HostWaitModal() {
             <img
               src={data?.imageUrl || NoPhoto}
               className="w-[150px] h-[150px] object-contain rounded-lg"
+              id="image"
+              onClick={handleClick}
               alt={data?.product.title}
+            />
+            <Input
+              type="file"
+              id="image"
+              accept=".jpeg, .png"
+              className="hidden"
+              ref={fileInputRef}
+              onChange={handleFileChange}
             />
             <div className="flex flex-col w-80 gap-3">
               <DetailItem label="장소 Title" value={data?.place.title} />
@@ -69,6 +111,10 @@ function HostWaitModal() {
               {data?.product.description}
             </p>
           </div>
+        </div>
+        {/* 요청하기 */}
+        <div className="mt-auto pb-5">
+          <ButtonProps size="full" variant="custom" title="요청하기" />
         </div>
       </div>
     </div>
