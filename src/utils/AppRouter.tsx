@@ -10,9 +10,7 @@ import Layout from '@/layout/Layout';
 import GuestProductRegist from '@/guest/pages/GuestProductRegist';
 import GuestPlace from '@/guest/pages/GuestPlace';
 import Profile from '@/pages/Profile';
-import History from '@/pages/History';
 import Note from '@/pages/Note';
-import Question from '@/pages/Question';
 import GuestPlaceFilter from '@/guest/pages/GuestPlaceFilter';
 import ProductWrapper from '@/component/wrapper/ProductWrapper';
 
@@ -93,15 +91,6 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
   },
   {
-    path: '/history',
-    element: (
-      <Layout>
-        <History />
-      </Layout>
-    ),
-    errorElement: <ErrorPage />,
-  },
-  {
     path: '/message',
     element: (
       <Layout>
@@ -109,14 +98,6 @@ const router = createBrowserRouter([
       </Layout>
     ),
     errorElement: <ErrorPage />,
-  },
-  {
-    path: '/question',
-    element: (
-      <Layout>
-        <Question />
-      </Layout>
-    ),
   },
 ]);
 
