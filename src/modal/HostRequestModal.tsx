@@ -1,7 +1,7 @@
 import { fetchMatchingAccept, fetchRequestModal } from '@/api/Matching';
 import { useMatchingIdStore } from '@/store/MatchingId';
 import { useStatusStore } from '@/store/ProductStatus';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { DetailItem } from './KeepDetailModal';
 import ModalHeader from '@/component/ui/ModalHeader';
 import ButtonProps from '@/component/ui/ButtonProps';
@@ -22,6 +22,8 @@ function HostRequestModal() {
     enabled: !!matchingId,
   });
 
+  const queryClient = useQueryClient();
+
   const mutation = useMutation<
     MatchingRequestResult,
     Error,
@@ -32,6 +34,7 @@ function HostRequestModal() {
     onSuccess: (data, variables) => {
       console.log('수락 성공');
       alert(`요청이 ${variables.isAccepted ? '수락' : '거절'}되었습니다.`);
+      queryClient.invalidateQueries({ queryKey: ['matching'] }); // 새로고침
       handleClose();
     },
     onError: (error) => {
