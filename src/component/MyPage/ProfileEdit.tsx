@@ -2,13 +2,22 @@ import { useMyPageStore } from '@/store/MyPageState';
 import ButtonProps from '../ui/ButtonProps';
 
 function ProfileEdit() {
-  const { isEdit, setIsEdit } = useMyPageStore();
+  const {
+    isEdit,
+    setIsEdit,
+    formData,
+    setFormData,
+    initialFormData,
+    setInitialFormData,
+  } = useMyPageStore();
 
   const handleEditClick = () => {
+    setInitialFormData(formData);
     setIsEdit(true);
   };
 
   const handleCancelEdit = () => {
+    setFormData(initialFormData);
     setIsEdit(false);
   };
 

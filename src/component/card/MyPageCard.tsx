@@ -1,5 +1,4 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { Link } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import DaumPostcode, { Address } from 'react-daum-postcode';
 import { fetchProfile, fetchProfileUpdate } from '@/api/UserProfile';
@@ -7,23 +6,22 @@ import { userLogout } from '@/api/Login';
 import CustomModal from '@/component/ui/CustomModal';
 import ProfileEdit from '../MyPage/ProfileEdit';
 import { useMyPageStore } from '@/store/MyPageState';
-import { ApiUpdateResponse } from '@/interface/MyPageInterface';
+import { ApiResponse, ApiUpdateResponse } from '@/interface/MyPageInterface';
 import ProfileInfo from '../MyPage/ProfileInfo';
 import { useModalStore } from '@/store/ModalState';
+import { MatchingRequestResult } from '@/interface/MatchingInterface';
+import History from '@/pages/History';
+import Question from '@/pages/Question';
+import PlaceEdit from '@/pages/PlaceEdit';
+import { useRoleStore } from '@/store/Role';
 
 interface Title {
   label: string;
-  path: string;
+  component?: (props: { label: string }) => React.ReactNode;
 }
 
-const titles: Title[] = [
-  { label: 'History', path: '/history' },
-  { label: 'Question', path: '/question' },
-  { label: 'Logout', path: '/logout' },
-];
-
 function MyPageCard() {
-  const { data } = useQuery({
+  const { data } = useQuery<ApiResponse>({
     queryKey: ['profile'],
     queryFn: fetchProfile,
   });
@@ -31,6 +29,33 @@ function MyPageCard() {
   const { isEdit, setIsEdit, formData, setFormData, image } = useMyPageStore();
   const { isOpen, closeModal } = useModalStore();
   const [zoneCode, setZoneCode] = useState<string>(''); // location 선택
+  const [view, setView] = useState<React.ReactNode | null>(null);
+  const { role, setRole } = useRoleStore();
+
+  useEffect(() => {
+    if (data?.data?.role) {
+      setRole(data.data.role);
+      console.log('Role set:', data.data.role);
+    }
+  }, [data, setRole]);
+
+  const titles: Title[] = [
+    { label: 'History', component: ({ label }) => <History title={label} /> },
+    { label: 'Question', component: ({ label }) => <Question title={label} /> },
+    {
+      label: '장소 수정',
+      component: ({ label }) => {
+        return role === 'Host' ? <PlaceEdit title={label} /> : null;
+      },
+    },
+    { label: 'Logout' },
+  ];
+
+  const handleClick = (title: Title) => {
+    if (title.component) {
+      setView(title.component({ label: title.label }));
+    }
+  };
 
   // 로그아웃 모달 상태
   const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -38,25 +63,27 @@ function MyPageCard() {
     setShowLogoutModal(true); // 모달 열기
   };
 
-  // 로그아웃 처리 함수
-  const handleLogoutConfirm = async () => {
-    try {
-      const response = await userLogout();
-      if (response.success) {
+  const { mutate: logout } = useMutation<MatchingRequestResult, Error>({
+    mutationFn: () => userLogout(),
+    onSuccess: (result) => {
+      if (result.success) {
         window.location.replace('/login');
       } else {
-        console.error('Logout failed:', response.message);
+        console.error('로그아웃 실패!', result.message);
       }
-    } catch (error) {
-      console.error('Error during logout:', error);
-    } finally {
-      setShowLogoutModal(false); // 모달 닫기
-    }
+    },
+    onError: (error) => {
+      console.error('로그아웃 실패!', error);
+    },
+  });
+
+  const handleLogoutConfirm = () => {
+    logout();
+    setShowLogoutModal(false);
   };
 
-  // 로그아웃 취소 처리 함수
   const handleLogoutCancel = () => {
-    setShowLogoutModal(false); // 모달 닫기
+    setShowLogoutModal(false);
   };
 
   const mutation = useMutation<ApiUpdateResponse, Error, FormData>({
@@ -107,6 +134,19 @@ function MyPageCard() {
     }
   };
 
+  useEffect(() => {
+    if (view) {
+      document.body.style.overflow = 'hidden'; // Disable body scroll
+      window.scrollTo(0, 0); // Scroll to top when opening the view
+    } else {
+      document.body.style.overflow = 'auto'; // Enable body scroll
+    }
+
+    return () => {
+      document.body.style.overflow = 'auto'; // Clean up on unmount
+    };
+  }, [view]);
+
   return (
     <>
       <form className="flex flex-col gap-10" onSubmit={handleSubmit}>
@@ -133,13 +173,15 @@ function MyPageCard() {
               </div>
             </div>
           ) : (
-            <Link to={title.path} key={title.label}>
-              <div className="flex flex-col items-start justify-center bg-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 w-full h-20 cursor-pointer">
-                <div className="flex items-start m-4 gap-10">
-                  <h2 className="font-extrabold text-xl">{title.label}</h2>
-                </div>
+            <div
+              key={title.label}
+              onClick={() => handleClick(title)}
+              className="flex flex-col items-start justify-center bg-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 w-full h-20 cursor-pointer"
+            >
+              <div className="flex items-start m-4 gap-10">
+                <h2 className="font-extrabold text-xl">{title.label}</h2>
               </div>
-            </Link>
+            </div>
           )
         )}
         {showLogoutModal && (
@@ -152,6 +194,19 @@ function MyPageCard() {
           />
         )}
       </form>
+      {view && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-10 w-full h-full max-w-4xl overflow-auto">
+            <button
+              onClick={() => setView(null)}
+              className="absolute top-4 right-4 bg-gray-200 w-[24px] h-[24px] p-4 rounded-full hover:bg-gray-300 font-bold flex items-center justify-center"
+            >
+              &times;
+            </button>
+            {view}
+          </div>
+        </div>
+      )}
     </>
   );
 }
