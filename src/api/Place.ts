@@ -1,8 +1,10 @@
 import {
   ApiDetailResponse,
+  ApiEditResponse,
   ApiResponse,
   Place,
   PlaceData,
+  PlaceEditData,
 } from '@/interface/PlaceInterface';
 import { getRequest } from './Request';
 
@@ -55,6 +57,22 @@ export async function fetchPlaceDetailList({
 }): Promise<PlaceData> {
   const result: ApiDetailResponse = await getRequest(
     `http://localhost:8080/place/placeDetail?placeId=${placeId}`
+  );
+  if (result.success) {
+    console.log('성공', result.message);
+    return result.data;
+  } else {
+    throw new Error(result.message || '실패');
+  }
+}
+
+/**
+ * HOST가 장소 수정 시 장소 정보를 불러오는 함수
+ * @returns {Promise<PlaceData>} 장소 정보를 반환하는 Promise
+ */
+export async function fetchPlaceEdit(): Promise<PlaceEditData> {
+  const result: ApiEditResponse = await getRequest(
+    'http://localhost:8080/place/edit'
   );
   if (result.success) {
     console.log('성공', result.message);
