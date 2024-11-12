@@ -16,7 +16,7 @@ import PlaceEdit from '@/pages/PlaceEdit';
 import { useRoleStore } from '@/store/Role';
 
 interface Title {
-  label: string;
+  label: 'History' | 'Question' | '장소 수정' | 'Logout'; // 가능한 label 값을 명시적으로 정의
   component?: (props: { label: string }) => React.ReactNode;
 }
 
@@ -44,9 +44,7 @@ function MyPageCard() {
     { label: 'Question', component: ({ label }) => <Question title={label} /> },
     {
       label: '장소 수정',
-      component: ({ label }) => {
-        return role === 'Host' ? <PlaceEdit title={label} /> : null;
-      },
+      component: ({ label }) => <PlaceEdit title={label} />,
     },
     { label: 'Logout' },
   ];
@@ -136,14 +134,14 @@ function MyPageCard() {
 
   useEffect(() => {
     if (view) {
-      document.body.style.overflow = 'hidden'; // Disable body scroll
-      window.scrollTo(0, 0); // Scroll to top when opening the view
+      document.body.style.overflow = 'hidden';
+      window.scrollTo(0, 0);
     } else {
-      document.body.style.overflow = 'auto'; // Enable body scroll
+      document.body.style.overflow = 'auto';
     }
 
     return () => {
-      document.body.style.overflow = 'auto'; // Clean up on unmount
+      document.body.style.overflow = 'auto';
     };
   }, [view]);
 
@@ -161,29 +159,29 @@ function MyPageCard() {
           </div>
         )}
         {/* 히스토리, Question, 로그아웃 */}
-        {titles.map((title) =>
-          title.label === 'Logout' ? (
-            <div key={title.label} onClick={handleLogoutClick}>
-              {' '}
-              {/* 로그아웃 클릭 시 모달 표시 */}
-              <div className="flex flex-col items-start justify-center bg-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 w-full h-20 cursor-pointer">
+        {titles
+          .filter((title) => title.label !== '장소 수정' || role === 'Host')
+          .map((title) =>
+            title.label === 'Logout' ? (
+              <div key={title.label} onClick={handleLogoutClick}>
+                <div className="flex flex-col items-start justify-center bg-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 w-full h-20 cursor-pointer">
+                  <div className="flex items-start m-4 gap-10">
+                    <h2 className="font-extrabold text-xl">{title.label}</h2>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div
+                key={title.label}
+                onClick={() => handleClick(title)}
+                className="flex flex-col items-start justify-center bg-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 w-full h-20 cursor-pointer"
+              >
                 <div className="flex items-start m-4 gap-10">
                   <h2 className="font-extrabold text-xl">{title.label}</h2>
                 </div>
               </div>
-            </div>
-          ) : (
-            <div
-              key={title.label}
-              onClick={() => handleClick(title)}
-              className="flex flex-col items-start justify-center bg-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 w-full h-20 cursor-pointer"
-            >
-              <div className="flex items-start m-4 gap-10">
-                <h2 className="font-extrabold text-xl">{title.label}</h2>
-              </div>
-            </div>
-          )
-        )}
+            )
+          )}
         {showLogoutModal && (
           <CustomModal
             title="정말로 로그아웃하시겠습니까?"
