@@ -1,22 +1,12 @@
 import { EventSourcePolyfill } from 'event-source-polyfill';
-import { getCookieValue } from '@/api/Login';
 
 export function connectSSE(
   onMessage: (event: MessageEvent) => void
 ): EventSource {
-  const accessToken = getCookieValue('accessToken');
-
-  if (!accessToken) {
-    console.error('인증 토큰이 없습니다.');
-    throw new Error('인증 토큰이 필요합니다.');
-  }
 
   const eventSource = new EventSourcePolyfill(
     `http://localhost:8080/notification/sse`,
     {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
       withCredentials: true,
       heartbeatTimeout: 60000,
       reconnectInterval: 3000,
@@ -42,19 +32,17 @@ export function connectSSE(
   eventSource.onerror = (error) => {
     console.error('SSE 연결 오류 발생:', error);
 
-    if (eventSource.readyState === EventSource.CLOSED || eventSource.readyState === EventSource.CONNECTING) {
+    if (
+      eventSource.readyState === EventSource.CLOSED ||
+      eventSource.readyState === EventSource.CONNECTING
+    ) {
       console.log('연결이 종료되거나 연결 중 문제 발생. 재연결 시도');
-      
+
       eventSource.close();
-      
+
       setTimeout(() => {
         try {
-          const newToken = getCookieValue('accessToken');
-          if (newToken) {
-            connectSSE(onMessage);
-          } else {
-            console.error('재연결을 위한 토큰이 없습니다.');
-          }
+          connectSSE(onMessage);
         } catch (reconnectError) {
           console.error('재연결 실패:', reconnectError);
         }
