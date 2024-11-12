@@ -2,8 +2,7 @@ import { EventSourcePolyfill } from 'event-source-polyfill';
 
 export function connectSSE(
   onMessage: (event: MessageEvent) => void
-): EventSource {
-
+): EventSourcePolyfill {
   const eventSource = new EventSourcePolyfill(
     `http://localhost:8080/notification/sse`,
     {
@@ -17,14 +16,11 @@ export function connectSSE(
     console.log('SSE 연결 성공');
   };
 
-  // NOTIFICATION 이벤트에 대한 리스너 추가
   eventSource.addEventListener('NOTIFICATION', (event) => {
     console.log('알림 이벤트 수신:', event.data);
-    // 서버에서 온 데이터를 직접 사용
     onMessage(new MessageEvent('message', { data: event.data }));
   });
 
-  // 하트비트 이벤트 리스너 추가
   eventSource.addEventListener('HEARTBEAT', () => {
     console.log('하트비트 수신');
   });
@@ -37,9 +33,10 @@ export function connectSSE(
       eventSource.readyState === EventSource.CONNECTING
     ) {
       console.log('연결이 종료되거나 연결 중 문제 발생. 재연결 시도');
-
+      
       eventSource.close();
 
+      // 재연결 시도
       setTimeout(() => {
         try {
           connectSSE(onMessage);
@@ -51,4 +48,8 @@ export function connectSSE(
   };
 
   return eventSource;
+}
+
+export function disconnectSSE() {
+  // 기존 연결 종료 로직
 }

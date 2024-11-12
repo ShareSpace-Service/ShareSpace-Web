@@ -1,12 +1,26 @@
 import { useEffect } from 'react';
 import AlarmList from '@/component/AlarmList';
+import { fetchReadAllNotifications } from '@/api/Notification';
+import useNotificationStore from '@/store/NotificationStore';
 
-function Modal({ closeModal }: { closeModal: () => void }) {
-  // Esc 버튼을 눌렀을 때 모달을 닫는 기능 추가
+function AlarmModal({ closeModal }: { closeModal: () => void }) {
+  const { resetUnreadCount } = useNotificationStore();
+  const handleClose = async () => {
+    try {
+      await fetchReadAllNotifications(); // 모든 알림 읽음 처리
+      resetUnreadCount();
+      closeModal();
+    } catch (error) {
+      console.error('알림 읽음 처리 실패:', error);
+      closeModal();
+    }
+  };
+
+  // Esc 버튼을 눌렀을 때 모달을 닫는 기능
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        closeModal();
+        handleClose();
       }
     };
 
@@ -19,18 +33,18 @@ function Modal({ closeModal }: { closeModal: () => void }) {
   // 모달 바깥쪽을 클릭했을 때 모달을 닫는 함수
   const handleOutsideClick = (event: React.MouseEvent<HTMLDivElement>) => {
     if (event.target === event.currentTarget) {
-      closeModal();
+      handleClose();
     }
   };
 
   return (
     <div
       className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50"
-      onClick={handleOutsideClick} // 바깥쪽 클릭 감지
+      onClick={handleOutsideClick}
     >
       <div className="signUpBg w-[500px] h-auto p-6 rounded-lg relative">
         <button
-          onClick={closeModal}
+          onClick={handleClose}
           className="absolute top-3 right-3 text-xl font-bold text-gray-600 hover:text-gray-800"
         >
           &times;
@@ -44,4 +58,4 @@ function Modal({ closeModal }: { closeModal: () => void }) {
   );
 }
 
-export default Modal;
+export default AlarmModal;
