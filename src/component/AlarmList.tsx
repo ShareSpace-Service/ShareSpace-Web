@@ -9,7 +9,7 @@ interface Notification {
   notificationId: number;
   message: string;
   timeElapsed: number; // 분 단위
-  isRead?: boolean;
+  read: boolean;
 }
 
 /**
@@ -53,6 +53,39 @@ function AlarmList(): JSX.Element {
    */
   const listInnerRef = useRef<HTMLDivElement | null>(null);
 
+  // 삭제 중인 알림 ID를 추적하기 위한 상태 추가
+  const [deletingId, setDeletingId] = useState<number | null>(null);
+
+  /**
+   * 알림을 삭제한 후 빈 자리를 채우기 위해 추가 데이터를 가져오는 함수
+   */
+  const fetchAfterDelete = async () => {
+    try {
+      // 현재 표시된 마지막 알림의 다음 데이터부터 가져오기
+      const data = await fetchNotifications(Math.floor(notifications.length / size), size);
+      
+      if (data.length > 0) {
+        // 새로운 데이터 중 하나만 추가
+        setNotifications(prev => {
+          const uniqueNotifications = [...prev, data[0]].filter(
+            (notification, index, self) =>
+              index === self.findIndex(
+                (n) => n.notificationId === notification.notificationId
+              )
+          );
+          return uniqueNotifications;
+        });
+      }
+      
+      // 더 이상 가져올 데이터가 없으면 hasMore false
+      if (data.length < size) {
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.error('추가 알림을 불러오는 중 오류 발생:', error);
+    }
+  };
+
   /**
    * 서버로부터 알림 데이터를 페이지네이션 방식으로 가져오는 함수.
    * 페이지 번호와 페이지당 데이터 개수를 인자로 서버에 전달하여 데이터를 요청한다.
@@ -66,13 +99,11 @@ function AlarmList(): JSX.Element {
   const fetchMoreNotifications = async () => {
     try {
       const data = await fetchNotifications(page, size);
-
-      // 중복 제거를 위해 Set 사용
+      
       setNotifications((prev) => {
         const uniqueNotifications = [...prev, ...data].filter(
           (notification, index, self) =>
-            index ===
-            self.findIndex(
+            index === self.findIndex(
               (n) => n.notificationId === notification.notificationId
             )
         );
@@ -92,9 +123,10 @@ function AlarmList(): JSX.Element {
    * @useEffect
    */
   useEffect(() => {
-    fetchMoreNotifications(); // 첫 페이지 데이터 로드
-  }, [page]);
-
+    if (notifications.length === 0 && hasMore) {
+      fetchMoreNotifications(); // 다음 페이지 자동 로드
+    }
+  }, [notifications, hasMore]);
   /**
    * 스크롤 이벤트를 처리하는 함수.
    * 스크롤이 리스트의 끝에 도달하면 페이지 번호를 증가시키고, 새로운 알림 데이터를 요청한다.
@@ -121,14 +153,26 @@ function AlarmList(): JSX.Element {
    */
   const handleNotificationClick = async (notificationId: number) => {
     try {
-      await fetchDeleteNotifications(notificationId);
-      setNotifications((prevNotifications) =>
-        prevNotifications.filter(
-          (notification) => notification.notificationId !== notificationId
-        )
-      );
+      setDeletingId(notificationId);
+      
+      setTimeout(async () => {
+        await fetchDeleteNotifications(notificationId);
+        setNotifications((prevNotifications) =>
+          prevNotifications.filter(
+            (notification) => notification.notificationId !== notificationId
+          )
+        );
+        setDeletingId(null);
+        
+        // 알림 삭제 후 새로운 데이터 하나 가져오기
+        if (hasMore) {
+          fetchAfterDelete();
+        }
+      }, 300);
+      
     } catch (error) {
       console.error(error);
+      setDeletingId(null);
     }
   };
 
@@ -142,14 +186,29 @@ function AlarmList(): JSX.Element {
         notifications.map((notification) => (
           <div
             key={notification.notificationId}
-            className="flex justify-between items-center rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 w-full h-[80px] cursor-pointer mb-4 p-4"
+            className={`flex justify-between items-center rounded-xl shadow-lg hover:shadow-2xl 
+              transition-all duration-300 ease-in-out w-full h-[80px] cursor-pointer mb-4 p-4 
+              ${!notification.read ? 'bg-blue-50' : 'bg-white'}
+              ${deletingId === notification.notificationId ? 
+                'transform translate-x-full opacity-0' : 
+                'transform translate-x-0 opacity-100'
+              }`}
             onClick={() => handleNotificationClick(notification.notificationId)}
           >
-            <div>
-              <p className="font-bold">{notification.message}</p>
-              <p className="text-sm text-gray-500">
-                {formatTimeElapsed(notification.timeElapsed)}{' '}
-              </p>
+            <div className="flex items-center w-full">
+              {!notification.read && (
+                <div className="w-2 h-2 bg-blue-500 rounded-full mr-3 animate-pulse" />
+              )}
+              <div className="flex-1">
+                <p
+                  className={`font-bold ${!notification.read ? 'text-blue-900' : ''}`}
+                >
+                  {notification.message}
+                </p>
+                <p className="text-sm text-gray-500">
+                  {formatTimeElapsed(notification.timeElapsed)}
+                </p>
+              </div>
             </div>
           </div>
         ))

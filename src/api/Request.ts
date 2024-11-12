@@ -1,19 +1,15 @@
-import { getCookieValue} from './Login';
-
 export async function fetchWithToken(
   url: string,
   options: RequestInit = {}
 ): Promise<Response> {
-  const token = getCookieValue('accessToken');
   const headers = {
     ...options.headers,
-    Authorization: `Bearer ${token}`,
-    Credential: 'include',
   };
 
   let response = await fetch(url, {
     ...options,
     headers,
+    credentials: 'include',
   });
 
   // accessToken 만료되면 로그인 페이지로 이동

@@ -3,7 +3,7 @@ import Message from '@/assets/Message.svg';
 import { Link } from 'react-router-dom';
 import { ModalPortal } from '@/lib/ModalPortal';
 import { useState } from 'react';
-import Modal from '@/modal/Modal';
+import AlarmModal from '@/modal/AlarmModal';
 import HeaderIcon from '@/component/ui/HeaderIcon';
 import AlarmBox from '@/components/ui/alarmbox';
 
@@ -36,7 +36,7 @@ function Header() {
       </div>
       {isOpen && (
         <ModalPortal>
-          <Modal closeModal={closeModal} />
+          <AlarmModal closeModal={closeModal} />
         </ModalPortal>
       )}
     </header>

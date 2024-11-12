@@ -1,4 +1,4 @@
-import { getRequest, deleteRequest } from '@/api/Request';
+import { getRequest, deleteRequest, patchRequest } from '@/api/Request';
 
 /**
  * 서버에서 알림 데이터를 GET 요청으로 불러오는 함수
@@ -29,4 +29,23 @@ export async function fetchDeleteNotifications(
   const url = `http://localhost:8080/notification?notificationId=${notificationId}`;
   const result = await deleteRequest(url);
   return result;
+}
+
+/**
+ * 모든 알림을 읽음 처리하는 함수
+ * @returns {Promise<any>} 서버로부터의 응답 데이터를 포함한 Promise
+ */
+export async function fetchReadAllNotifications(): Promise<any> {
+  const url = `http://localhost:8080/notification/read`;
+  const result = await patchRequest(url, {});
+  return result;
+}
+
+/**
+ * 읽지 않은 알림 개수를 조회하는 함수
+ * @returns {Promise<number>} 읽지 않은 알림 개수
+ */
+export async function fetchUnreadNotificationsCount(): Promise<number> {
+  const result = await getRequest('http://localhost:8080/notification/unread-alarms');
+  return result.data.unreadNotificationNum;
 }

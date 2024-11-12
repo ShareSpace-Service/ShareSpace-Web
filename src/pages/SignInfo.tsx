@@ -88,29 +88,33 @@ function SignInfo() {
   };
 
   return (
-    <div className="h-full flex flex-col">
-      <HeaderBack />
-      <LoginTitle
-        title="회원 정보 입력"
-        subTitle="회원 가입에 필요한 정보를 입력해주세요"
-      />
-      <SignUpForm
-        setEmail={setEmail}
-        setPassword={setPassword}
-        setPasswordValidate={setPasswordValidate}
-        setNickname={setNickname}
-        setLocation={setLocation}
-        password={password}
-        passwordValidate={passwordValidate}
-        isPasswordValid={isPasswordValid}
-      />
-      <div className="pt-8 flex justify-center">
-        <ButtonProps
-          size="login"
-          variant="custom"
-          title="Next"
-          onClick={handleNextClick}
-        />
+    <div className="min-h-screen flex flex-col bg-white">
+      <HeaderBack /> 
+      <div className="flex-1 overflow-y-auto">
+        <div className="container mx-auto px-4 max-w-2xl">
+          <LoginTitle
+            title="회원 정보 입력"
+            subTitle="회원 가입에 필요한 정보를 입력해주세요"
+          />
+          <SignUpForm
+            setEmail={setEmail}
+            setPassword={setPassword}
+            setPasswordValidate={setPasswordValidate}
+            setNickname={setNickname}
+            setLocation={setLocation}
+            password={password}
+            passwordValidate={passwordValidate}
+            isPasswordValid={isPasswordValid}
+          />
+          <div className="flex justify-center my-8">
+            <ButtonProps
+              size="login"
+              variant="custom"
+              title="Next"
+              onClick={handleNextClick}
+            />
+          </div>
+        </div>
       </div>
       {showModal && (
         <CustomModal
