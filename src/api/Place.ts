@@ -5,8 +5,10 @@ import {
   Place,
   PlaceData,
   PlaceEditData,
+  PlaceEditForm,
+  PlaceEditResponse,
 } from '@/interface/PlaceInterface';
-import { getRequest } from './Request';
+import { fetchWithToken, getRequest } from './Request';
 
 /**
  * 서버에서 Place 데이터를 GET 요청으로 불러오는 함수
@@ -79,5 +81,29 @@ export async function fetchPlaceEdit(): Promise<PlaceEditData> {
     return result.data;
   } else {
     throw new Error(result.message || '실패');
+  }
+}
+
+/**
+ * HOST 장소 수정 시 장소 정보를 서버에 전송하는 함수
+ *  @param formData - 장소 수정 정보
+ *  @returns {Promise<PlaceEditForm>} 장소 수정 정보를 반환하는 Promise
+ */
+export async function fetchPlaceForm(
+  formData: FormData
+): Promise<PlaceEditForm> {
+  const response = await fetchWithToken('http://localhost:8080/place', {
+    method: 'PUT',
+    body: formData,
+  });
+  if (!response.ok) {
+    throw new Error('서버 상태 :' + response.status);
+  }
+  const result: PlaceEditResponse = await response.json();
+  if (response.ok && result.success) {
+    console.log('장소 수정이 성공하였습니다.', result.message);
+    return result.data;
+  } else {
+    throw new Error(result.message || '장소 수정이 실패하였습니다.');
   }
 }
