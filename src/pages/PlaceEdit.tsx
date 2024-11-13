@@ -6,7 +6,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 
 function PlaceEdit({ title }: { title: string }) {
-  const { setFormData, setCurrentImage } = usePlaceEditStore();
+  const { setFormData, setCurrentImage, setOriginalData, setOriginalImage } =
+    usePlaceEditStore();
 
   // 1. 장소 수정 정보를 불러오는 API를 호출한다.
   const { data } = useQuery<PlaceEditData>({
@@ -17,7 +18,7 @@ function PlaceEdit({ title }: { title: string }) {
   // 2. 불러온 장소 정보를 formData에 저장한다.
   useEffect(() => {
     if (data) {
-      setFormData({
+      const formattedData = {
         title: data.title,
         location: data.location,
         category: data.category,
@@ -25,10 +26,13 @@ function PlaceEdit({ title }: { title: string }) {
         description: data.description,
         deleteImageUrl: [],
         newImageUrl: [],
-      });
+      };
+      setFormData(formattedData);
+      setOriginalData(formattedData);
       setCurrentImage(data.imageUrl);
+      setOriginalImage(data.imageUrl);
     }
-  }, [data]);
+  }, [data, setFormData, setOriginalData, setOriginalImage, setOriginalImage]);
   return (
     <>
       <div className="w-full pb-5">

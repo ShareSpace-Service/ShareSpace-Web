@@ -5,7 +5,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { useEffect, useRef, useState } from 'react';
 import { usePlaceEditStore } from '@/store/PlaceEdit';
 import DaumPostcodeEmbed, { Address } from 'react-daum-postcode';
-
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper/modules';
 import 'swiper/css';
@@ -15,25 +14,7 @@ import { Label } from '@radix-ui/react-label';
 import { useMutation } from '@tanstack/react-query';
 import { fetchPlaceForm } from '@/api/Place';
 import { PlaceEditForm } from '@/interface/PlaceInterface';
-
-// 이미지 삭제 및 등록에 필요한 상태 및 로직
-// 1. 수정 버튼을 클릭 하면 x 버튼이 있어야됨
-// 2. 수정 버튼을 클릭하고 이미지를 클릭하면 파일 선택 창이 떠야함
-
-// 분기
-
-// 이미지를 등록할 경우
-// 이미지를 등록하면 0번째에 추가되겠지
-// newImageUrl은 <File[]>로 넘겨야됨
-// 이미지만 등록할 경우 deleteImageUrl은 빈 배열로 넘기면 된다.
-
-// 이미지를 삭제할 경우
-// 이미지를 삭제하면 formData에서도 삭제가 되야되고
-// Delete된 사진의 Url 즉 string을 넘겨야 된다.
-// 이미지만 삭제하는 경우 newImageUrl은 빈 배열로 넘기면 된다.
-
-// 이미지를 등록하고 삭제할 경우
-// 두개의 배열이 다 포함되서 넘기면 되겠죠?
+import { validatePeriod } from '@/lib/PeriodFormat';
 
 function HostEditForm() {
   const {
@@ -45,6 +26,10 @@ function HostEditForm() {
     setFormData,
     currentImage,
     setCurrentImage,
+    originalData,
+    setOriginalData,
+    originalImage,
+    setOriginalImage,
   } = usePlaceEditStore();
   const [zoneCode, setZoneCode] = useState<string>('');
   const objectUrls = useRef<string[]>([]);
@@ -70,6 +55,10 @@ function HostEditForm() {
 
   // 수정 버튼 클릭 시
   const handleEditClick = () => {
+    if (formData) {
+      setOriginalData(formData);
+      setOriginalImage(currentImage);
+    }
     setIsEdit(true);
   };
   // 주소 검색 버튼 클릭 시
@@ -90,12 +79,14 @@ function HostEditForm() {
 
   // Input 값 변경 시
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (formData) {
-      setFormData({
-        ...formData,
-        [e.target.name]: e.target.value,
-      });
-    }
+    if (!formData) return;
+
+    const { name, value } = e.target;
+
+    setFormData({
+      ...formData,
+      [name]: name === 'period' ? validatePeriod(value) : value,
+    });
   };
 
   // TextArea 값 변경 시
@@ -233,6 +224,10 @@ function HostEditForm() {
     objectUrls.current = [];
 
     console.log('Cleanup 완료 - objectUrls 비워짐:', objectUrls.current);
+    if (originalData) {
+      setFormData(originalData);
+      setCurrentImage(originalImage);
+    }
     setIsEdit(false);
   };
 
@@ -270,12 +265,15 @@ function HostEditForm() {
   };
 
   return (
-    <form className="flex flex-col" onSubmit={handleSubmit}>
-      <div className="flex items-center gap-3 justify-end">
-        {/* 수정 모드에 이미지 추가 버튼 등장 */}
+    <form
+      className="flex flex-col max-w-2xl mx-auto p-6 gap-10"
+      onSubmit={handleSubmit}
+    >
+      {/* 상단 버튼 영역 */}
+      <div className="flex items-center justify-end gap-3">
         {isEdit && (
           <>
-            <Label className="font-bold text-xl bg-baseColor px-3 py-1 rounded-lg text-white cursor-pointer">
+            <Label className="font-bold text-lg bg-baseColor hover:bg-baseColor/90 px-3 py-1 rounded-md text-white cursor-pointer transition-colors">
               <Input
                 type="file"
                 accept=".jpeg, .png"
@@ -283,13 +281,8 @@ function HostEditForm() {
                 className="hidden"
                 onChange={handleImageAdd}
               />
-              파일 추가
+              이미지 추가
             </Label>
-          </>
-        )}
-        {/* 수정 버튼 클릭 시 취소 버튼 등장 */}
-        {isEdit && (
-          <div className="flex gap-3">
             <ButtonProps
               size="sm"
               variant="custom"
@@ -297,7 +290,7 @@ function HostEditForm() {
               type="button"
               onClick={handleCancelClick}
             />
-          </div>
+          </>
         )}
         {!isEdit && (
           <ButtonProps
@@ -309,117 +302,131 @@ function HostEditForm() {
           />
         )}
       </div>
-      <div>
-        {/* 장소 사진들 */}
-        <div className="pt-5">
-          <Swiper
-            modules={[Pagination]}
-            spaceBetween={30}
-            slidesPerView={1}
-            pagination={{ clickable: true }}
-            className="w-full aspect-[4/3]"
-          >
-            {currentImage?.map((image, index) => (
-              <SwiperSlide key={index}>
-                <img
-                  src={image}
-                  alt={`place-${index + 1}`}
-                  className="w-full h-full rounded-lg"
-                />
-                {/* 수정 모드 일때 삭제 버튼 표시 */}
-                {isEdit && (
-                  <button
-                    type="button"
-                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
-                    onClick={() => handleImageDelete(image)}
-                  >
-                    X
-                  </button>
-                )}
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        </div>
-        {/* 제목, 위치 */}
-        <div className="flex flex-col gap-2 pt-5">
-          <div>
+
+      {/* 이미지 슬라이더 */}
+      <div className="rounded-lg overflow-hidden shadow-md">
+        <Swiper
+          modules={[Pagination]}
+          spaceBetween={30}
+          slidesPerView={1}
+          pagination={{ clickable: true }}
+          className="aspect-[4/3]"
+        >
+          {currentImage?.map((image, index) => (
+            <SwiperSlide key={index}>
+              <img
+                src={image}
+                alt={`place-${index + 1}`}
+                className="w-full h-full rounded-lg"
+              />
+              {/* 수정 모드 일때 삭제 버튼 표시 */}
+              {isEdit && (
+                <button
+                  type="button"
+                  className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
+                  onClick={() => handleImageDelete(image)}
+                >
+                  X
+                </button>
+              )}
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </div>
+
+      {/* 폼 필드 영역 */}
+      <div className="space-y-6">
+        {/* 제목 */}
+        <ProfileDetailItem
+          value={formData?.title || ''}
+          disabled={!isEdit}
+          name="title"
+          onChange={handleInputChange}
+        />
+
+        {/* 위치 */}
+        <div className="flex items-center gap-4">
+          <img src={MapIcon} alt="map" className="w-5 h-5" />
+          <div className="flex-1">
             <ProfileDetailItem
-              value={formData?.title || ''}
-              disabled={!isEdit}
-              name="title"
+              value={formData?.location || ''}
+              disabled={true}
+              name="location"
               onChange={handleInputChange}
             />
-            <div className="flex items-center pt-2">
-              <img src={MapIcon} alt="map" className="w-6 h-6" />
-              <ProfileDetailItem
-                value={formData?.location || ''}
-                disabled={true}
-                name="location"
-                onChange={handleInputChange}
-              />
-              {isEdit && (
-                <ButtonProps
-                  size="sm"
-                  variant="custom"
-                  title="주소 검색"
-                  onClick={handleClick}
-                  className="ml-auto"
-                />
-              )}
+          </div>
+          {isEdit && (
+            <ButtonProps
+              size="sm"
+              variant="custom"
+              title="주소 검색"
+              onClick={handleClick}
+            />
+          )}
+        </div>
+
+        {/* 카테고리, 대여기간 */}
+        <div className="grid grid-cols-2 gap-6">
+          <ProfileDetailItem
+            label="카테고리"
+            value={formData?.category || ''}
+            disabled={!isEdit}
+            name="category"
+            onChange={handleInputChange}
+          />
+          <ProfileDetailItem
+            label="대여기간"
+            value={formData?.period?.toString() || ''}
+            disabled={!isEdit}
+            name="period"
+            onChange={handleInputChange}
+          />
+        </div>
+
+        {/* 요청사항 */}
+        <div className="space-y-1">
+          <h2 className="font-semibold text-gray-700 text-sm">요청사항</h2>
+          <Textarea
+            value={formData?.description || ''}
+            name="description"
+            className={`w-full min-h-[100px] rounded-md font-medium text-base p-3 ${
+              !isEdit
+                ? 'bg-gray-50 text-gray-700'
+                : 'bg-white text-gray-900 hover:bg-gray-50 focus:ring-2 focus:ring-baseColor'
+            } transition-colors`}
+            disabled={!isEdit}
+            onChange={handleTextareaChange}
+            placeholder="요청사항을 입력하세요"
+          />
+        </div>
+      </div>
+
+      {/* 저장 버튼 */}
+      {isEdit && (
+        <ButtonProps
+          size="full"
+          variant="custom"
+          title="저장하기"
+          type="submit"
+        />
+      )}
+      {isOpen && (
+        <>
+          {/* 배경 오버레이 */}
+          <div className="fixed inset-0 m-0 bg-black/50 backdrop-blur-sm z-50" />
+          {/* 모달 컨텐츠 */}
+          <div className="fixed inset-0 flex items-center justify-center z-50">
+            <div className="bg-white p-5 rounded-lg shadow-lg relative max-w-md w-full">
+              <button
+                onClick={() => setIsOpen(false)}
+                className="absolute -top-2 -right-2 w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-md text-gray-500 hover:text-gray-700 transition-colors"
+              >
+                ✕
+              </button>
+              <DaumPostcodeEmbed onComplete={handleAddress} />
             </div>
           </div>
-          {/* 카테고리, 대여기간 */}
-          <div className="flex flex-col gap-2">
-            <ProfileDetailItem
-              label="카테고리"
-              value={formData?.category || ''}
-              disabled={!isEdit}
-              name="category"
-              onChange={handleInputChange}
-            />
-            <ProfileDetailItem
-              label="대여기간"
-              value={`${formData?.period}일` || ''}
-              disabled={!isEdit}
-              name="period"
-              onChange={handleInputChange}
-            />
-          </div>
-          {/* 요청 사항 */}
-          <div className="flex flex-col gap-2">
-            <h2 className="font-extrabold text-lg">요청사항</h2>
-            <Textarea
-              value={formData?.description || ''}
-              name="description"
-              className="font-bold text-base flex-1 h-full p-2"
-              disabled={!isEdit}
-              onChange={handleTextareaChange}
-            />
-          </div>
-        </div>
-        {isEdit && (
-          <div className="flex gap-3 pt-5">
-            <ButtonProps
-              size="full"
-              variant="custom"
-              title="저장하기"
-              type="submit"
-            />
-          </div>
-        )}
-      </div>
-      {isOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white p-5 rounded-lg shadow-lg relative">
-            <button
-              onClick={() => setIsOpen(false)}
-              className="absolute top-2 right-2 font-bold text-gray-500 hover:text-gray-700"
-            >
-              &times;
-            </button>
-            <DaumPostcodeEmbed onComplete={handleAddress} />
-          </div>
-        </div>
+        </>
       )}
     </form>
   );
@@ -440,18 +447,29 @@ function ProfileDetailItem({
   name: string;
 }) {
   return (
-    <div className="flex items-start gap-2">
-      <h2 className="font-extrabold text-lg">{label}</h2>
-      <Input
-        value={value || ''}
-        name={name}
-        className={`font-extrabold text-lg flex-1 h-full ${
-          disabled ? 'text-black' : 'text-gray-300'
-        } border-none p-0`}
-        style={{ height: 'auto' }}
-        disabled={disabled}
-        onChange={onChange}
-      />
+    <div className="flex flex-col gap-1">
+      {label && (
+        <h2 className="font-semibold text-gray-700 text-sm">{label}</h2>
+      )}
+      <div className="flex items-center gap-2">
+        <Input
+          value={value}
+          name={name}
+          className={`font-medium text-base rounded-md ${
+            disabled
+              ? 'bg-gray-50 text-gray-700'
+              : 'bg-white text-gray-900 hover:bg-gray-50 focus:ring-2 focus:ring-baseColor'
+          } transition-colors`}
+          disabled={disabled}
+          onChange={onChange}
+          type={name === 'period' ? 'number' : 'text'}
+          min={name === 'period' ? 0 : undefined}
+          max={name === 'period' ? 100 : undefined}
+        />
+        {name === 'period' && (
+          <span className="font-medium text-gray-600">일</span>
+        )}
+      </div>
     </div>
   );
 }
