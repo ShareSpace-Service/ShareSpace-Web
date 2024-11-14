@@ -64,3 +64,13 @@ export interface NoteIsReadRequestResult {
   data: null;
   message: string;
 }
+
+// 읽지 않은 쪽지 개수 응답
+export interface UnreadNoteCountResponse {
+  message: string;
+  status: string;
+  data: {
+    unreadCount: number;
+  };
+  success: boolean;
+}

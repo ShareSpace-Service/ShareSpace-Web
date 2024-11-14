@@ -4,6 +4,7 @@ import {
   ApiNoteResponse,
   NoteIsReadRequestResult,
   NoteSendRequest,
+  UnreadNoteCountResponse,
 } from '@/interface/NoteInterface';
 import { fetchWithToken, getRequest } from './Request';
 
@@ -126,5 +127,22 @@ export async function fetchNoteIsReadRequest(noteId: number) {
     return result;
   } else {
     throw new Error(result.message || '요청 실패');
+  }
+}
+
+/**
+ * 읽지 않은 쪽지 개수를 조회하는 함수
+ * @returns {Promise<UnreadNoteCountResponse>} 읽지 않은 쪽지 개수 응답을 반환하는 Promise
+ * @throws {Error} 서버 응답이 성공적이지 않을 경우 에러 발생
+ */
+export async function fetchUnreadNoteCount() {
+  const result: UnreadNoteCountResponse = await getRequest(
+    'http://localhost:8080/note/unreadNote'
+  );
+  if (result.success) {
+    console.log('읽지 않은 쪽지 개수 조회 성공', result.data.unreadCount);
+    return result;
+  } else {
+    throw new Error(result.message || '실패');
   }
 }
