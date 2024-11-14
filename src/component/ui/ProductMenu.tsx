@@ -2,7 +2,7 @@ import { useProductStore } from '@/store/ProductState';
 import { useRoleStore } from '@/store/Role';
 import clsx from 'clsx';
 
-interface ProductStatusProps {
+export interface ProductStatusProps {
   noPadding?: boolean;
 }
 

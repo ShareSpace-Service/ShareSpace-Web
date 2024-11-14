@@ -10,11 +10,9 @@ import Layout from '@/layout/Layout';
 import GuestProductRegist from '@/guest/pages/GuestProductRegist';
 import GuestPlace from '@/guest/pages/GuestPlace';
 import Profile from '@/pages/Profile';
-import Product from '@/pages/Product';
-import History from '@/pages/History';
 import Note from '@/pages/Note';
-import Question from '@/pages/Question';
 import GuestPlaceFilter from '@/guest/pages/GuestPlaceFilter';
+import ProductWrapper from '@/component/wrapper/ProductWrapper';
 
 const router = createBrowserRouter([
   {
@@ -89,20 +87,7 @@ const router = createBrowserRouter([
   },
   {
     path: '/product',
-    element: (
-      <Layout noPadding={true}>
-        <Product />
-      </Layout>
-    ),
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: '/history',
-    element: (
-      <Layout>
-        <History />
-      </Layout>
-    ),
+    element: <ProductWrapper />,
     errorElement: <ErrorPage />,
   },
   {
@@ -113,14 +98,6 @@ const router = createBrowserRouter([
       </Layout>
     ),
     errorElement: <ErrorPage />,
-  },
-  {
-    path: '/question',
-    element: (
-      <Layout>
-        <Question />
-      </Layout>
-    ),
   },
 ]);
 

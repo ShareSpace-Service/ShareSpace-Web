@@ -13,20 +13,12 @@ function ProductStatusList() {
   const { setMatchingId } = useMatchingIdStore();
   const { setStatus } = useStatusStore();
 
-  // const [selectedId, setSelectedId] = useState<number | null>(null);
-  // const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
-
   const handleClick = (item: MatchingData) => {
     if (item.matchingId !== null) {
       setMatchingId(item.matchingId);
     }
     setStatus(item.status);
   };
-
-  // const closeModal = () => {
-  //   setSelectedId(null);
-  //   setSelectedStatus(null);
-  // };
 
   const getTitle = (status: string) => {
     const menu = getMenuTitle(role).find((menu) => menu.status === status);
@@ -66,11 +58,7 @@ function ProductStatusList() {
           </div>
         </div>
       ))}
-      <StatusModalRender
-      // matchingId={selectedId}
-      // status={selectedStatus}
-      // onClose={closeModal}
-      />
+      <StatusModalRender />
     </div>
   );
 }

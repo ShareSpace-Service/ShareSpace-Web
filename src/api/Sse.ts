@@ -1,34 +1,55 @@
-/**
- * SSE 연결을 설정하는 함수.
- * @param {number} userId - 로그인한 사용자의 ID
- * @param {(event: MessageEvent) => void} onMessage - 알림 메시지를 받을 때 호출되는 콜백 함수
- * @returns {EventSource} SSE 연결 객체를 반환
- */
+import { EventSourcePolyfill } from 'event-source-polyfill';
+
 export function connectSSE(
-  userId: number,
   onMessage: (event: MessageEvent) => void
-): EventSource {
-  // SSE 연결 설정
-  const eventSource = new EventSource(
-    `http://localhost:8080/notification/sse/${userId}`
+): EventSourcePolyfill {
+  const eventSource = new EventSourcePolyfill(
+    `http://localhost:8080/notification/sse`,
+    {
+      withCredentials: true,
+      heartbeatTimeout: 60000,
+      reconnectInterval: 3000,
+    }
   );
 
-  // 일반적인 메시지(onmessage) 처리 (기본적으로 명명되지 않은 이벤트)
-  eventSource.onmessage = (event) => {
-    onMessage(event); // 외부에서 전달된 onMessage 콜백 함수 호출
+  eventSource.onopen = () => {
+    console.log('SSE 연결 성공');
   };
 
-  // 명명된 이벤트 처리 (예: 'NOTIFICATION' 이벤트)
   eventSource.addEventListener('NOTIFICATION', (event) => {
-    onMessage(event); // 외부에서 전달된 onMessage 콜백 함수 호출
+    console.log('알림 이벤트 수신:', event.data);
+    onMessage(new MessageEvent('message', { data: event.data }));
   });
 
-  // 오류 발생 시 처리
+  eventSource.addEventListener('HEARTBEAT', () => {
+    console.log('하트비트 수신');
+  });
+
   eventSource.onerror = (error) => {
     console.error('SSE 연결 오류 발생:', error);
-    eventSource.close(); // 오류 발생 시 연결 종료
+
+    if (
+      eventSource.readyState === EventSource.CLOSED ||
+      eventSource.readyState === EventSource.CONNECTING
+    ) {
+      console.log('연결이 종료되거나 연결 중 문제 발생. 재연결 시도');
+      
+      eventSource.close();
+
+      // 재연결 시도
+      setTimeout(() => {
+        try {
+          connectSSE(onMessage);
+        } catch (reconnectError) {
+          console.error('재연결 실패:', reconnectError);
+        }
+      }, 5000);
+    }
   };
 
-  // SSE 연결 객체 반환
   return eventSource;
+}
+
+export function disconnectSSE() {
+  // 기존 연결 종료 로직
 }

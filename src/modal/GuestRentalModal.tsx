@@ -129,7 +129,7 @@ export function PlaceDetails({ data }: { data: PlaceData }) {
     <div className="flex flex-col bg-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 w-full h-60 cursor-pointer">
       <div className="flex items-start m-4 gap-3 pb-2">
         <img
-          src={data.imageUrl}
+          src={data.imageUrl[0]}
           className="w-[150px] h-[150px] object-contain rounded-lg"
           alt={data.title}
         />

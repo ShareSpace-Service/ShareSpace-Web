@@ -251,3 +251,68 @@ export async function fetchKeepRequest({
     throw new Error(result.message || '실패');
   }
 }
+
+/**
+ *  HOST가 물품 보관 요청 수락/거절
+ * @param {number} matchingId - 매칭 ID
+ * @param {boolean} isAccepted - 수락 여부
+ * @returns {Promise<MatchingRequestResult>} 물품 보관 요청 수락/거절 결과를 반환하는 Promise
+ * @throws {Error} 서버 응답이 성공적이지 않을 경우 에러 발생
+ */
+export async function fetchMatchingAccept({
+  matchingId,
+  isAccepted,
+}: {
+  matchingId: number;
+  isAccepted: boolean;
+}): Promise<MatchingRequestResult> {
+  const response = await fetchWithToken(
+    'http://localhost:8080/matching/acceptRequest/host',
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ matchingId, isAccepted }),
+    }
+  );
+  if (!response.ok) {
+    throw new Error('서버 상태 :' + response.status);
+  }
+  const result: MatchingRequestResult = await response.json();
+  if (result.success && response.ok) {
+    console.log('성공', result.message);
+    return result;
+  } else {
+    throw new Error(result.message || '실패');
+  }
+}
+
+/**
+ * HOST가 물품 보관 대기중일 때 이미지 업로드
+ * @param {number} matchingId - 매칭 ID
+ * @param {string} imageUrl - 이미지 URL
+ * @returns {Promise<MatchingRequestResult>} 이미지 업로드 결과를 반환하는 Promise
+ * @throws {Error} 서버 응답이 성공적이지 않을 경우 에러 발생
+ */
+export async function fetchMatchingUploadImage(
+  formData: FormData
+): Promise<MatchingRequestResult> {
+  const response = await fetchWithToken(
+    'http://localhost:8080/matching/uploadImage/host',
+    {
+      method: 'POST',
+      body: formData,
+    }
+  );
+  if (!response.ok) {
+    throw new Error('서버 상태 :' + response.status);
+  }
+  const result: MatchingRequestResult = await response.json();
+  if (result.success && response.ok) {
+    console.log('성공', result.message);
+    return result;
+  } else {
+    throw new Error(result.message || '실패');
+  }
+}

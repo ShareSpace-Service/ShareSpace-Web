@@ -1,3 +1,5 @@
+import { MatchingRequestResult } from '@/interface/MatchingInterface';
+
 /**
  * 주어진 이메일(username)과 비밀번호(password)를 이용하여
  * 서버에 로그인 요청을 보내는 함수
@@ -26,46 +28,43 @@ export async function login(
   return response;
 }
 
-/**
- * 주어진 쿠키 이름에 해당하는 값을 반환하는 함수
- * @param {string} name - 가져올 쿠키의 이름
- * @returns {string | undefined} 쿠키 값 또는 undefined (undefined일 경우, 토큰이 없는 것)
- */
-export function getCookieValue(name: string): string | undefined {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop()?.split(';').shift();
-}
 
 /**
  * 사용자 로그아웃 요청을 서버에 보내는 함수.
  * 이 함수는 쿠키에서 accessToken과 refreshToken을 추출하여
  * 해당 토큰들을 포함한 로그아웃 요청을 서버로 보냄
+ * 
+ * // 2024-11-13 쿠키 사용 제거
  *
- * @returns {Promise<any>} 서버의 응답 데이터가 담긴 Promise 객체
+ * @returns {Promise<MatchingRequestResult>} 서버의 응답 데이터가 담긴 Promise 객체
  * @throws {Error} 토큰이 없거나 요청이 실패할 경우 에러를 발생
  */
-export async function userLogout(): Promise<any> {
+export async function userLogout(): Promise<MatchingRequestResult> {
   const url = `http://localhost:8080/user/logout`;
-  const accessToken = getCookieValue('accessToken');
-  const refreshToken = getCookieValue('refreshToken');
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+    });
 
-  if (!accessToken || !refreshToken) {
-    throw new Error('토큰이 존재하지 않습니다.');
-  }
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      'X-Refresh-Token': refreshToken,
-      'Content-Type': 'application/json',
-    },
-    credentials: 'include',
-  });
-  if (!response.ok) {
-    const errorMessage = await response.text();
-    throw new Error(`요청에 실패했습니다: ${response.status}, ${errorMessage}`);
-  }
+    if (!response.ok) {
+      const errorMessage = await response.text();
+      throw new Error(
+        `요청에 실패했습니다: ${response.status}, ${errorMessage}`
+      );
+    }
 
-  return response.json(); // 성공적으로 로그아웃 시 응답 데이터 반환
+    const result: MatchingRequestResult = await response.json();
+
+    if (result.success) {
+      return result;
+    } else {
+      throw new Error(result.message || '로그아웃 실패');
+    }
+  } catch (error: any) {
+    throw new Error(`로그아웃 처리 중 오류 발생: ${error.message || error}`);
+  }
 }

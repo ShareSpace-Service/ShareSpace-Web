@@ -41,82 +41,88 @@ function SignUpForm({
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <form className="flex flex-col items-center gap-5 pt-12">
-      {/* 이메일 입력 */}
-      <div className="grid w-full max-w-lg items-center gap-2">
-        <Label htmlFor="email" className="text-start font-bold text-base">
-          Email
-        </Label>
-        <Input
-          type="email"
-          id="email"
-          placeholder="Email"
-          onChange={(e) => setEmail(e.target.value)}
+    <form className="flex flex-col items-center gap-5 pt-8 px-4 max-w-lg mx-auto">
+      <div className="w-full space-y-4">
+        {/* 이메일 입력 */}
+        <div className="grid w-full items-center gap-2">
+          <Label htmlFor="email" className="text-start font-bold text-base">
+            Email
+          </Label>
+          <Input
+            type="email"
+            id="email"
+            placeholder="Email"
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full"
+          />
+        </div>
+
+        {/* 비밀번호 입력 */}
+        <div className="grid w-full items-center gap-2">
+          <Label htmlFor="password" className="text-start font-bold text-base">
+            Password
+          </Label>
+          <Input
+            type="password"
+            id="password"
+            placeholder="Password"
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full"
+          />
+          {!isPasswordValid(password) && password && (
+            <p className="text-red-500 text-sm">
+              비밀번호는 문자, 숫자, 특수문자를 포함한 8-20자여야 합니다.
+            </p>
+          )}
+        </div>
+
+        {/* 비밀번호 확인 */}
+        <div className="grid w-full items-center gap-2">
+          <Label
+            htmlFor="passwordValidate"
+            className="text-start font-bold text-base"
+          >
+            Password-Validation
+          </Label>
+          <Input
+            type="password"
+            id="passwordValidate"
+            placeholder="Password-Validation"
+            onChange={(e) => setPasswordValidate(e.target.value)}
+            className="w-full"
+          />
+          {passwordValidate && password !== passwordValidate && (
+            <p className="text-red-500 text-sm">비밀번호가 일치하지 않습니다.</p>
+          )}
+        </div>
+
+        {/* 닉네임 입력 */}
+        <div className="grid w-full items-center gap-2">
+          <Label htmlFor="NickName" className="text-start font-bold text-base">
+            NickName
+          </Label>
+          <Input
+            type="text"
+            id="NickName"
+            placeholder="NickName"
+            onChange={(e) => setNickname(e.target.value)}
+            className="w-full"
+          />
+        </div>
+
+        {/* 주소 입력 (DaumPost API 연동) */}
+        <DaumPost
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          zoneCode={zoneCode}
+          setZoneCode={setZoneCode}
+          address={address}
+          setAddress={(newAddress) => {
+            setAddress(newAddress);
+            setLocation(newAddress);
+          }}
         />
       </div>
-
-      {/* 비밀번호 입력 */}
-      <div className="grid w-full max-w-lg items-center gap-2">
-        <Label htmlFor="password" className="text-start font-bold text-base">
-          Password
-        </Label>
-        <Input
-          type="password"
-          id="password"
-          placeholder="Password"
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        {!isPasswordValid(password) && password && (
-          <p className="text-red-500 text-sm">
-            비밀번호는 문자, 숫자, 특수문자를 포함한 8-20자여야 합니다.
-          </p>
-        )}
-      </div>
-
-      {/* 비밀번호 확인 */}
-      <div className="grid w-full max-w-lg items-center gap-2">
-        <Label
-          htmlFor="passwordValidate"
-          className="text-start font-bold text-base"
-        >
-          Password-Validation
-        </Label>
-        <Input
-          type="password"
-          id="passwordValidate"
-          placeholder="Password-Validation"
-          onChange={(e) => setPasswordValidate(e.target.value)}
-        />
-        {passwordValidate && password !== passwordValidate && (
-          <p className="text-red-500 text-sm">비밀번호가 일치하지 않습니다.</p>
-        )}
-      </div>
-
-      {/* 닉네임 입력 */}
-      <div className="grid w-full max-w-lg items-center gap-2">
-        <Label htmlFor="NickName" className="text-start font-bold text-base">
-          NickName
-        </Label>
-        <Input
-          type="text"
-          id="NickName"
-          placeholder="NickName"
-          onChange={(e) => setNickname(e.target.value)}
-        />
-      </div>
-
-      {/* 주소 입력 (DaumPost API 연동) */}
-      <DaumPost
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-        zoneCode={zoneCode}
-        setZoneCode={setZoneCode}
-        address={address}
-        setAddress={(newAddress) => {
-          setAddress(newAddress);
-          setLocation(newAddress);
-        }}
-      />
     </form>
   );
 }

@@ -1,0 +1,12 @@
+.swiper-button-next,
+.swiper-button-prev {
+  color: #000 !important;
+}
+
+.swiper-pagination-bullet-active {
+  background: #000 !important;
+}
+
+.swiper {
+  padding-bottom: 40px !important;
+}

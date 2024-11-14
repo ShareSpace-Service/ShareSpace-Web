@@ -2,7 +2,9 @@ import {
   ApiNoteDetailResponse,
   ApiNoteReceiverResponse,
   ApiNoteResponse,
+  NoteIsReadRequestResult,
   NoteSendRequest,
+  UnreadNoteCountResponse,
 } from '@/interface/NoteInterface';
 import { fetchWithToken, getRequest } from './Request';
 
@@ -94,6 +96,51 @@ export async function fetchNoteSend(
   const result = await response.json();
   if (response.ok && result.success) {
     console.log('쪽지 전송 성공', result.message);
+    return result;
+  } else {
+    throw new Error(result.message || '실패');
+  }
+}
+
+/**
+ * 쪽지를 읽었을 경우(쪽지를 클릭하여 디테일 모달을 열었을 경우) 쪽지 읽음 처리 요청 함수
+ * 받은 쪽지 전체 리스트 중에서 read를 비교하여 false일 경우 true로 변경하며,
+ * 기존에 읽은 쪽지의 경우 API 호출을 하지 않음
+ *
+ * @param noteId 쪽지 고유 ID 값
+ * @returns {Promise<NoteIsReadRequestResult>} 쪽지 읽음 처리 성공 여부
+ * @throws {Error} 서버 응답이 성공적이지 않을 경우 에러 발생
+ */
+export async function fetchNoteIsReadRequest(noteId: number) {
+  const response = await fetchWithToken(
+    `http://localhost:8080/note/${noteId}/read`,
+    {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  );
+  const result: NoteIsReadRequestResult = await response.json();
+  if (response.ok && result.success) {
+    console.log('요청 성공', result.message);
+    return result;
+  } else {
+    throw new Error(result.message || '요청 실패');
+  }
+}
+
+/**
+ * 읽지 않은 쪽지 개수를 조회하는 함수
+ * @returns {Promise<UnreadNoteCountResponse>} 읽지 않은 쪽지 개수 응답을 반환하는 Promise
+ * @throws {Error} 서버 응답이 성공적이지 않을 경우 에러 발생
+ */
+export async function fetchUnreadNoteCount() {
+  const result: UnreadNoteCountResponse = await getRequest(
+    'http://localhost:8080/note/unreadNote'
+  );
+  if (result.success) {
+    console.log('읽지 않은 쪽지 개수 조회 성공', result.data.unreadCount);
     return result;
   } else {
     throw new Error(result.message || '실패');

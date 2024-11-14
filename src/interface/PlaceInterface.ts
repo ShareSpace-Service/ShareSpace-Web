@@ -21,7 +21,7 @@ export interface PlaceData {
   title: string;
   category: string;
   period: number;
-  imageUrl: string;
+  imageUrl: string[];
   description: string;
 }
 
@@ -31,4 +31,42 @@ export interface ApiDetailResponse {
   status: string;
   data: PlaceData;
   success: boolean;
+}
+
+// 장소 수정 페이지 장소 정보
+export interface PlaceEditData {
+  placeId: number;
+  title: string;
+  category: string;
+  period: number;
+  location: string;
+  imageUrl: string[];
+  description: string;
+}
+
+// 장소 수정 페이지 장소 정보 API Response
+export interface ApiEditResponse {
+  message: string;
+  status: string;
+  data: PlaceEditData;
+  success: boolean;
+}
+
+// 장소 수정 페이지 장소 Form 정보
+export interface PlaceEditForm {
+  title: string;
+  category: string;
+  period: number;
+  deleteImageUrl: string[] | null;
+  newImageUrl: File[] | null;
+  description: string;
+  location: string;
+}
+
+// 장소 수정 페이지 장소 Form API Response
+export interface PlaceEditResponse {
+  message: string;
+  success: boolean;
+  status: string;
+  data: PlaceEditForm;
 }

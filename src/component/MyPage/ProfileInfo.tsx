@@ -9,10 +9,7 @@ interface ProfileEditProps {
   data?: UserData;
 }
 
-function ProfileInfo(
-  { data }: ProfileEditProps,
-  setIsOpen: (isOpen: boolean) => void
-) {
+function ProfileInfo({ data }: ProfileEditProps) {
   const { isEdit, formData, setFormData, setImage } = useMyPageStore();
   const { openModal } = useModalStore();
 
