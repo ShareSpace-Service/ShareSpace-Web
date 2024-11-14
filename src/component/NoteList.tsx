@@ -36,8 +36,14 @@ function NoteList() {
     setNoteId(noteId);
   };
   const handleClose = () => {
+    // TODO: 모달창 닫힘 버튼 클릭 시 API 재호출
     setIsOpen(false);
     setNoteId(null);
+    setNoteList((prev) =>
+      prev.map((note) =>
+        note.noteId === noteId ? { ...note, read: true } : note
+      )
+    );
   };
 
   const handleDelete = (noteId: number, event: React.MouseEvent) => {
@@ -61,8 +67,16 @@ function NoteList() {
               &times;
             </button>
           </div>
-          <div className="flex flex-col justify-center gap-3 h-full pl-4">
-            <h2 className="font-extrabold text-xl">{note.title}</h2>
+          <div
+            className={`flex flex-col justify-center gap-3 h-full pl-4 ${note.read ? 'text-[#7f7f7f]' : ''}`}
+          >
+            <div className="flex items-center w-full">
+              {!note.read && (
+                <div className="w-2 h-2 bg-[#5669FF] rounded-full mr-3 animate-pulse" />
+              )}
+              <h2 className="font-extrabold text-xl">{note.title}</h2>
+            </div>
+
             <p className="font-bold">발신자 : {note.sender}</p>
             <div>
               <p>내용 : {note.content}</p>
@@ -73,7 +87,13 @@ function NoteList() {
       {isOpen && (
         <ModalPortal>
           {noteId !== null && (
-            <NoteDetailModal handleClose={handleClose} noteId={noteId} />
+            <NoteDetailModal
+              handleClose={handleClose}
+              noteId={noteId}
+              isRead={
+                noteList.find((note) => note.noteId === noteId)?.read ?? false
+              }
+            />
           )}
         </ModalPortal>
       )}

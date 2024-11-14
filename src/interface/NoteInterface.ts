@@ -4,6 +4,7 @@ export interface Note {
   title: string;
   content: string;
   sender: string;
+  read: boolean;
 }
 // 쪽지 조회 응답
 export interface ApiNoteResponse {
@@ -54,4 +55,12 @@ export interface NoteSendRequest {
   receiverId: number;
   title: string;
   content: string;
+}
+
+// 쪽지 읽음 처리
+export interface NoteIsReadRequestResult {
+  success: boolean;
+  status: string;
+  data: null;
+  message: string;
 }

@@ -1,4 +1,4 @@
-import { fetchNoteDetail } from '@/api/Note';
+import { fetchNoteDetail, fetchNoteIsReadRequest } from '@/api/Note';
 import { ApiNoteDetailResponse } from '@/interface/NoteInterface';
 import { formatDateTime } from '@/lib/DateFormat';
 import { useQuery } from '@tanstack/react-query';
@@ -6,13 +6,21 @@ import { useQuery } from '@tanstack/react-query';
 function NoteDetailModal({
   handleClose,
   noteId,
+  isRead,
 }: {
   handleClose: () => void;
   noteId: number;
+  isRead: boolean;
 }) {
   const { data } = useQuery<ApiNoteDetailResponse>({
     queryKey: ['noteDetail'],
-    queryFn: () => fetchNoteDetail(noteId),
+    queryFn: () => {
+      const detailPromise = fetchNoteDetail(noteId);
+      if (!isRead) {
+        fetchNoteIsReadRequest(noteId);
+      }
+      return detailPromise;
+    },
   });
   console.log('detail', data);
   const noteDetail = data?.data;
