@@ -9,7 +9,6 @@ import NoteDetailModal from '@/modal/NoteDetailModal';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import useNoteStore from '@/store/NoteStore';
-import { useNotificationSSE } from '@/hooks/notification/useNotificationSSE';
 
 function NoteList() {
   const [isOpen, setIsOpen] = useState<boolean>(false);

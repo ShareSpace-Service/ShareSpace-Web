@@ -1,10 +1,8 @@
 import HomeLogo from '@/assets/HomeLogo.svg';
-import Message from '@/assets/Message.svg';
 import { Link } from 'react-router-dom';
 import { ModalPortal } from '@/lib/ModalPortal';
 import { useState } from 'react';
 import AlarmModal from '@/modal/AlarmModal';
-import HeaderIcon from '@/component/ui/HeaderIcon';
 import AlarmBox from '@/component/notification/AlarmBox';
 import NoteIcon from '@/component/note/NoteIcon';
 
