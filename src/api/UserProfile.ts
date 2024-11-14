@@ -1,5 +1,4 @@
 import { fetchWithToken, getRequest } from './Request';
-import { UserData } from '@/components/ui/alarmbox';
 import { AddressResponse } from '@/component/ui/Address';
 import { ApiResponse, ApiUpdateResponse } from '@/interface/MyPageInterface';
 

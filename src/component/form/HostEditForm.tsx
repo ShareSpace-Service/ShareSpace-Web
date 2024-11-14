@@ -2,7 +2,7 @@ import ButtonProps from '../ui/ButtonProps';
 import { Input } from '@/components/ui/input';
 import MapIcon from '@/assets/Map.svg';
 import { Textarea } from '@/components/ui/textarea';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { usePlaceEditStore } from '@/store/PlaceEdit';
 import DaumPostcodeEmbed, { Address } from 'react-daum-postcode';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -31,7 +31,7 @@ function HostEditForm() {
     originalImage,
     setOriginalImage,
   } = usePlaceEditStore();
-  const [zoneCode, setZoneCode] = useState<string>('');
+  // const [zoneCode, setZoneCode] = useState<string>('');
   const objectUrls = useRef<string[]>([]);
 
   const mutation = useMutation({
@@ -73,7 +73,7 @@ function HostEditForm() {
     if (formData) {
       setFormData({ ...formData, location: fullAddress });
     }
-    setZoneCode(addressData.zonecode);
+    // setZoneCode(addressData.zonecode);
     setIsOpen(false);
   };
 

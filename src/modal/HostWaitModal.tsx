@@ -12,10 +12,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { useRef } from 'react';
 import ButtonProps from '@/component/ui/ButtonProps';
-import {
-  MatchingApiResponse,
-  MatchingRequestResult,
-} from '@/interface/MatchingInterface';
+import { MatchingRequestResult } from '@/interface/MatchingInterface';
 
 function HostWaitModal() {
   const { matchingId, clearMatchingId } = useMatchingIdStore();

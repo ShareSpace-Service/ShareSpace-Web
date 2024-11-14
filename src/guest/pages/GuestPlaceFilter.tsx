@@ -6,7 +6,6 @@ import { useModalStore } from '@/store/ModalState';
 import { usePlaceIdStore } from '@/store/PlaceId';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
-import { useLocation } from 'react-router-dom';
 
 function GuestPlaceFilter() {
   const { isOpen, openModal } = useModalStore();

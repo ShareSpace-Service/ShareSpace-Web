@@ -28,7 +28,7 @@ function MyPageCard() {
 
   const { isEdit, setIsEdit, formData, setFormData, image } = useMyPageStore();
   const { isOpen, closeModal } = useModalStore();
-  const [zoneCode, setZoneCode] = useState<string>(''); // location 선택
+  // const [zoneCode, setZoneCode] = useState<string>('');
   const [view, setView] = useState<React.ReactNode | null>(null);
   const { role, setRole } = useRoleStore();
 
@@ -113,7 +113,7 @@ function MyPageCard() {
     if (formData) {
       setFormData({ ...formData, location: fullAddress });
     }
-    setZoneCode(addressData.zonecode);
+    // setZoneCode(addressData.zonecode);
     closeModal();
   };
 
