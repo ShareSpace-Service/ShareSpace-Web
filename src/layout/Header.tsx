@@ -1,11 +1,10 @@
 import HomeLogo from '@/assets/HomeLogo.svg';
-import Message from '@/assets/Message.svg';
 import { Link } from 'react-router-dom';
 import { ModalPortal } from '@/lib/ModalPortal';
 import { useState } from 'react';
 import AlarmModal from '@/modal/AlarmModal';
-import HeaderIcon from '@/component/ui/HeaderIcon';
-import AlarmBox from '@/components/ui/alarmbox';
+import AlarmBox from '@/component/notification/AlarmBox';
+import NoteIcon from '@/component/note/NoteIcon';
 
 function Header() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -27,11 +26,8 @@ function Header() {
           </Link>
         </div>
         <div className="flex gap-2">
-          {/* NotificationBell 사용 */}
           <AlarmBox onClick={openModal} />
-          <Link to="/message">
-            <HeaderIcon src={Message} alt="Message" />
-          </Link>
+          <NoteIcon />
         </div>
       </div>
       {isOpen && (

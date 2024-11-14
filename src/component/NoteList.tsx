@@ -1,14 +1,21 @@
-import { fetchNoteDelete, fetchNoteList } from '@/api/Note';
+import {
+  fetchNoteDelete,
+  fetchNoteList,
+  fetchUnreadNoteCount,
+} from '@/api/Note';
 import { ApiNoteResponse } from '@/interface/NoteInterface';
 import { ModalPortal } from '@/lib/ModalPortal';
 import NoteDetailModal from '@/modal/NoteDetailModal';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
+import useNoteStore from '@/store/NoteStore';
 
 function NoteList() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [noteId, setNoteId] = useState<number | null>(null);
   const [noteList, setNoteList] = useState<ApiNoteResponse['data']>([]);
+  const { setUnreadCount } = useNoteStore();
+  const queryClient = useQueryClient();
 
   const { data } = useQuery<ApiNoteResponse>({
     queryKey: ['notes'],
@@ -25,8 +32,19 @@ function NoteList() {
   const mutation = useMutation<{ noteId: number }, unknown, { noteId: number }>(
     {
       mutationFn: ({ noteId }) => fetchNoteDelete(noteId),
-      onSuccess: (_, { noteId }) => {
+      onSuccess: async (_, { noteId }) => {
+        // 노트 리스트에서 삭제
         setNoteList((prev) => prev.filter((note) => note.noteId !== noteId));
+
+        try {
+          // 읽지 않은 쪽지 개수 갱신
+          const unreadCountResponse = await fetchUnreadNoteCount();
+          if (unreadCountResponse.success) {
+            setUnreadCount(unreadCountResponse.data.unreadCount);
+          }
+        } catch (error) {
+          console.error('읽지 않은 쪽지 개수 갱신 실패:', error);
+        }
       },
     }
   );
@@ -35,15 +53,29 @@ function NoteList() {
     setIsOpen(true);
     setNoteId(noteId);
   };
-  const handleClose = () => {
-    // TODO: 모달창 닫힘 버튼 클릭 시 API 재호출
+  const handleClose = async () => {
     setIsOpen(false);
     setNoteId(null);
+
+    // 노트 리스트 상태 업데이트
     setNoteList((prev) =>
       prev.map((note) =>
         note.noteId === noteId ? { ...note, read: true } : note
       )
     );
+
+    try {
+      // 읽지 않은 쪽지 개수 갱신
+      const unreadCountResponse = await fetchUnreadNoteCount();
+      if (unreadCountResponse.success) {
+        setUnreadCount(unreadCountResponse.data.unreadCount);
+      }
+
+      // notes 쿼리 무효화 (선택적)
+      queryClient.invalidateQueries({ queryKey: ['notes'] });
+    } catch (error) {
+      console.error('읽지 않은 쪽지 개수 갱신 실패:', error);
+    }
   };
 
   const handleDelete = (noteId: number, event: React.MouseEvent) => {

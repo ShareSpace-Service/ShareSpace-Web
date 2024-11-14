@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import AlarmList from '@/component/AlarmList';
+import AlarmList from '@/component/notification/AlarmList';
 import { fetchReadAllNotifications } from '@/api/Notification';
 import useNotificationStore from '@/store/NotificationStore';
 
