@@ -1,10 +1,10 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useCallback, useEffect } from 'react';
 import { Notification } from '@/interface/NotificationInterface';
 import { fetchNotifications } from '@/api/Notification';
 
 /**
  * 알림 목록의 무한 스크롤 기능을 관리하는 커스텀 훅
- * 
+ *
  * @param {number} size - 한 번에 불러올 알림의 개수 (기본값: 5)
  * @returns {Object} 알림 목록 상태와 관련 메서드들을 포함한 객체
  * @property {Notification[]} notifications - 현재 표시된 알림 목록
@@ -19,47 +19,59 @@ export const useNotificationScroll = (size: number = 5) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const listInnerRef = useRef<HTMLDivElement | null>(null);
+  const initialLoadRef = useRef(false);
 
-  /**
-   * 서버로부터 추가 알림을 불러오는 함수
-   * 중복 알림을 필터링하고 새로운 알림을 기존 목록에 추가
-   * 
-   * @async
-   * @throws {Error} 알림 데이터 로드 실패 시 에러
-   */
-  const fetchMoreNotifications = async () => {
+  const fetchMoreNotifications = useCallback(async () => {
+    if (isLoading || !hasMore) return;
+
     try {
+      setIsLoading(true);
       const data = await fetchNotifications(page, size);
 
       setNotifications((prev) => {
         const uniqueNotifications = [...prev, ...data].filter(
           (notification, index, self) =>
-            index === self.findIndex(
+            index ===
+            self.findIndex(
               (n) => n.notificationId === notification.notificationId
             )
         );
         return uniqueNotifications;
       });
 
-      if (data.length < size) setHasMore(false);
+      if (data.length < size) {
+        setHasMore(false);
+      }
     } catch (error) {
       console.error('알림을 불러오는 중 오류 발생:', error);
+    } finally {
+      setIsLoading(false);
     }
-  };
+  }, [page, size, hasMore, isLoading]);
 
-  /**
-   * 스크롤 이벤트를 처리하는 함수
-   * 스크롤이 하단에 가까워지면 추가 데이터를 로드하기 위해 페이지 번호를 증가
-   */
-  const handleScroll = () => {
-    if (listInnerRef.current) {
-      const { scrollTop, scrollHeight, clientHeight } = listInnerRef.current;
-      if (scrollTop + clientHeight >= scrollHeight - 5 && hasMore) {
-        setPage((prevPage) => prevPage + 1);
-      }
+  const handleScroll = useCallback(() => {
+    if (!listInnerRef.current || isLoading) return;
+
+    const { scrollTop, scrollHeight, clientHeight } = listInnerRef.current;
+    if (scrollTop + clientHeight >= scrollHeight - 5 && hasMore) {
+      setPage((prevPage) => prevPage + 1);
     }
-  };
+  }, [hasMore, isLoading]);
+
+  useEffect(() => {
+    if (!initialLoadRef.current) {
+      initialLoadRef.current = true;
+      fetchMoreNotifications();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (page > 0) {
+      fetchMoreNotifications();
+    }
+  }, [page]);
 
   return {
     notifications,
@@ -69,5 +81,6 @@ export const useNotificationScroll = (size: number = 5) => {
     listInnerRef,
     handleScroll,
     fetchMoreNotifications,
+    isLoading,
   };
 };
