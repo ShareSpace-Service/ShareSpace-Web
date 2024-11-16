@@ -1,54 +1,83 @@
 import { useState, useEffect } from 'react';
 import { useNotificationScroll } from '@/hooks/notification/useNotificationScroll';
-import { fetchDeleteNotifications } from '@/api/Notification';
-import NotificationList from '@/component/notification/NotificationList';
-import EmptyNotification from '@/component/notification/EmptyNotification'
+import {
+  fetchDeleteNotifications,
+  fetchNotifications,
+} from '@/api/Notification';
+import EmptyNotification from '@/component/notification/EmptyNotification';
+import NotificationItem from './NotificationItem';
+import { useNotificationSSE } from '@/hooks/notification/useNotificationSSE';
 
 /**
  * 알림 목록을 표시하고 관리하는 컴포넌트
  * 무한 스크롤을 지원하며, 각 알림 항목을 클릭하여 삭제 가능
- * 
+ *
  * @component
  * @returns {JSX.Element} 알림 목록을 렌더링하는 JSX 요소
  */
-function AlarmList(): JSX.Element {
+function AlarmList({
+  isDeletingAll = false,
+}: {
+  isDeletingAll?: boolean;
+}): JSX.Element {
   const {
     notifications,
     setNotifications,
     hasMore,
     listInnerRef,
     handleScroll,
-    fetchMoreNotifications
+    fetchMoreNotifications,
   } = useNotificationScroll();
 
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
-    if (notifications.length === 0 && hasMore) {
+    if (
+      notifications.length === 0 &&
+      hasMore &&
+      !isDeleting &&
+      !isDeletingAll
+    ) {
       fetchMoreNotifications();
     }
-  }, [notifications, hasMore]);
+  }, [notifications, hasMore, isDeleting, isDeletingAll]);
 
   const handleDelete = async (notificationId: number) => {
     try {
       setDeletingId(notificationId);
-      
+      setIsDeleting(true);
+
       setTimeout(async () => {
         await fetchDeleteNotifications(notificationId);
         setNotifications((prev) =>
-          prev.filter((notification) => notification.notificationId !== notificationId)
+          prev.filter(
+            (notification) => notification.notificationId !== notificationId
+          )
         );
         setDeletingId(null);
-        
-        if (hasMore) {
+        setIsDeleting(false);
+
+        if (notifications.length <= 1 && hasMore) {
           fetchMoreNotifications();
         }
       }, 300);
     } catch (error) {
       console.error('알림 삭제 중 오류 발생:', error);
       setDeletingId(null);
+      setIsDeleting(false);
     }
   };
+
+  // 전체 삭제 시 애니메이션 효과를 위한 지연 처리
+  useEffect(() => {
+    if (isDeletingAll) {
+      // 애니메이션이 끝난 후에 notifications를 비움
+      setTimeout(() => {
+        setNotifications([]);
+      }, 500); // 애니메이션 시간과 맞춤
+    }
+  }, [isDeletingAll]);
 
   return (
     <div
@@ -57,11 +86,18 @@ function AlarmList(): JSX.Element {
       ref={listInnerRef}
     >
       {notifications.length > 0 ? (
-        <NotificationList
-          notifications={notifications}
-          deletingId={deletingId}
-          onDelete={handleDelete}
-        />
+        <div className="space-y-4">
+          {notifications.map((notification) => (
+            <NotificationItem
+              key={notification.notificationId}
+              notification={notification}
+              isDeleting={
+                isDeletingAll || deletingId === notification.notificationId
+              }
+              onDelete={handleDelete}
+            />
+          ))}
+        </div>
       ) : (
         <EmptyNotification />
       )}

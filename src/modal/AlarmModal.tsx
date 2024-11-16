@@ -1,18 +1,40 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import AlarmList from '@/component/notification/AlarmList';
-import { fetchReadAllNotifications } from '@/api/Notification';
+import {
+  fetchReadAllNotifications,
+  fetchDeleteAllNotifications,
+} from '@/api/Notification';
 import useNotificationStore from '@/store/NotificationStore';
 
 function AlarmModal({ closeModal }: { closeModal: () => void }) {
   const { resetUnreadCount } = useNotificationStore();
+  const [isDeletingAll, setIsDeletingAll] = useState(false);
+
   const handleClose = async () => {
     try {
-      await fetchReadAllNotifications(); // 모든 알림 읽음 처리
+      await fetchReadAllNotifications();
       resetUnreadCount();
       closeModal();
     } catch (error) {
       console.error('알림 읽음 처리 실패:', error);
       closeModal();
+    }
+  };
+
+  const handleDeleteAll = async () => {
+    try {
+      setIsDeletingAll(true);  // 삭제 애니메이션 시작
+      
+      // 애니메이션을 위한 지연
+      setTimeout(async () => {
+        await fetchDeleteAllNotifications();
+        resetUnreadCount();
+        setIsDeletingAll(false);
+      }, 500);  // 애니메이션 시간과 맞춤
+      
+    } catch (error) {
+      console.error('알림 전체 삭제 실패:', error);
+      setIsDeletingAll(false);
     }
   };
 
@@ -43,15 +65,26 @@ function AlarmModal({ closeModal }: { closeModal: () => void }) {
       onClick={handleOutsideClick}
     >
       <div className="signUpBg w-[500px] h-auto p-6 rounded-lg relative">
-        <button
-          onClick={handleClose}
-          className="absolute top-3 right-3 text-xl font-bold text-gray-600 hover:text-gray-800"
-        >
-          &times;
-        </button>
-        <h2 className="text-2xl font-bold mb-4">알림</h2>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-bold">알림</h2>
+          <div className="flex gap-2">
+            <button
+              onClick={handleDeleteAll}
+              className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+              disabled={isDeletingAll}
+            >
+              모두 삭제
+            </button>
+            <button
+              onClick={handleClose}
+              className="text-xl font-bold text-gray-600 hover:text-gray-800"
+            >
+              &times;
+            </button>
+          </div>
+        </div>
         <div>
-          <AlarmList />
+          <AlarmList isDeletingAll={isDeletingAll} />
         </div>
       </div>
     </div>
