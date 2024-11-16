@@ -1,41 +1,44 @@
-// import { getCookieValue } from '@/api/Login';
-// class TokenRefreshManager {
-//   private isRefreshing = false;
-//   private refreshSubscribers: Array<(token: string) => void> = [];
+class TokenRefreshManager {
+  private isRefreshing = false;
+  private refreshSubscribers: Array<() => void> = [];
 
-//   async refreshToken(): Promise<boolean> {
-//     if (this.isRefreshing) {
-//       // 이미 갱신 중이면 완료될 때까지 대기
-//       return new Promise((resolve) => {
-//         this.refreshSubscribers.push(() => resolve(true));
-//       });
-//     }
+  public addSubscriber(callback: () => void) {
+    this.refreshSubscribers.push(callback);
+  }
 
-//     this.isRefreshing = true;
+  private onRefreshed() {
+    this.refreshSubscribers.forEach((callback) => callback());
+    this.refreshSubscribers = [];
+  }
 
-//     try {
-//       const response = await fetch('http://localhost:8080/token/reissue', {
-//         method: 'POST',
-//         credentials: 'include',
-//       });
+  async refreshToken(): Promise<boolean> {
+    if (this.isRefreshing) {
+      return new Promise<boolean>((resolve) => {
+        this.addSubscriber(() => resolve(true));
+      });
+    }
 
-//       if (!response.ok) {
-//         throw new Error('토큰 갱신 실패');
-//       }
+    this.isRefreshing = true;
 
-//       this.isRefreshing = false;
-//       this.refreshSubscribers.forEach((cb) =>
-//         cb(getCookieValue('accessToken') || '')
-//       );
-//       this.refreshSubscribers = [];
+    try {
+      const response = await fetch('http://localhost:8080/token/reissue', {
+        method: 'POST',
+        credentials: 'include',
+      });
 
-//       return true;
-//     } catch (error) {
-//       this.isRefreshing = false;
-//       this.refreshSubscribers = [];
-//       return false;
-//     }
-//   }
-// }
+      if (!response.ok) {
+        throw new Error('토큰 갱신 실패');
+      }
 
-// export default new TokenRefreshManager();
+      this.isRefreshing = false;
+      this.onRefreshed();
+      return true;
+    } catch (error) {
+      this.isRefreshing = false;
+      this.refreshSubscribers = [];
+      return false;
+    }
+  }
+}
+
+export default new TokenRefreshManager();
