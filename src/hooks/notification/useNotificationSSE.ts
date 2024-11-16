@@ -15,11 +15,7 @@ import useNoteStore from '@/store/NoteStore';
  * @property {number} unreadCount - 읽지 않은 알림의 개수
  * @property {Function} showNotification - 새로운 알림을 표시하는 함수
  */
-interface UseNotificationSSEProps {
-  onMessage?: () => void;
-}
-
-export const useNotificationSSE = ({ onMessage }: UseNotificationSSEProps = {}) => {
+export const useNotificationSSE = () => {
   const [hasNewNotification, setHasNewNotification] = useState(false);
   const [latestNotification, setLatestNotification] = useState('');
   const [isVisible, setIsVisible] = useState(false);
@@ -78,40 +74,29 @@ export const useNotificationSSE = ({ onMessage }: UseNotificationSSEProps = {}) 
    * 컴포넌트 마운트 시 SSE 연결을 설정하고, 언마운트 시 연결을 정리
    */
   useEffect(() => {
-    loadUnreadCounts();
+    // 최초 한 번만 실행
+    if (!sseConnectionRef.current) {
+      loadUnreadCounts();
 
-    const setupSSE = () => {
-      if (sseConnectionRef.current) return;
+      const eventSource = connectSSE(async (event: MessageEvent) => {
+        try {
+          const newNotification = event.data;
+          showNotification(newNotification);
+          loadUnreadCounts();
+        } catch (parseError) {
+          console.error('SSE 메시지 파싱 실패:', parseError);
+        }
+      });
 
-      try {
-        const eventSource = connectSSE(async (event: MessageEvent) => {
-          try {
-            const newNotification = event.data;
-            showNotification(newNotification);
-            loadUnreadCounts();
-            onMessage?.();
-          } catch (parseError) {
-            console.error('SSE 메시지 파싱 실패:', parseError);
-          }
-        });
-        sseConnectionRef.current = eventSource;
-      } catch (error) {
-        console.error('SSE 연결 실패:', error);
-      }
-    };
-
-    setupSSE();
+      sseConnectionRef.current = eventSource;
+    }
 
     return () => {
-      if (sseConnectionRef.current) {
-        sseConnectionRef.current.close();
-        sseConnectionRef.current = null;
-      }
       if (timerRef.current) {
         clearTimeout(timerRef.current);
       }
     };
-  }, [onMessage]);
+  }, []);
 
   return {
     hasNewNotification,

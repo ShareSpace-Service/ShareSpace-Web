@@ -49,3 +49,9 @@ export async function fetchUnreadNotificationsCount(): Promise<number> {
   const result = await getRequest('http://localhost:8080/notification/unread-alarms');
   return result.data.unreadNotificationNum;
 }
+
+export async function fetchDeleteAllNotifications(): Promise<any> {
+  const url = `http://localhost:8080/notification/all`;
+  const result = await deleteRequest(url);
+  return result;
+}
