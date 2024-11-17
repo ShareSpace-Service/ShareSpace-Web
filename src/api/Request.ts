@@ -1,3 +1,5 @@
+import TokenRefreshManager from '@/lib/TokenManager';
+
 export async function fetchWithToken(
   url: string,
   options: RequestInit = {}
@@ -12,13 +14,23 @@ export async function fetchWithToken(
     credentials: 'include',
   });
 
-  // accessToken 만료되면 로그인 페이지로 이동
-  if (response.status === 401) {
-    alert('세션이 만료되었습니다. 다시 로그인해주세요.');
-    window.location.href = '/login';
+  if (response.status === 401 && !url.includes('/user/logout')) {
+    const isRefreshSuccess = await TokenRefreshManager.refreshToken();
+
+    if (isRefreshSuccess) {
+      response = await fetch(url, {
+        ...options,
+        headers,
+        credentials: 'include',
+      });
+    } else {
+      alert('세션이 만료되었습니다. 다시 로그인해주세요.');
+      window.location.href = '/login';
+      throw new Error('인증 실패');
+    }
   }
 
-  if (!response.ok) {
+  if (!response.ok && !url.includes('/user/logout')) {
     throw new Error(`요청에 실패했습니다: ${response.status}`);
   }
 

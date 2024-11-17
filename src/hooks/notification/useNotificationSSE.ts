@@ -4,6 +4,7 @@ import { fetchUnreadNotificationsCount } from '@/api/Notification';
 import { fetchUnreadNoteCount } from '@/api/Note';
 import useNotificationStore from '@/store/NotificationStore';
 import useNoteStore from '@/store/NoteStore';
+import { useAuthStore } from '@/store/AuthStore';
 
 /**
  * SSE(Server-Sent Events)를 통한 실시간 알림 기능을 관리하는 커스텀 훅
@@ -21,6 +22,7 @@ export const useNotificationSSE = () => {
   const [isVisible, setIsVisible] = useState(false);
   const { unreadCount, setUnreadCount } = useNotificationStore();
   const { setUnreadCount: setUnreadNoteCount } = useNoteStore();
+  const { isAuthenticated } = useAuthStore();
 
   const timerRef = useRef<NodeJS.Timeout>();
   const sseConnectionRef = useRef<EventSource | null>(null);
@@ -69,15 +71,19 @@ export const useNotificationSSE = () => {
     }, 3000);
   };
 
-  /**
-   * SSE 연결 설정 및 정리를 처리하는 useEffect
-   * 컴포넌트 마운트 시 SSE 연결을 설정하고, 언마운트 시 연결을 정리
-   */
-  useEffect(() => {
-    // 최초 한 번만 실행
-    if (!sseConnectionRef.current) {
-      loadUnreadCounts();
+  // SSE 연결 해제 함수
+  const disconnectSSE = () => {
+    if (sseConnectionRef.current) {
+      sseConnectionRef.current.close();
+      sseConnectionRef.current = null;
+    }
+  };
 
+  useEffect(() => {
+    // 인증된 사용자만 SSE 연결 및 알림 카운트 로드
+    if (isAuthenticated && !sseConnectionRef.current) {
+      loadUnreadCounts();
+      
       const eventSource = connectSSE(async (event: MessageEvent) => {
         try {
           const newNotification = event.data;
@@ -89,14 +95,20 @@ export const useNotificationSSE = () => {
       });
 
       sseConnectionRef.current = eventSource;
+    } else if (!isAuthenticated) {
+      // 비인증 상태일 때 연결 해제 및 상태 초기화
+      disconnectSSE();
+      setUnreadCount(0);
+      setUnreadNoteCount(0);
     }
 
     return () => {
       if (timerRef.current) {
         clearTimeout(timerRef.current);
       }
+      disconnectSSE();
     };
-  }, []);
+  }, [isAuthenticated]); // isAuthenticated가 변경될 때마다 실행
 
   return {
     hasNewNotification,

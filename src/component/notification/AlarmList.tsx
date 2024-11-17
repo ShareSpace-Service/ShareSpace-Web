@@ -1,12 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNotificationScroll } from '@/hooks/notification/useNotificationScroll';
-import {
-  fetchDeleteNotifications,
-  fetchNotifications,
-} from '@/api/Notification';
+import { fetchDeleteNotifications } from '@/api/Notification';
 import EmptyNotification from '@/component/notification/EmptyNotification';
 import NotificationItem from './NotificationItem';
-import { useNotificationSSE } from '@/hooks/notification/useNotificationSSE';
 
 /**
  * 알림 목록을 표시하고 관리하는 컴포넌트
@@ -32,17 +28,6 @@ function AlarmList({
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  useEffect(() => {
-    if (
-      notifications.length === 0 &&
-      hasMore &&
-      !isDeleting &&
-      !isDeletingAll
-    ) {
-      fetchMoreNotifications();
-    }
-  }, [notifications, hasMore, isDeleting, isDeletingAll]);
-
   const handleDelete = async (notificationId: number) => {
     try {
       setDeletingId(notificationId);
@@ -55,12 +40,13 @@ function AlarmList({
             (notification) => notification.notificationId !== notificationId
           )
         );
-        setDeletingId(null);
-        setIsDeleting(false);
 
-        if (notifications.length <= 1 && hasMore) {
+        if (notifications.length <= 5 && hasMore) {
           fetchMoreNotifications();
         }
+
+        setDeletingId(null);
+        setIsDeleting(false);
       }, 300);
     } catch (error) {
       console.error('알림 삭제 중 오류 발생:', error);
