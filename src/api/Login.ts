@@ -1,5 +1,6 @@
 import { postRequest } from '@/api/Request';
 import { LogoutResponse } from '@/interface/AuthInterface';
+import { useAuthStore } from '@/store/AuthStore';
 
 /**
  * 주어진 이메일(username)과 비밀번호(password)를 이용하여
@@ -25,6 +26,10 @@ export async function login(
     credentials: 'include',
   });
 
+  if (response.ok) {
+    useAuthStore.getState().setIsAuthenticated(true);
+  }
+
   return response;
 }
 
@@ -45,6 +50,7 @@ export async function userLogout(): Promise<LogoutResponse> {
     if (result.success) {
       localStorage.clear();
       sessionStorage.clear();
+      useAuthStore.getState().setIsAuthenticated(false);
     }
 
     return result;

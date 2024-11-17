@@ -1,4 +1,5 @@
 import { EventSourcePolyfill } from 'event-source-polyfill';
+import { useAuthStore } from '@/store/AuthStore';
 
 export function connectSSE(
   onMessage: (event: MessageEvent) => void
@@ -27,23 +28,29 @@ export function connectSSE(
 
   eventSource.onerror = (error) => {
     console.error('SSE 연결 오류 발생:', error);
+    
+    if ((error as any).status === 401) {
+      console.log('인증되지 않은 사용자. SSE 연결 종료');
+      eventSource.close();
+      return;
+    }
 
     if (
       eventSource.readyState === EventSource.CLOSED ||
       eventSource.readyState === EventSource.CONNECTING
     ) {
       console.log('연결이 종료되거나 연결 중 문제 발생. 재연결 시도');
-      
       eventSource.close();
-
-      // 재연결 시도
-      setTimeout(() => {
-        try {
-          connectSSE(onMessage);
-        } catch (reconnectError) {
-          console.error('재연결 실패:', reconnectError);
-        }
-      }, 5000);
+      
+      if (useAuthStore.getState().isAuthenticated) {
+        setTimeout(() => {
+          try {
+            connectSSE(onMessage);
+          } catch (reconnectError) {
+            console.error('재연결 실패:', reconnectError);
+          }
+        }, 5000);
+      }
     }
   };
 
