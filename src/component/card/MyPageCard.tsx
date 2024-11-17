@@ -9,11 +9,13 @@ import { useMyPageStore } from '@/store/MyPageState';
 import { ApiResponse, ApiUpdateResponse } from '@/interface/MyPageInterface';
 import ProfileInfo from '../MyPage/ProfileInfo';
 import { useModalStore } from '@/store/ModalState';
-import { MatchingRequestResult } from '@/interface/MatchingInterface';
 import History from '@/pages/History';
 import Question from '@/pages/Question';
 import PlaceEdit from '@/pages/PlaceEdit';
 import { useRoleStore } from '@/store/Role';
+import { useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
+import { LogoutResponse } from '@/interface/AuthInterface';
 
 interface Title {
   label: 'History' | 'Question' | '장소 수정' | 'Logout'; // 가능한 label 값을 명시적으로 정의
@@ -31,6 +33,8 @@ function MyPageCard() {
   // const [zoneCode, setZoneCode] = useState<string>('');
   const [view, setView] = useState<React.ReactNode | null>(null);
   const { role, setRole } = useRoleStore();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (data?.data?.role) {
@@ -61,17 +65,25 @@ function MyPageCard() {
     setShowLogoutModal(true); // 모달 열기
   };
 
-  const { mutate: logout } = useMutation<MatchingRequestResult, Error>({
+  const { mutate: logout } = useMutation<LogoutResponse, Error>({
     mutationFn: () => userLogout(),
-    onSuccess: (result) => {
+    onSuccess: async (result) => {
       if (result.success) {
-        window.location.replace('/login');
+        // 1. React Query 캐시 초기화
+        queryClient.clear();
+
+        // 2. 로컬 스토리지/세션 스토리지 정리
+        localStorage.clear();
+        sessionStorage.clear();
+
+        // 3. 프로그래매틱 네비게이션
+        navigate('/login', { replace: true });
       } else {
-        console.error('로그아웃 실패!', result.message);
+        console.error('로그아웃 실패:', result.message);
       }
     },
     onError: (error) => {
-      console.error('로그아웃 실패!', error);
+      console.error('로그아웃 오류:', error);
     },
   });
 

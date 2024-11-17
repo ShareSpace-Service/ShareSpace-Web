@@ -1,4 +1,5 @@
-import { MatchingRequestResult } from '@/interface/MatchingInterface';
+import { postRequest } from '@/api/Request';
+import { LogoutResponse } from '@/interface/AuthInterface';
 
 /**
  * 주어진 이메일(username)과 비밀번호(password)를 이용하여
@@ -24,47 +25,30 @@ export async function login(
     credentials: 'include',
   });
 
-  // 2024-10-25 에러가 발생해도 response를 그대로 반환하도록 수정
   return response;
 }
-
 
 /**
  * 사용자 로그아웃 요청을 서버에 보내는 함수.
  * 이 함수는 쿠키에서 accessToken과 refreshToken을 추출하여
  * 해당 토큰들을 포함한 로그아웃 요청을 서버로 보냄
- * 
+ *
  * // 2024-11-13 쿠키 사용 제거
  *
- * @returns {Promise<MatchingRequestResult>} 서버의 응답 데이터가 담긴 Promise 객체
+ * @returns {Promise<LogoutResponse>} 서버의 응답 데이터가 담긴 Promise 객체
  * @throws {Error} 토큰이 없거나 요청이 실패할 경우 에러를 발생
  */
-export async function userLogout(): Promise<MatchingRequestResult> {
-  const url = `http://localhost:8080/user/logout`;
+export async function userLogout(): Promise<LogoutResponse> {
   try {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
-    });
-
-    if (!response.ok) {
-      const errorMessage = await response.text();
-      throw new Error(
-        `요청에 실패했습니다: ${response.status}, ${errorMessage}`
-      );
-    }
-
-    const result: MatchingRequestResult = await response.json();
+    const result = await postRequest('http://localhost:8080/user/logout', {});
 
     if (result.success) {
-      return result;
-    } else {
-      throw new Error(result.message || '로그아웃 실패');
+      localStorage.clear();
+      sessionStorage.clear();
     }
+
+    return result;
   } catch (error: any) {
-    throw new Error(`로그아웃 처리 중 오류 발생: ${error.message || error}`);
+    throw new Error(`로그아웃 처리 중 오류 발생: ${error.message}`);
   }
 }

@@ -14,7 +14,7 @@ export async function fetchWithToken(
     credentials: 'include',
   });
 
-  if (response.status === 401) {
+  if (response.status === 401 && !url.includes('/user/logout')) {
     const isRefreshSuccess = await TokenRefreshManager.refreshToken();
 
     if (isRefreshSuccess) {
@@ -30,7 +30,7 @@ export async function fetchWithToken(
     }
   }
 
-  if (!response.ok) {
+  if (!response.ok && !url.includes('/user/logout')) {
     throw new Error(`요청에 실패했습니다: ${response.status}`);
   }
 
