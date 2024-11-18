@@ -8,6 +8,7 @@ import { useModalStore } from '@/store/ModalState';
 import { useMatchingIdStore } from '@/store/MatchingId';
 import { useStatusStore } from '@/store/ProductStatus';
 import { usePlaceIdStore } from '@/store/PlaceId';
+import { formatDistance } from '@/lib/formatDistance';
 
 function UnassignedModal() {
   const { openModal } = useModalStore();
@@ -74,7 +75,9 @@ function UnassignedModal() {
               </div>
               {/* 하단 거리 */}
               <div className="flex flex-col items-start pl-4 h-full">
-                <p className="text-black font-bold">{place.distance}</p>
+                <p className="text-black font-bold">
+                  {formatDistance(place.distance)}
+                </p>
               </div>
             </div>
           ))}

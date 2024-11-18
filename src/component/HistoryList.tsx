@@ -4,6 +4,7 @@ import ButtonProps from './ui/ButtonProps';
 import { useEffect, useState } from 'react';
 import HistoryDetailModal from '@/modal/HistoryDetailModal';
 import { ApiResponse, MatchingItem } from '@/interface/HistoryInterface';
+import { formatDistance } from '@/lib/formatDistance';
 
 function HistoryList() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -87,7 +88,9 @@ function HistoryList() {
           </div>
           {/* 하단 거리 */}
           <div className="flex flex-col items-start pl-4 h-full">
-            <p className="text-black font-bold">{history.distance}</p>
+            <p className="text-black font-bold">
+              {formatDistance(history.distance)}
+            </p>
           </div>
         </div>
       ))}
