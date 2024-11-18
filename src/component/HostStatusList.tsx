@@ -6,6 +6,7 @@ import { useRoleStore } from '@/store/Role';
 import { hostMenuTitle } from './ui/HostProductMenu';
 import ButtonProps from './ui/ButtonProps';
 import HostModalRender from '@/modal/HostModalRender';
+import { formatDistance } from '@/lib/formatDistance';
 
 function HostStatusList() {
   const { filteredData } = useProductStore();
@@ -54,7 +55,9 @@ function HostStatusList() {
           </div>
           {/* 하단 거리 */}
           <div className="flex flex-col items-start pl-4 h-full">
-            <p className="text-black font-bold">{data.distance}</p>
+            <p className="text-black font-bold">
+              {formatDistance(data.distance)}
+            </p>
           </div>
         </div>
       ))}

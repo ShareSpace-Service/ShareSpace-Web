@@ -1,4 +1,5 @@
 import { fetchProductList } from '@/api/Place';
+import { formatDistance } from '@/lib/formatDistance';
 import { ModalPortal } from '@/lib/ModalPortal';
 import GuestKeepRequestModal from '@/modal/GuestKeepRequestModal';
 import { useModalStore } from '@/store/ModalState';
@@ -48,7 +49,9 @@ function GuestProductList() {
           </div>
           {/* 하단 거리 */}
           <div className="flex flex-col items-start pl-4 h-full">
-            <p className="text-black font-bold">{place.distance}</p>
+            <p className="text-black font-bold">
+              {formatDistance(place.distance)}
+            </p>
           </div>
         </div>
       ))}
