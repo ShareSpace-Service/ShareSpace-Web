@@ -11,3 +11,9 @@ export interface QuestionResponse {
   data: null;
   success: boolean;
 }
+
+// 문의하기 모달창 닫기
+export interface QuestionFormProps {
+  title?: string | null;
+  setView: (view: React.ReactNode | null) => void;
+}
