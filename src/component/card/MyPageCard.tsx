@@ -45,7 +45,10 @@ function MyPageCard() {
 
   const titles: Title[] = [
     { label: 'History', component: ({ label }) => <History title={label} /> },
-    { label: 'Question', component: ({ label }) => <Question title={label} /> },
+    {
+      label: 'Question',
+      component: ({ label }) => <Question title={label} setView={setView} />,
+    },
     {
       label: '장소 수정',
       component: ({ label }) => <PlaceEdit title={label} />,

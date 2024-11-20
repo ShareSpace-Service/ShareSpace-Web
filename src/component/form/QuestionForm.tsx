@@ -2,23 +2,30 @@ import { useState } from 'react';
 import { FormGroup } from './GuestRegistForm';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { QuestionPost } from '@/interface/QuestionInterface';
+import {
+  QuestionFormProps,
+  QuestionPost,
+  QuestionResponse,
+} from '@/interface/QuestionInterface';
 import { useMutation } from '@tanstack/react-query';
 import { fetchQuestionPost } from '@/api/Question';
 import ButtonProps from '../ui/ButtonProps';
 
-function QuestionForm() {
+function QuestionForm({ setView }: QuestionFormProps) {
   const [title, setTitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
 
-  const mutation = useMutation<QuestionPost, Error, QuestionPost>({
+  const mutation = useMutation<QuestionResponse, Error, QuestionPost>({
     mutationKey: ['question'],
     mutationFn: (payload: QuestionPost) => fetchQuestionPost(payload),
     onSuccess: (data) => {
       console.log('문의하기 성공:', data);
+      alert('요청사항이 정상적으로 접수되었습니다. 감사합니다!');
+      setView(null);
     },
     onError: (error) => {
       console.error('문의하기 실패:', error);
+      alert('요청사항 전송에 실패하였습니다');
     },
   });
 
