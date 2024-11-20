@@ -127,6 +127,16 @@ function GuestRegistForm() {
       return;
     }
 
+    if (title.length > 50) {
+      alert('제목은 50자 이내로 작성해주세요.');
+      return;
+    }
+
+    if (description.length > 100) {
+      alert('요청사항은 100자 이내로 작성해주세요');
+      return;
+    }
+
     const formData = new FormData();
     formData.append('title', title);
     formData.append('category', category);
@@ -155,6 +165,7 @@ function GuestRegistForm() {
             id="title"
             placeholder="제목"
             value={title}
+            maxLength={50}
             onChange={(e) => setTitle(e.target.value)}
           />
         </FormGroup>
@@ -182,6 +193,8 @@ function GuestRegistForm() {
             placeholder="요청사항을 입력해주세요"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
+            maxLength={100}
+            rows={5}
           />
         </FormGroup>
 
