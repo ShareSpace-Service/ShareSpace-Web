@@ -31,6 +31,16 @@ function QuestionForm() {
       return;
     }
 
+    if (title.length > 50) {
+      alert('제목은 50자 이내로 작성해주세요');
+      return;
+    }
+
+    if (content.length > 200) {
+      alert('내용은 최대 200자 이내로 작성해주세요');
+      return;
+    }
+
     const payload: QuestionPost = {
       // QuestionPost 타입의 payload 객체 생성
       title: title,
@@ -67,8 +77,14 @@ function QuestionForm() {
               value={content}
               onChange={(e) => setContent(e.target.value)}
               className="h-96"
+              maxLength={200}
             />
           </FormGroup>
+          <div className="flex justify-end -space-y-0 -translate-y-4">
+            <span className="text-gray-400 text-sm">
+              {content.length} / 200
+            </span>
+          </div>
           <ButtonProps
             type="submit"
             size="full"

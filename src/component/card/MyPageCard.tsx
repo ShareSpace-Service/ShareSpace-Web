@@ -140,6 +140,12 @@ function MyPageCard() {
       if (image) {
         formDataSubmit.append('image', image);
       }
+
+      if (formData.nickName.length > 50 || formData.nickName.length < 2) {
+        alert('닉네임은 2자 이상 50자 이내로 작성해주세요.');
+        return;
+      }
+
       mutation.mutate(formDataSubmit);
     }
   };

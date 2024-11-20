@@ -236,6 +236,16 @@ function HostEditForm() {
     console.log('수정 완료');
     if (formData && isEdit) {
       const formDataSubmit = new FormData();
+      if (formData.title.length > 50) {
+        alert('제목은 50자 이내로 작성해주세요');
+        return;
+      }
+
+      if (formData.description.length > 100) {
+        alert('요청사항은 100자 이내로 작성해주세요');
+        return;
+      }
+
       formDataSubmit.append('title', formData.title);
       formDataSubmit.append('location', formData.location);
       formDataSubmit.append('category', formData.category);
@@ -396,6 +406,7 @@ function HostEditForm() {
             } transition-colors`}
             disabled={!isEdit}
             onChange={handleTextareaChange}
+            maxLength={100}
             placeholder="요청사항을 입력하세요"
           />
         </div>

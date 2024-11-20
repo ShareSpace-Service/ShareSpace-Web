@@ -47,6 +47,11 @@ function NoteSendForm() {
       return;
     }
 
+    if (title.length > 50) {
+      alert('제목은 50자 이내로 작성해주세요');
+      return;
+    }
+
     const payload: NoteSendRequest = {
       receiverId: receiverId!,
       title: title,
