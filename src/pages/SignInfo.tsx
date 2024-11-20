@@ -70,6 +70,12 @@ function SignInfo() {
       return;
     }
 
+    if (nickname.length > 50 || nickname.length < 2) {
+      setModalMessage('닉네임은 2자 이상 50자 이내로 작성해주세요.');
+      setShowModal(true);
+      return;
+    }
+
     try {
       const userData = {
         email,
