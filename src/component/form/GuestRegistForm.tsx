@@ -197,6 +197,11 @@ function GuestRegistForm() {
             rows={5}
           />
         </FormGroup>
+        <div className="flex justify-end -space-y-0 -translate-y-5">
+          <span className="text-gray-400 text-sm">
+            {description.length} / 100
+          </span>
+        </div>
 
         {/* onSubmit */}
         <div className="mt-6 pt-4">

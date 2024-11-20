@@ -80,6 +80,11 @@ function QuestionForm() {
               maxLength={200}
             />
           </FormGroup>
+          <div className="flex justify-end -space-y-0 -translate-y-4">
+            <span className="text-gray-400 text-sm">
+              {content.length} / 200
+            </span>
+          </div>
           <ButtonProps
             type="submit"
             size="full"
