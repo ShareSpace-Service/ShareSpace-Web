@@ -87,6 +87,7 @@ function NoteSendForm() {
             placeholder="내용을 입력해주세요"
             value={content}
             onChange={(e) => setContent(e.target.value)}
+            className="whitespace-pre-wrap"
           />
         </FormGroup>
         <ButtonProps type="submit" size="full" variant="custom" title="전송" />

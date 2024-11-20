@@ -49,7 +49,9 @@ function NoteDetailModal({
           </p>
         </div>
         <div className="bg-gray-100 p-6 rounded-md">
-          <p className="font-bold">{noteDetail?.content}</p>
+          <p className="font-medium text-black whitespace-pre-wrap leading-normal">
+            {noteDetail?.content}
+          </p>
         </div>
       </div>
     </div>
