@@ -11,7 +11,7 @@ import { fetchNoteReceiver, fetchNoteSend } from '@/api/Note';
 import { useState } from 'react';
 import ButtonProps from '../ui/ButtonProps';
 
-function NoteSendForm() {
+function NoteSendForm({ closeModal }: { closeModal: () => void }) {
   const [title, setTitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
   const [receiverId, setReceiverId] = useState<number | null>(null);
@@ -26,12 +26,15 @@ function NoteSendForm() {
     mutationFn: (noteData: NoteSendRequest) => fetchNoteSend(noteData),
     onSuccess: (data) => {
       console.log('Note sent successfully:', data);
+      alert('쪽지가 성공적으로 전송되었습니다!'); // 성공 여부 alert로 띄워주기
       setReceiverId(null);
       setTitle('');
       setContent('');
+      closeModal(); // 쪽지 전송 후 받은 쪽지함으로 이동
     },
     onError: (error) => {
       console.error('Error sending note:', error);
+      alert('쪽지 전송에 실패하였습니다!');
     },
   });
 
