@@ -1,3 +1,5 @@
+import config from "@/config/config";
+
 class TokenRefreshManager {
   private isRefreshing = false;
   private refreshSubscribers: Array<() => void> = [];
@@ -21,7 +23,7 @@ class TokenRefreshManager {
     this.isRefreshing = true;
 
     try {
-      const response = await fetch('http://localhost:8080/token/reissue', {
+      const response = await fetch(`${config.baseUrl}/token/reissue`, {
         method: 'POST',
         credentials: 'include',
       });
