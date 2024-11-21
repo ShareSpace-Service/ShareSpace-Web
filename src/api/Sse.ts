@@ -1,15 +1,21 @@
 import { EventSourcePolyfill } from 'event-source-polyfill';
 import { useAuthStore } from '@/store/AuthStore';
+import config from '@/config/config';
 
 export function connectSSE(
   onMessage: (event: MessageEvent) => void
 ): EventSourcePolyfill {
   const eventSource = new EventSourcePolyfill(
-    `http://localhost:8080/notification/sse`,
+    `${config.baseUrl}/notification/sse`,
     {
       withCredentials: true,
       heartbeatTimeout: 60000,
       reconnectInterval: 3000,
+      headers: {
+        Connection: 'keep-alive',
+        'Cache-Control': 'no-cache',
+        'Keep-Alive': 'timeout=60',
+      },
     }
   );
 
@@ -28,7 +34,7 @@ export function connectSSE(
 
   eventSource.onerror = (error) => {
     console.error('SSE 연결 오류 발생:', error);
-    
+
     if ((error as any).status === 401) {
       console.log('인증되지 않은 사용자. SSE 연결 종료');
       eventSource.close();
@@ -41,7 +47,7 @@ export function connectSSE(
     ) {
       console.log('연결이 종료되거나 연결 중 문제 발생. 재연결 시도');
       eventSource.close();
-      
+
       if (useAuthStore.getState().isAuthenticated) {
         setTimeout(() => {
           try {
@@ -55,8 +61,4 @@ export function connectSSE(
   };
 
   return eventSource;
-}
-
-export function disconnectSSE() {
-  // 기존 연결 종료 로직
 }

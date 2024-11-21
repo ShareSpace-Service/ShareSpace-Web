@@ -1,4 +1,5 @@
 import { getRequest, deleteRequest, patchRequest } from '@/api/Request';
+import config from '@/config/config';
 
 /**
  * 서버에서 알림 데이터를 GET 요청으로 불러오는 함수
@@ -13,8 +14,9 @@ export async function fetchNotifications(
   size: number
 ): Promise<any> {
   const result = await getRequest(
-    `http://localhost:8080/notification?page=${page}&size=${size}`
+    `${config.baseUrl}/notification?page=${page}&size=${size}`
   );
+
   return result.data;
 }
 
@@ -26,7 +28,7 @@ export async function fetchNotifications(
 export async function fetchDeleteNotifications(
   notificationId: number
 ): Promise<any> {
-  const url = `http://localhost:8080/notification?notificationId=${notificationId}`;
+  const url = `${config.baseUrl}/notification?notificationId=${notificationId}`;
   const result = await deleteRequest(url);
   return result;
 }
@@ -36,7 +38,7 @@ export async function fetchDeleteNotifications(
  * @returns {Promise<any>} 서버로부터의 응답 데이터를 포함한 Promise
  */
 export async function fetchReadAllNotifications(): Promise<any> {
-  const url = `http://localhost:8080/notification/read`;
+  const url = `${config.baseUrl}/notification/read`;
   const result = await patchRequest(url, {});
   return result;
 }
@@ -46,12 +48,13 @@ export async function fetchReadAllNotifications(): Promise<any> {
  * @returns {Promise<number>} 읽지 않은 알림 개수
  */
 export async function fetchUnreadNotificationsCount(): Promise<number> {
-  const result = await getRequest('http://localhost:8080/notification/unread-alarms');
+  const result = await getRequest(
+    `${config.baseUrl}/notification/unread-alarms`
+  );
   return result.data.unreadNotificationNum;
 }
 
 export async function fetchDeleteAllNotifications(): Promise<any> {
-  const url = `http://localhost:8080/notification/all`;
-  const result = await deleteRequest(url);
+  const result = await deleteRequest(`${config.baseUrl}/notification/all`);
   return result;
 }

@@ -1,4 +1,5 @@
 import { postRequest } from '@/api/Request';
+import config from '@/config/config';
 import { LogoutResponse } from '@/interface/AuthInterface';
 import { useAuthStore } from '@/store/AuthStore';
 
@@ -20,7 +21,7 @@ export async function login(
   formData.append('username', username);
   formData.append('password', password);
 
-  const response = await fetch('http://localhost:8080/user/login', {
+  const response = await fetch(`${config.baseUrl}/user/login`, {
     method: 'POST',
     body: formData,
     credentials: 'include',
@@ -45,7 +46,7 @@ export async function login(
  */
 export async function userLogout(): Promise<LogoutResponse> {
   try {
-    const result = await postRequest('http://localhost:8080/user/logout', {});
+    const result = await postRequest(`${config.baseUrl}/user/logout`, {});
 
     if (result.success) {
       localStorage.clear();

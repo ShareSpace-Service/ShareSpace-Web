@@ -1,5 +1,6 @@
 import { EmailValidationRequest } from '@/interface/Email';
 import { ApiUpdateResponse } from '@/interface/MyPageInterface';
+import config from '@/config/config';
 
 /**
  * 임시 회원가입 요청 + 이메읿 발송을 처리하는 함수
@@ -8,7 +9,7 @@ import { ApiUpdateResponse } from '@/interface/MyPageInterface';
  * @throws {Error} - 요청 실패 시 에러 발생
  */
 export async function registerUser(body: any): Promise<any> {
-  const response = await fetch('http://localhost:8080/user/register', {
+  const response = await fetch(`${config.baseUrl}/user/register`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -40,7 +41,7 @@ export async function registerUser(body: any): Promise<any> {
 export async function validateEmail(
   request: EmailValidationRequest
 ): Promise<ApiUpdateResponse> {
-  const response = await fetch('http://localhost:8080/user/validate', {
+  const response = await fetch(`${config.baseUrl}/user/validate`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

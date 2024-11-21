@@ -1,11 +1,12 @@
 import { RegistResponse } from '@/interface/ProductRegistInterface';
 import { fetchWithToken } from './Request';
+import config from '@/config/config';
 
 export async function RegistProduct(
   formData: FormData
 ): Promise<RegistResponse> {
   const response = await fetchWithToken(
-    'http://localhost:8080/product/register',
+    `${config.baseUrl}/product/register`,
     {
       method: 'POST',
       body: formData,

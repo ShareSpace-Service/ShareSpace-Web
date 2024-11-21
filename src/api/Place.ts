@@ -9,6 +9,7 @@ import {
   PlaceEditResponse,
 } from '@/interface/PlaceInterface';
 import { fetchWithToken, getRequest } from './Request';
+import config from '@/config/config';
 
 /**
  * 서버에서 Place 데이터를 GET 요청으로 불러오는 함수
@@ -16,7 +17,7 @@ import { fetchWithToken, getRequest } from './Request';
  * @returns {Promise<Place[]>} 서버로부터 Place 리스트 데이터를 반환하는 Promise
  */
 export async function fetchProductList() {
-  const result: ApiResponse = await getRequest('http://localhost:8080/place');
+  const result: ApiResponse = await getRequest(`${config.baseUrl}/place`);
   if (result.success && result.data) {
     console.log('요청 성공', result.message);
     return result.data;
@@ -33,7 +34,7 @@ export async function fetchProductList() {
 export async function fetchPlaceList(matchingId: number): Promise<Place[]> {
   try {
     const result: ApiResponse = await getRequest(
-      `http://localhost:8080/place/searchByProduct?matchingId=${matchingId}`
+      `${config.baseUrl}/place/searchByProduct?matchingId=${matchingId}`
     );
     if (result.success && result.data) {
       return result.data;
@@ -58,7 +59,7 @@ export async function fetchPlaceDetailList({
   placeId: number;
 }): Promise<PlaceData> {
   const result: ApiDetailResponse = await getRequest(
-    `http://localhost:8080/place/placeDetail?placeId=${placeId}`
+    `${config.baseUrl}/place/placeDetail?placeId=${placeId}`
   );
   if (result.success) {
     console.log('성공', result.message);
@@ -74,7 +75,7 @@ export async function fetchPlaceDetailList({
  */
 export async function fetchPlaceEdit(): Promise<PlaceEditData> {
   const result: ApiEditResponse = await getRequest(
-    'http://localhost:8080/place/edit'
+    `${config.baseUrl}/place/edit`
   );
   if (result.success) {
     console.log('성공', result.message);
@@ -92,7 +93,7 @@ export async function fetchPlaceEdit(): Promise<PlaceEditData> {
 export async function fetchPlaceForm(
   formData: FormData
 ): Promise<PlaceEditForm> {
-  const response = await fetchWithToken('http://localhost:8080/place', {
+  const response = await fetchWithToken(`${config.baseUrl}`, {
     method: 'PUT',
     body: formData,
   });
