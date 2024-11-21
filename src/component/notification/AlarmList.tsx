@@ -26,7 +26,7 @@ function AlarmList({
   } = useNotificationScroll();
 
   const [deletingId, setDeletingId] = useState<number | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
+  const [, setIsDeleting] = useState(false);
 
   const handleDelete = async (notificationId: number) => {
     try {
