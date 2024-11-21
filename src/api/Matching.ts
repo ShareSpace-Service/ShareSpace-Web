@@ -316,3 +316,32 @@ export async function fetchMatchingUploadImage(
     throw new Error(result.message || '실패');
   }
 }
+
+/**
+ * 물품 보관 완료 처리하는 API
+ * @param {number} matchingId - 매칭 ID
+ * @returns {Promise<any>} 서버로부터의 응답 데이터를 포함한 Promise
+ */
+export async function fetchMatchingComplete({
+  matchingId,
+}: {
+  matchingId: number;
+}) {
+  const response = await fetchWithToken(
+    'http://localhost:8080/matching/completeStorage',
+    {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ matchingId }),
+    }
+  );
+  const result = await response.json();
+  if (response.ok && result.success) {
+    console.log('보관 완료 버튼 클릭 완료', result.message);
+    return result;
+  } else {
+    throw new Error(result.message || '실패');
+  }
+}
