@@ -87,7 +87,7 @@ function SignInfo() {
       };
       const response = await registerUser(userData);
       const userId = response.data.userId;
-      navigate('/emailverify', { state: { userId } });
+      navigate('/emailverify', { state: { userId, role } });
     } catch (err: any) {
       setModalMessage(err.MESSAGE || '알 수 없는 오류가 발생했습니다.');
       setShowModal(true);

@@ -14,10 +14,13 @@ import { EmailBox } from '@/component/email/EmailVerifyBox';
 function EmailVerify() {
   const location = useLocation();
   const { userId } = location.state; // 회원가입 페이지에서 넘겨준 userId
+  const { role } = location.state;
   const [isVerified, setIsVerified] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
   const navigate = useNavigate();
+
+  console.log('role', role);
 
   /**
    * 인증 상태를 업데이트하는 함수
@@ -37,9 +40,10 @@ function EmailVerify() {
     if (!isVerified) {
       setModalMessage('인증이 완료되지 않았습니다.');
       setShowModal(true);
-    } else {
-      navigate('/login');
+      return;
     }
+
+    navigate(role === 'ROLE_HOST' ? '/place-register' : '/login');
   };
 
   /**
