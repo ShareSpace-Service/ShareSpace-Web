@@ -2,7 +2,6 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { DetailItem } from './KeepDetailModal';
 import ButtonProps from '@/component/ui/ButtonProps';
 import NoRegisterPhoto from '@/assets/Photo.svg';
-import { useState } from 'react';
 import { MatchingRequestResult } from '@/interface/MatchingInterface';
 import {
   fetchCancelRequest,
@@ -14,7 +13,6 @@ import { useMatchingIdStore } from '@/store/MatchingId';
 import { useStatusStore } from '@/store/ProductStatus';
 
 function WaitDetailModal() {
-  const [isCancel, setIsCancel] = useState<boolean>(true);
   const { matchingId, clearMatchingId } = useMatchingIdStore();
   const { clearStatus } = useStatusStore();
 
@@ -38,7 +36,6 @@ function WaitDetailModal() {
     onSuccess: () => {
       console.log('수락 성공');
       alert('요청이 수락되었습니다.');
-      setIsCancel(false);
       handleClose();
     },
     onError: (error) => {
@@ -122,7 +119,7 @@ function WaitDetailModal() {
           <ButtonProps
             size="full"
             title="요청 취소"
-            variant={isCancel ? 'gray' : 'custom'}
+            variant="custom"
             onClick={handleCancelClick}
           />
         </div>

@@ -133,12 +133,12 @@ function HostWaitModal() {
             </p>
           </div>
         </div>
-        {/* 요청하기 */}
+        {/* 요청 취소 */}
         <div className="mt-auto pb-5">
           <ButtonProps
             size="full"
             variant="custom"
-            title="요청하기"
+            title="요청 취소"
             onClick={handleCancelClick}
           />
         </div>
