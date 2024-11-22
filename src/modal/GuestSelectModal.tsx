@@ -5,6 +5,7 @@ import { MatchingRequestResult } from '@/interface/MatchingInterface';
 import { useModalStore } from '@/store/ModalState';
 import { usePlaceIdStore } from '@/store/PlaceId';
 import { useMutation } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 
 function GuestSelectModal({
   title,
@@ -17,6 +18,7 @@ function GuestSelectModal({
 }) {
   const { closeModal } = useModalStore();
   const { placeId } = usePlaceIdStore();
+  const navigate = useNavigate();
 
   const mutation = useMutation<
     MatchingRequestResult,
@@ -30,6 +32,7 @@ function GuestSelectModal({
       refetch(); // 성공시 데이터 GuestPlaceFilter 데이터 새로고침
       alert('보관 요청이 완료되었습니다.');
       closeModal();
+      navigate('/product');
     },
     onError: (error) => {
       console.error('요청 실패', error);
