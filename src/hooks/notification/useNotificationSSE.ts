@@ -72,19 +72,37 @@ export const useNotificationSSE = () => {
   };
 
   // SSE 연결 해제 함수
-  const disconnectSSE = () => {
-    if (sseConnectionRef.current) {
-      sseConnectionRef.current.close();
-      sseConnectionRef.current = null;
-    }
-  };
+  // const disconnectSSE = () => {
+  //   if (sseConnectionRef.current) {
+  //     sseConnectionRef.current.close();
+  //     sseConnectionRef.current = null;
+  //   }
+  // };
 
   useEffect(() => {
-    // 인증된 사용자만 SSE 연결 및 알림 카운트 로드
+    let mounted = true;
+    const channel = new BroadcastChannel('notification-channel');
+
+    const handleBroadcastMessage = (event: MessageEvent) => {
+      if (!mounted) return;
+      
+      switch (event.data.type) {
+        case 'NOTIFICATION':
+          showNotification(event.data.data);
+          loadUnreadCounts();
+          break;
+        case 'SSE_DISCONNECTED':
+          sseConnectionRef.current = null;
+          break;
+      }
+    };
+
+    channel.addEventListener('message', handleBroadcastMessage);
+
     if (isAuthenticated && !sseConnectionRef.current) {
       loadUnreadCounts();
-      
       const eventSource = connectSSE(async (event: MessageEvent) => {
+        if (!mounted) return;
         try {
           const newNotification = event.data;
           showNotification(newNotification);
@@ -95,20 +113,17 @@ export const useNotificationSSE = () => {
       });
 
       sseConnectionRef.current = eventSource;
-    } else if (!isAuthenticated) {
-      // 비인증 상태일 때 연결 해제 및 상태 초기화
-      disconnectSSE();
-      setUnreadCount(0);
-      setUnreadNoteCount(0);
     }
 
     return () => {
+      mounted = false;
+      channel.removeEventListener('message', handleBroadcastMessage);
+      channel.close();
       if (timerRef.current) {
         clearTimeout(timerRef.current);
       }
-      disconnectSSE();
     };
-  }, [isAuthenticated]); // isAuthenticated가 변경될 때마다 실행
+  }, [isAuthenticated]);
 
   return {
     hasNewNotification,

@@ -1,43 +1,46 @@
-import { EventSourcePolyfill } from 'event-source-polyfill';
 import { useAuthStore } from '@/store/AuthStore';
 import config from '@/config/config';
 
+const NOTIFICATION_CHANNEL = 'notification-channel';
+let activeEventSource: EventSource | null = null;
+const broadcastChannel = new BroadcastChannel(NOTIFICATION_CHANNEL);
+
 export function connectSSE(
   onMessage: (event: MessageEvent) => void
-): EventSourcePolyfill {
-  const eventSource = new EventSourcePolyfill(
-    `${config.baseUrl}/notification/sse`,
-    {
-      withCredentials: true,
-      heartbeatTimeout: 60000,
-      reconnectInterval: 3000,
-      headers: {
-        Connection: 'keep-alive',
-        'Cache-Control': 'no-cache',
-        'Keep-Alive': 'timeout=60',
-      },
-    }
-  );
+): EventSource {
+  // 이미 활성화된 연결이 있다면 재사용
+  if (activeEventSource?.readyState === EventSource.OPEN) {
+    return activeEventSource;
+  }
+
+  const eventSource = new EventSource(`${config.baseUrl}/notification/sse`, {
+    withCredentials: true
+  });
+
+  activeEventSource = eventSource;
 
   eventSource.onopen = () => {
     console.log('SSE 연결 성공');
+    // 다른 탭들에게 연결 상태 브로드캐스트
+    broadcastChannel.postMessage({ type: 'SSE_CONNECTED' });
   };
 
   eventSource.addEventListener('NOTIFICATION', (event) => {
-    console.log('알림 이벤트 수신:', event.data);
+    // 현재 탭에서 메시지 처리
     onMessage(new MessageEvent('message', { data: event.data }));
+    // 다른 탭들에게 알림 브로드캐스트
+    broadcastChannel.postMessage({ 
+      type: 'NOTIFICATION', 
+      data: event.data 
+    });
   });
 
-  eventSource.addEventListener('HEARTBEAT', () => {
-    console.log('하트비트 수신');
-  });
 
   eventSource.onerror = (error) => {
-    console.error('SSE 연결 오류 발생:', error);
+    console.error('SSE 오류:', error);
 
     if ((error as any).status === 401) {
-      console.log('인증되지 않은 사용자. SSE 연결 종료');
-      eventSource.close();
+      closeConnection();
       return;
     }
 
@@ -45,8 +48,7 @@ export function connectSSE(
       eventSource.readyState === EventSource.CLOSED ||
       eventSource.readyState === EventSource.CONNECTING
     ) {
-      console.log('연결이 종료되거나 연결 중 문제 발생. 재연결 시도');
-      eventSource.close();
+      closeConnection();
 
       if (useAuthStore.getState().isAuthenticated) {
         setTimeout(() => {
@@ -62,3 +64,14 @@ export function connectSSE(
 
   return eventSource;
 }
+
+function closeConnection() {
+  if (activeEventSource) {
+    activeEventSource.close();
+    activeEventSource = null;
+    broadcastChannel.postMessage({ type: 'SSE_DISCONNECTED' });
+  }
+}
+
+// 페이지 언로드 시 연결 정리
+window.addEventListener('unload', closeConnection);
