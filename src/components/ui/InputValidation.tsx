@@ -6,7 +6,6 @@ import {
 } from '@/components/ui/input-otp';
 import { useState } from 'react';
 import ButtonProps from '@/component/ui/ButtonProps';
-import { validateEmail } from '@/api/RegisterUser';
 import CustomModal from '@/component/ui/CustomModal';
 import { useEmailVerification } from '@/action/post-email';
 import { ApiUpdateResponse } from '@/interface/MyPageInterface';
