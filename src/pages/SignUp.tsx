@@ -11,16 +11,16 @@ interface RoleType {
 
 const RoleInfo: RoleType[] = [
   {
-    role: '호스트',
-    description: '호스트에 대한 설명이 들어갑니다.',
-    image: HostImage,
-    roleStatus: 'ROLE_HOST',
-  },
-  {
     role: '게스트',
     description: '게스트에 대한 설명이 들어갑니다.',
     image: GuestImage,
     roleStatus: 'ROLE_GUEST',
+  },
+  {
+    role: '호스트',
+    description: '호스트에 대한 설명이 들어갑니다.',
+    image: HostImage,
+    roleStatus: 'ROLE_HOST',
   },
 ];
 
@@ -44,7 +44,6 @@ const RoleCard = ({ role }: { role: RoleType }) => (
     </div>
   </div>
 );
-
 
 function SignUp() {
   const navigate = useNavigate();

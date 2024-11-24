@@ -7,6 +7,7 @@ import {
   UnreadNoteCountResponse,
 } from '@/interface/NoteInterface';
 import { fetchWithToken, getRequest } from './Request';
+import config from '@/config/config';
 
 /**
  * 노트 리스트를 불러오는 함수
@@ -14,9 +15,7 @@ import { fetchWithToken, getRequest } from './Request';
  * @throws {Error} 서버 응답이 성공적이지 않을 경우 에러 발생
  */
 export async function fetchNoteList() {
-  const result: ApiNoteResponse = await getRequest(
-    'http://localhost:8080/note'
-  );
+  const result: ApiNoteResponse = await getRequest(`${config.baseUrl}/note`);
   if (result.success) {
     console.log('성공', result.message);
     return result;
@@ -33,7 +32,7 @@ export async function fetchNoteList() {
  */
 export async function fetchNoteDetail(noteId: number) {
   const result: ApiNoteDetailResponse = await getRequest(
-    `http://localhost:8080/note/noteDetail?noteId=${noteId}`
+    `${config.baseUrl}/note/noteDetail?noteId=${noteId}`
   );
   if (result.success) {
     console.log('쪽지 디테일 불러오기 성공', result.message);
@@ -51,7 +50,7 @@ export async function fetchNoteDetail(noteId: number) {
  */
 export async function fetchNoteDelete(noteId: number) {
   const response = await fetchWithToken(
-    `http://localhost:8080/note?noteId=${noteId}`,
+    `${config.baseUrl}/note?noteId=${noteId}`,
     {
       method: 'DELETE',
       body: JSON.stringify({ noteId }),
@@ -73,7 +72,7 @@ export async function fetchNoteDelete(noteId: number) {
  */
 export async function fetchNoteReceiver() {
   const result: ApiNoteReceiverResponse = await getRequest(
-    'http://localhost:8080/note/available'
+    `${config.baseUrl}/note/available`
   );
   if (result.success) {
     console.log('성공', result.message);
@@ -86,7 +85,7 @@ export async function fetchNoteReceiver() {
 export async function fetchNoteSend(
   noteData: NoteSendRequest
 ): Promise<NoteSendRequest> {
-  const response = await fetchWithToken('http://localhost:8080/note', {
+  const response = await fetchWithToken(`${config.baseUrl}/note`, {
     method: 'POST',
     body: JSON.stringify(noteData),
     headers: {
@@ -113,7 +112,7 @@ export async function fetchNoteSend(
  */
 export async function fetchNoteIsReadRequest(noteId: number) {
   const response = await fetchWithToken(
-    `http://localhost:8080/note/${noteId}/read`,
+    `${config.baseUrl}/note/${noteId}/read`,
     {
       method: 'PATCH',
       headers: {
@@ -137,7 +136,7 @@ export async function fetchNoteIsReadRequest(noteId: number) {
  */
 export async function fetchUnreadNoteCount() {
   const result: UnreadNoteCountResponse = await getRequest(
-    'http://localhost:8080/note/unreadNote'
+    `${config.baseUrl}/note/unreadNote`
   );
   if (result.success) {
     console.log('읽지 않은 쪽지 개수 조회 성공', result.data.unreadCount);

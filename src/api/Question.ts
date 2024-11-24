@@ -1,8 +1,9 @@
 import { QuestionPost } from '@/interface/QuestionInterface';
 import { fetchWithToken } from './Request';
+import config from '@/config/config';
 
 export async function fetchQuestionPost(payload: QuestionPost) {
-  const response = await fetchWithToken('http://localhost:8080/contact', {
+  const response = await fetchWithToken(`${config.baseUrl}/contact`, {
     method: 'POST',
     body: JSON.stringify(payload),
     headers: {

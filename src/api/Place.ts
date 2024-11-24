@@ -9,6 +9,8 @@ import {
   PlaceEditResponse,
 } from '@/interface/PlaceInterface';
 import { fetchWithToken, getRequest } from './Request';
+import config from '@/config/config';
+import { ApiUpdateResponse } from '@/interface/MyPageInterface';
 
 /**
  * 서버에서 Place 데이터를 GET 요청으로 불러오는 함수
@@ -16,7 +18,7 @@ import { fetchWithToken, getRequest } from './Request';
  * @returns {Promise<Place[]>} 서버로부터 Place 리스트 데이터를 반환하는 Promise
  */
 export async function fetchProductList() {
-  const result: ApiResponse = await getRequest('http://localhost:8080/place');
+  const result: ApiResponse = await getRequest(`${config.baseUrl}/place`);
   if (result.success && result.data) {
     console.log('요청 성공', result.message);
     return result.data;
@@ -33,7 +35,7 @@ export async function fetchProductList() {
 export async function fetchPlaceList(matchingId: number): Promise<Place[]> {
   try {
     const result: ApiResponse = await getRequest(
-      `http://localhost:8080/place/searchByProduct?matchingId=${matchingId}`
+      `${config.baseUrl}/place/searchByProduct?matchingId=${matchingId}`
     );
     if (result.success && result.data) {
       return result.data;
@@ -58,7 +60,7 @@ export async function fetchPlaceDetailList({
   placeId: number;
 }): Promise<PlaceData> {
   const result: ApiDetailResponse = await getRequest(
-    `http://localhost:8080/place/placeDetail?placeId=${placeId}`
+    `${config.baseUrl}/place/placeDetail?placeId=${placeId}`
   );
   if (result.success) {
     console.log('성공', result.message);
@@ -74,7 +76,7 @@ export async function fetchPlaceDetailList({
  */
 export async function fetchPlaceEdit(): Promise<PlaceEditData> {
   const result: ApiEditResponse = await getRequest(
-    'http://localhost:8080/place/edit'
+    `${config.baseUrl}/place/edit`
   );
   if (result.success) {
     console.log('성공', result.message);
@@ -92,7 +94,7 @@ export async function fetchPlaceEdit(): Promise<PlaceEditData> {
 export async function fetchPlaceForm(
   formData: FormData
 ): Promise<PlaceEditForm> {
-  const response = await fetchWithToken('http://localhost:8080/place', {
+  const response = await fetchWithToken(`${config.baseUrl}`, {
     method: 'PUT',
     body: formData,
   });
@@ -106,4 +108,26 @@ export async function fetchPlaceForm(
   } else {
     throw new Error(result.message || '장소 수정이 실패하였습니다.');
   }
+}
+
+/**
+ * HOST 회원가입 시 장소 등록시 장소 정보를 서버에 전송하는 함수
+ *
+ */
+export async function fetchPlaceRegister(
+  formData: FormData
+): Promise<ApiUpdateResponse> {
+  const response = await fetch(`${config.baseUrl}/place/register`, {
+    method: 'POST',
+    body: formData,
+  });
+  const result: ApiUpdateResponse = await response.json();
+  console.log('서버 응답:', result); // 응답 확인
+  // 성공/실패 여부와 관계없이 result를 그대로 반환/throw
+  if (!result.success) {
+    console.log('에러 응답:', result); // 에러 응답 확인
+    throw result;
+  }
+
+  return result;
 }

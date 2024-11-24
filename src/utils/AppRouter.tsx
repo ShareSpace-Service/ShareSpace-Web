@@ -13,6 +13,7 @@ import Profile from '@/pages/Profile';
 import Note from '@/pages/Note';
 import GuestPlaceFilter from '@/guest/pages/GuestPlaceFilter';
 import ProductWrapper from '@/component/wrapper/ProductWrapper';
+import PlaceRegister from '@/pages/PlaceRegister';
 
 const router = createBrowserRouter([
   {
@@ -38,6 +39,11 @@ const router = createBrowserRouter([
   {
     path: '/emailverify',
     element: <EmailVerify />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: '/place-register',
+    element: <PlaceRegister />,
     errorElement: <ErrorPage />,
   },
   {

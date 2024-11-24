@@ -6,8 +6,11 @@ import {
 } from '@/components/ui/input-otp';
 import { useState } from 'react';
 import ButtonProps from '@/component/ui/ButtonProps';
-import { validateEmail } from '@/api/RegisterUser';
 import CustomModal from '@/component/ui/CustomModal';
+import { useEmailVerification } from '@/action/post-email';
+import { ApiUpdateResponse } from '@/interface/MyPageInterface';
+import { Loader2 } from 'lucide-react';
+import { EmailResponse } from '@/interface/Email';
 /**
  * 인증번호 입력 및 확인 컴포넌트
  *
@@ -22,11 +25,13 @@ function InputValidation({
   onVerified,
 }: {
   userId: number;
-  onVerified: (isVerified: boolean) => void;
+  onVerified: (isVerified: boolean, email: string) => void;
 }) {
   const [otp, setOtp] = useState<string>('');
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState<string>('');
+
+  const mutation = useEmailVerification(userId);
 
   const handleChange = (value: string) => {
     const numericValue = value.replace(/\D/g, '');
@@ -48,17 +53,19 @@ function InputValidation({
       return;
     }
 
-    try {
-      const validationNumber = parseInt(otp, 10);
-      await validateEmail(userId, validationNumber);
-      onVerified(true); // 인증 성공 시 상태 전달
-      setModalMessage('인증이 완료되었습니다.');
-      setShowModal(true);
-    } catch (error: any) {
-      onVerified(false); // 인증 실패 시 상태 전달
-      setModalMessage(error.MESSAGE || '알 수 없는 오류가 발생했습니다.');
-      setShowModal(true);
-    }
+    const validationNumber = parseInt(otp, 10);
+    mutation.mutate(validationNumber, {
+      onSuccess: (data: EmailResponse) => {
+        onVerified(true, data.data.email); // 인증 성공 시 상태 전달 + 이메일 정보
+        setModalMessage(data.message);
+        setShowModal(true);
+      },
+      onError: (error: ApiUpdateResponse) => {
+        onVerified(false, ''); // 인증 실패 시 상태 전달
+        setModalMessage(error.message);
+        setShowModal(true);
+      },
+    });
   };
 
   const handleCloseModal = () => {
@@ -73,6 +80,7 @@ function InputValidation({
           pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
           onChange={handleChange}
           value={otp}
+          disabled={mutation.isPending || mutation.isSuccess}
         >
           <InputOTPGroup>
             <InputOTPSlot
@@ -105,7 +113,11 @@ function InputValidation({
           variant="color"
           title="Confirm"
           onClick={handleConfirm}
+          disabled={mutation.isPending || mutation.isSuccess}
         />
+        {mutation.isPending && (
+          <Loader2 className="h-8 w-8 animate-spin absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
+        )}
       </div>
       {showModal && (
         <CustomModal

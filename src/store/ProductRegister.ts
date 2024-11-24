@@ -38,8 +38,6 @@ export const useProductRegisterStore = create<FormState>()(
           category: '',
           period: '',
           description: '',
-          files: [],
-          showImages: [],
         }),
     }),
     { name: 'ProductRegisterStore' }

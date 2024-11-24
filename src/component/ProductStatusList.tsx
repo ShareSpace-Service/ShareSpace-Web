@@ -6,6 +6,7 @@ import { useProductStore } from '@/store/ProductState';
 import { useRoleStore } from '@/store/Role';
 import { useMatchingIdStore } from '@/store/MatchingId';
 import { useStatusStore } from '@/store/ProductStatus';
+import { formatDistance } from '@/lib/formatDistance';
 
 function ProductStatusList() {
   const { filteredData } = useProductStore();
@@ -54,7 +55,9 @@ function ProductStatusList() {
           </div>
           {/* 하단 거리 */}
           <div className="flex flex-col items-start pl-4 h-full">
-            <p className="text-black font-bold">{data.distance}</p>
+            <p className="text-black font-bold">
+              {formatDistance(data.distance)}
+            </p>
           </div>
         </div>
       ))}

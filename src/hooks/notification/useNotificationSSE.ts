@@ -4,6 +4,7 @@ import { fetchUnreadNotificationsCount } from '@/api/Notification';
 import { fetchUnreadNoteCount } from '@/api/Note';
 import useNotificationStore from '@/store/NotificationStore';
 import useNoteStore from '@/store/NoteStore';
+import { useAuthStore } from '@/store/AuthStore';
 
 /**
  * SSE(Server-Sent Events)를 통한 실시간 알림 기능을 관리하는 커스텀 훅
@@ -15,16 +16,13 @@ import useNoteStore from '@/store/NoteStore';
  * @property {number} unreadCount - 읽지 않은 알림의 개수
  * @property {Function} showNotification - 새로운 알림을 표시하는 함수
  */
-interface UseNotificationSSEProps {
-  onMessage?: () => void;
-}
-
-export const useNotificationSSE = ({ onMessage }: UseNotificationSSEProps = {}) => {
+export const useNotificationSSE = () => {
   const [hasNewNotification, setHasNewNotification] = useState(false);
   const [latestNotification, setLatestNotification] = useState('');
   const [isVisible, setIsVisible] = useState(false);
   const { unreadCount, setUnreadCount } = useNotificationStore();
   const { setUnreadCount: setUnreadNoteCount } = useNoteStore();
+  const { isAuthenticated } = useAuthStore();
 
   const timerRef = useRef<NodeJS.Timeout>();
   const sseConnectionRef = useRef<EventSource | null>(null);
@@ -73,45 +71,59 @@ export const useNotificationSSE = ({ onMessage }: UseNotificationSSEProps = {}) 
     }, 3000);
   };
 
-  /**
-   * SSE 연결 설정 및 정리를 처리하는 useEffect
-   * 컴포넌트 마운트 시 SSE 연결을 설정하고, 언마운트 시 연결을 정리
-   */
+  // SSE 연결 해제 함수
+  // const disconnectSSE = () => {
+  //   if (sseConnectionRef.current) {
+  //     sseConnectionRef.current.close();
+  //     sseConnectionRef.current = null;
+  //   }
+  // };
+
   useEffect(() => {
-    loadUnreadCounts();
+    let mounted = true;
+    const channel = new BroadcastChannel('notification-channel');
 
-    const setupSSE = () => {
-      if (sseConnectionRef.current) return;
-
-      try {
-        const eventSource = connectSSE(async (event: MessageEvent) => {
-          try {
-            const newNotification = event.data;
-            showNotification(newNotification);
-            loadUnreadCounts();
-            onMessage?.();
-          } catch (parseError) {
-            console.error('SSE 메시지 파싱 실패:', parseError);
-          }
-        });
-        sseConnectionRef.current = eventSource;
-      } catch (error) {
-        console.error('SSE 연결 실패:', error);
+    const handleBroadcastMessage = (event: MessageEvent) => {
+      if (!mounted) return;
+      
+      switch (event.data.type) {
+        case 'NOTIFICATION':
+          showNotification(event.data.data);
+          loadUnreadCounts();
+          break;
+        case 'SSE_DISCONNECTED':
+          sseConnectionRef.current = null;
+          break;
       }
     };
 
-    setupSSE();
+    channel.addEventListener('message', handleBroadcastMessage);
+
+    if (isAuthenticated && !sseConnectionRef.current) {
+      loadUnreadCounts();
+      const eventSource = connectSSE(async (event: MessageEvent) => {
+        if (!mounted) return;
+        try {
+          const newNotification = event.data;
+          showNotification(newNotification);
+          loadUnreadCounts();
+        } catch (parseError) {
+          console.error('SSE 메시지 파싱 실패:', parseError);
+        }
+      });
+
+      sseConnectionRef.current = eventSource;
+    }
 
     return () => {
-      if (sseConnectionRef.current) {
-        sseConnectionRef.current.close();
-        sseConnectionRef.current = null;
-      }
+      mounted = false;
+      channel.removeEventListener('message', handleBroadcastMessage);
+      channel.close();
       if (timerRef.current) {
         clearTimeout(timerRef.current);
       }
     };
-  }, [onMessage]);
+  }, [isAuthenticated]);
 
   return {
     hasNewNotification,

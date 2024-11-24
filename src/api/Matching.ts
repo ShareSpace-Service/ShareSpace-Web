@@ -8,6 +8,7 @@ import {
   MatchingRequestResult,
 } from '@/interface/MatchingInterface';
 import { fetchWithToken, getRequest } from './Request';
+import config from '@/config/config';
 
 /**
  * 서버에서 Matching에 연결된 Product 데이터를 GET 요청으로 불러오는 함수
@@ -18,7 +19,7 @@ import { fetchWithToken, getRequest } from './Request';
 export async function fetchMatchingProducts(): Promise<Matching> {
   try {
     const result: MatchingApiResponse = await getRequest(
-      'http://localhost:8080/matching'
+      `${config.baseUrl}/matching`
     );
     console.log('Fetch result:', result);
 
@@ -53,7 +54,7 @@ export async function fetchMatchingRentalRequest({
   placeId: number;
   matchingId: number;
 }): Promise<MatchingRequestResult> {
-  const response = await fetchWithToken('http://localhost:8080/matching/keep', {
+  const response = await fetchWithToken(`${config.baseUrl}/matching/keep`, {
     method: 'PUT',
     body: JSON.stringify({ placeId, matchingId }),
     headers: {
@@ -81,7 +82,7 @@ export async function fetchFilterMatchingProducts(
 ): Promise<MatchingData[]> {
   try {
     const result: MatchingApiResponse = await getRequest(
-      `http://localhost:8080/matching?status=${status}`
+      `${config.baseUrl}/matching?status=${status}`
     );
     console.log('필터링되고 있습니다.:', result);
     if (result.data && Array.isArray(result.data.products)) {
@@ -107,7 +108,7 @@ export async function fetchRequestModal({
   matchingId: number;
 }) {
   const result: ApiRequestModalResponse = await getRequest(
-    `http://localhost:8080/matching/requestDetail?matchingId=${matchingId}`
+    `${config.baseUrl}/matching/requestDetail?matchingId=${matchingId}`
   );
   if (result.success) {
     console.log('Request Detail 요청 성공', result.message);
@@ -125,7 +126,7 @@ export async function fetchRequestModal({
  */
 export async function fetchKeepModal({ matchingId }: { matchingId: number }) {
   const result: ApiKeepModalResponse = await getRequest(
-    `http://localhost:8080/matching/keepDetail?matchingId=${matchingId}`
+    `${config.baseUrl}/matching/keepDetail?matchingId=${matchingId}`
   );
   if (result.success) {
     console.log('Keep, Waiting 요청 성공', result.message);
@@ -143,7 +144,7 @@ export async function fetchKeepModal({ matchingId }: { matchingId: number }) {
  */
 export async function fetchKeepAccept({ matchingId }: { matchingId: number }) {
   const response = await fetchWithToken(
-    'http://localhost:8080/matching/confirmStorage/guest',
+    `${config.baseUrl}/matching/confirmStorage/guest`,
     {
       method: 'PATCH',
       body: JSON.stringify({ matchingId }),
@@ -176,7 +177,7 @@ export async function fetchCancelRequest({
   matchingId: number;
 }) {
   const response = await fetchWithToken(
-    `http://localhost:8080/matching/cancelRequest?matchingId=${matchingId}`,
+    `${config.baseUrl}/matching/cancelRequest?matchingId=${matchingId}`,
     {
       method: 'POST',
       headers: {
@@ -207,7 +208,7 @@ export async function fetchMatchingPlace({
   placeId: number;
 }): Promise<MatchingPlaceResponse> {
   const result: MatchingPlaceResponse = await getRequest(
-    `http://localhost:8080/matching/by-place?placeId=${placeId}`
+    `${config.baseUrl}/matching/by-place?placeId=${placeId}`
   );
   if (result.success) {
     console.log(result.message);
@@ -231,7 +232,7 @@ export async function fetchKeepRequest({
   matchingId: number;
 }): Promise<MatchingRequestResult> {
   const response = await fetchWithToken(
-    `http://localhost:8080/matching/${matchingId}`,
+    `${config.baseUrl}/matching/${matchingId}`,
     {
       method: 'PATCH',
       headers: {
@@ -267,7 +268,7 @@ export async function fetchMatchingAccept({
   isAccepted: boolean;
 }): Promise<MatchingRequestResult> {
   const response = await fetchWithToken(
-    'http://localhost:8080/matching/acceptRequest/host',
+    `${config.baseUrl}/matching/acceptRequest/host`,
     {
       method: 'POST',
       headers: {
@@ -299,7 +300,7 @@ export async function fetchMatchingUploadImage(
   formData: FormData
 ): Promise<MatchingRequestResult> {
   const response = await fetchWithToken(
-    'http://localhost:8080/matching/uploadImage/host',
+    `${config.baseUrl}/matching/uploadImage/host`,
     {
       method: 'POST',
       body: formData,
@@ -311,6 +312,35 @@ export async function fetchMatchingUploadImage(
   const result: MatchingRequestResult = await response.json();
   if (result.success && response.ok) {
     console.log('성공', result.message);
+    return result;
+  } else {
+    throw new Error(result.message || '실패');
+  }
+}
+
+/**
+ * 물품 보관 완료 처리하는 API
+ * @param {number} matchingId - 매칭 ID
+ * @returns {Promise<any>} 서버로부터의 응답 데이터를 포함한 Promise
+ */
+export async function fetchMatchingComplete({
+  matchingId,
+}: {
+  matchingId: number;
+}) {
+  const response = await fetchWithToken(
+    `${config.baseUrl}/matching/completeStorage`,
+    {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ matchingId }),
+    }
+  );
+  const result = await response.json();
+  if (response.ok && result.success) {
+    console.log('보관 완료 버튼 클릭 완료', result.message);
     return result;
   } else {
     throw new Error(result.message || '실패');

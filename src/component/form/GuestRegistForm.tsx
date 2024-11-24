@@ -122,8 +122,18 @@ function GuestRegistForm() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault(); // 기본 폼 제출 방지
 
-    if (!title || !category || !period || !description) {
+    if (!title || !category || !period) {
       alert('항목을 입력해주세요.');
+      return;
+    }
+
+    if (title.length > 50) {
+      alert('제목은 50자 이내로 작성해주세요.');
+      return;
+    }
+
+    if (description.length > 100) {
+      alert('요청사항은 100자 이내로 작성해주세요');
       return;
     }
 
@@ -131,7 +141,7 @@ function GuestRegistForm() {
     formData.append('title', title);
     formData.append('category', category);
     formData.append('period', period);
-    formData.append('description', description);
+    description && formData.append('description', description);
     files.forEach(
       (file) => formData.append('imageUrl', file) // 이미지 파일 추가
     );
@@ -155,6 +165,7 @@ function GuestRegistForm() {
             id="title"
             placeholder="제목"
             value={title}
+            maxLength={50}
             onChange={(e) => setTitle(e.target.value)}
           />
         </FormGroup>
@@ -182,8 +193,15 @@ function GuestRegistForm() {
             placeholder="요청사항을 입력해주세요"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
+            maxLength={100}
+            rows={5}
           />
         </FormGroup>
+        <div className="flex justify-end -space-y-0 -translate-y-5">
+          <span className="text-gray-400 text-sm">
+            {description.length} / 100
+          </span>
+        </div>
 
         {/* onSubmit */}
         <div className="mt-6 pt-4">

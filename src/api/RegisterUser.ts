@@ -1,3 +1,7 @@
+import { EmailResponse, EmailValidationRequest } from '@/interface/Email';
+import { ApiUpdateResponse } from '@/interface/MyPageInterface';
+import config from '@/config/config';
+
 /**
  * 임시 회원가입 요청 + 이메읿 발송을 처리하는 함수
  * @param {any} body - 회원가입 시 전송할 데이터
@@ -5,7 +9,7 @@
  * @throws {Error} - 요청 실패 시 에러 발생
  */
 export async function registerUser(body: any): Promise<any> {
-  const response = await fetch('http://localhost:8080/user/register', {
+  const response = await fetch(`${config.baseUrl}/user/register`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -35,27 +39,21 @@ export async function registerUser(body: any): Promise<any> {
  */
 
 export async function validateEmail(
-  userId: number,
-  validationNumber: number
-): Promise<any> {
-  const body = {
-    userId: userId,
-    validationNumber: validationNumber,
-  };
-
-  const response = await fetch('http://localhost:8080/user/validate', {
+  request: EmailValidationRequest
+): Promise<EmailResponse> {
+  const response = await fetch(`${config.baseUrl}/user/validate`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(body),
+    body: JSON.stringify(request),
   });
 
-  const result = await response.json();
+  const result: EmailResponse | ApiUpdateResponse = await response.json();
 
   if (!response.ok) {
-    throw result; // 서버에서 온 에러 메시지를 직접 던짐
+    throw result as ApiUpdateResponse; // 서버에서 온 에러 메시지를 직접 던짐
   }
 
-  return result;
+  return result as EmailResponse;
 }

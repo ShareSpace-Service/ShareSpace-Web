@@ -12,7 +12,7 @@ function NoteSendModal({ closeModal }: { closeModal: () => void }) {
           />
           <p className="font-bold">쪽지 보내기</p>
         </div>
-        <NoteSendForm />
+        <NoteSendForm closeModal={closeModal} />
       </div>
     </div>
   );

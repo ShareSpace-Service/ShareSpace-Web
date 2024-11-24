@@ -75,6 +75,8 @@ export interface ApiKeepModalResponse {
     product: KeepProductDetails;
     place: KeepPlaceDetails;
     imageUrl: string | null; // 이거 이미지가 Null이 들어갈 수가 없음 수정해야함
+    guestCompleted: boolean;
+    hostCompleted: boolean;
   };
   success: boolean;
 }

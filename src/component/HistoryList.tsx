@@ -1,9 +1,10 @@
-import { fetchHistory, fetchHistoryComplete } from '@/api/History';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { fetchHistory } from '@/api/History';
+import { useQuery } from '@tanstack/react-query';
 import ButtonProps from './ui/ButtonProps';
 import { useEffect, useState } from 'react';
 import HistoryDetailModal from '@/modal/HistoryDetailModal';
 import { ApiResponse, MatchingItem } from '@/interface/HistoryInterface';
+import { formatDistance } from '@/lib/formatDistance';
 
 function HistoryList() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -21,16 +22,6 @@ function HistoryList() {
     }
   }, [data]);
 
-  const mutation = useMutation<Error, unknown, { matchingId: number }>({
-    mutationFn: ({ matchingId }) => fetchHistoryComplete({ matchingId }),
-    onSuccess: () => {
-      console.log('성공');
-    },
-    onError: (error) => {
-      console.error('실패', error);
-    },
-  });
-
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error loading data</div>;
 
@@ -38,19 +29,6 @@ function HistoryList() {
   const handleClick = (matchingId: number) => {
     setIsOpen(true);
     setMatchingId(matchingId);
-  };
-
-  const handleComplete = (matchingId: number) => {
-    mutation.mutate(
-      { matchingId },
-      {
-        onSuccess: () => {
-          setHistoryData((prev) =>
-            prev.filter((item) => item.matchingId !== matchingId)
-          );
-        },
-      }
-    );
   };
 
   console.log('data', data);
@@ -78,16 +56,14 @@ function HistoryList() {
                 variant="custom"
                 size="status"
                 className="text-base"
-                onClick={(event) => {
-                  event.stopPropagation(); // 상위에 Link 이벤트 전파 방지
-                  handleComplete(history.matchingId);
-                }}
               />
             </div>
           </div>
           {/* 하단 거리 */}
           <div className="flex flex-col items-start pl-4 h-full">
-            <p className="text-black font-bold">{history.distance}</p>
+            <p className="text-black font-bold">
+              {formatDistance(history.distance)}
+            </p>
           </div>
         </div>
       ))}

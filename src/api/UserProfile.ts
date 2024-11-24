@@ -1,5 +1,6 @@
 import { fetchWithToken, getRequest } from './Request';
 import { AddressResponse } from '@/component/ui/Address';
+import config from '@/config/config';
 import { ApiResponse, ApiUpdateResponse } from '@/interface/MyPageInterface';
 
 /**
@@ -11,7 +12,7 @@ import { ApiResponse, ApiUpdateResponse } from '@/interface/MyPageInterface';
 export async function fetchProfileUpdate(
   formData: FormData
 ): Promise<ApiUpdateResponse> {
-  const response = await fetchWithToken('http://localhost:8080/user/update', {
+  const response = await fetchWithToken(`${config.baseUrl}/user/update`, {
     method: 'PUT',
     body: formData,
   });
@@ -32,7 +33,7 @@ export async function fetchProfileUpdate(
 
 export async function fetchProfile(): Promise<ApiResponse> {
   const result: ApiResponse = await getRequest(
-    `http://localhost:8080/user/detail`
+    `${config.baseUrl}/user/detail`
   );
   if (result.success) {
     console.log('성공', result.message);
@@ -47,7 +48,7 @@ export async function fetchProfile(): Promise<ApiResponse> {
  * @throws {Error} 서버 응답이 성공적이지 않을 경우 에러 발생
  */
 export async function fetchUserAddress(): Promise<AddressResponse> {
-  const result = await getRequest('http://localhost:8080/user/place');
+  const result = await getRequest(`${config.baseUrl}/user/place`);
   if (result.success) {
     console.log('성공', result.message);
     return result;
