@@ -12,7 +12,6 @@ export async function fetchQuestionPost(payload: QuestionPost) {
   });
   const result = await response.json();
   if (response.ok && result.success) {
-    console.log('문의하기 성공', result.message);
     return result;
   } else {
     throw new Error(result.message || '실패');

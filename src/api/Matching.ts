@@ -29,12 +29,10 @@ export async function fetchMatchingProducts(): Promise<Matching> {
       return result.data;
     } else {
       // 예상 못하면 에러 발생
-      console.error('Unexpected response format:', result);
       throw new Error('Invalid response format');
     }
   } catch (error) {
     // 네트워크나 서버 문제로 인한 에러 발생
-    console.error('Fetch error:', error);
     throw new Error('Failed to fetch matching products');
   }
 }
@@ -63,7 +61,6 @@ export async function fetchMatchingRentalRequest({
   });
   const result: MatchingRequestResult = await response.json();
   if (response.ok && result.success) {
-    console.log('요청 성공', result.message);
     return result;
   } else {
     throw new Error(result.message || '요청 실패');
@@ -84,15 +81,12 @@ export async function fetchFilterMatchingProducts(
     const result: MatchingApiResponse = await getRequest(
       `${config.baseUrl}/matching?status=${status}`
     );
-    console.log('필터링되고 있습니다.:', result);
     if (result.data && Array.isArray(result.data.products)) {
       return result.data.products;
     } else {
-      console.error('예상치 못한 응답 형식:', result);
       throw new Error('잘못된 응답 형식');
     }
   } catch (error) {
-    console.error(':', error);
     throw new Error('Failed to fetch matching products');
   }
 }
@@ -111,7 +105,6 @@ export async function fetchRequestModal({
     `${config.baseUrl}/matching/requestDetail?matchingId=${matchingId}`
   );
   if (result.success) {
-    console.log('Request Detail 요청 성공', result.message);
     return result.data;
   } else {
     throw new Error(result.message || '요청 실패');
@@ -129,7 +122,6 @@ export async function fetchKeepModal({ matchingId }: { matchingId: number }) {
     `${config.baseUrl}/matching/keepDetail?matchingId=${matchingId}`
   );
   if (result.success) {
-    console.log('Keep, Waiting 요청 성공', result.message);
     return result.data;
   } else {
     throw new Error(result.message || '요청 실패');
@@ -158,7 +150,6 @@ export async function fetchKeepAccept({ matchingId }: { matchingId: number }) {
   }
   const result: MatchingRequestResult = await response.json();
   if (response.ok && result.success) {
-    console.log('성공', result.message);
     return result;
   } else {
     throw new Error(result.message || '실패');
@@ -190,7 +181,6 @@ export async function fetchCancelRequest({
   }
   const result: MatchingRequestResult = await response.json();
   if (response.ok && result.success) {
-    console.log('취소 성공', result.message);
     return result;
   } else {
     throw new Error(result.message || '취소 실패');
@@ -211,10 +201,8 @@ export async function fetchMatchingPlace({
     `${config.baseUrl}/matching/by-place?placeId=${placeId}`
   );
   if (result.success) {
-    console.log(result.message);
     return result;
   } else {
-    console.log(result.status);
     throw new Error(result.message);
   }
 }
@@ -246,7 +234,6 @@ export async function fetchKeepRequest({
   }
   const result: MatchingRequestResult = await response.json();
   if (response.ok && result.success) {
-    console.log('성공', result.message);
     return result;
   } else {
     throw new Error(result.message || '실패');
@@ -282,7 +269,6 @@ export async function fetchMatchingAccept({
   }
   const result: MatchingRequestResult = await response.json();
   if (result.success && response.ok) {
-    console.log('성공', result.message);
     return result;
   } else {
     throw new Error(result.message || '실패');
@@ -311,7 +297,6 @@ export async function fetchMatchingUploadImage(
   }
   const result: MatchingRequestResult = await response.json();
   if (result.success && response.ok) {
-    console.log('성공', result.message);
     return result;
   } else {
     throw new Error(result.message || '실패');
@@ -340,7 +325,6 @@ export async function fetchMatchingComplete({
   );
   const result = await response.json();
   if (response.ok && result.success) {
-    console.log('보관 완료 버튼 클릭 완료', result.message);
     return result;
   } else {
     throw new Error(result.message || '실패');

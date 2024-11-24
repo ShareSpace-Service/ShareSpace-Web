@@ -30,7 +30,6 @@ function MyPageCard() {
 
   const { isEdit, setIsEdit, formData, setFormData, image } = useMyPageStore();
   const { isOpen, closeModal } = useModalStore();
-  // const [zoneCode, setZoneCode] = useState<string>('');
   const [view, setView] = useState<React.ReactNode | null>(null);
   const { role, setRole } = useRoleStore();
   const navigate = useNavigate();
@@ -39,7 +38,6 @@ function MyPageCard() {
   useEffect(() => {
     if (data?.data?.role) {
       setRole(data.data.role);
-      console.log('Role set:', data.data.role);
     }
   }, [data, setRole]);
 
@@ -82,11 +80,11 @@ function MyPageCard() {
         // 3. 프로그래매틱 네비게이션
         navigate('/login', { replace: true });
       } else {
-        console.error('로그아웃 실패:', result.message);
+        alert(result.message);
       }
     },
     onError: (error) => {
-      console.error('로그아웃 오류:', error);
+      alert(error);
     },
   });
 
@@ -101,19 +99,18 @@ function MyPageCard() {
 
   const mutation = useMutation<ApiUpdateResponse, Error, FormData>({
     mutationFn: (formData: FormData) => fetchProfileUpdate(formData),
-    onSuccess: (data: any) => {
-      console.log('Profile updated successfully:', data);
+    onSuccess: () => {
       setIsEdit(false);
     },
-    onError: (error: any) => {
-      console.error('Error updating profile:', error);
+    onError: () => {
+      // console.error('Error updating profile:', error);
+      alert('프로필 업데이트 중 오류가 발생했습니다. 다시 시도해주세요.');
     },
   });
 
   // API가 호출 성공이 되면 데이터를 formData에 저장
   useEffect(() => {
     if (data && data.success) {
-      console.log('fetching data', data);
       setFormData(data.data);
     }
   }, [data]);
@@ -128,7 +125,7 @@ function MyPageCard() {
     if (formData) {
       setFormData({ ...formData, location: fullAddress });
     }
-    // setZoneCode(addressData.zonecode);
+
     closeModal();
   };
 

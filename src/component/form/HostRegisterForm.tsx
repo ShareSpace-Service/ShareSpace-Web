@@ -8,7 +8,7 @@ import { usePlaceRegister } from '@/action/post-place';
 function HostRegisterForm({ email }: { email: string }) {
   // 상태 정의
   const { title, category, period, description } = useProductRegisterStore();
-  const { handleAddImages, files, showImages, handleDeleteImages, cleanUp } =
+  const { handleAddImages, files, showImages, handleDeleteImages } =
     useImageUpload();
   // React Query mutation 훅
   const mutation = usePlaceRegister();

@@ -14,13 +14,12 @@ export function connectSSE(
   }
 
   const eventSource = new EventSource(`${config.baseUrl}/notification/sse`, {
-    withCredentials: true
+    withCredentials: true,
   });
 
   activeEventSource = eventSource;
 
   eventSource.onopen = () => {
-    console.log('SSE 연결 성공');
     // 다른 탭들에게 연결 상태 브로드캐스트
     broadcastChannel.postMessage({ type: 'SSE_CONNECTED' });
   };
@@ -29,16 +28,13 @@ export function connectSSE(
     // 현재 탭에서 메시지 처리
     onMessage(new MessageEvent('message', { data: event.data }));
     // 다른 탭들에게 알림 브로드캐스트
-    broadcastChannel.postMessage({ 
-      type: 'NOTIFICATION', 
-      data: event.data 
+    broadcastChannel.postMessage({
+      type: 'NOTIFICATION',
+      data: event.data,
     });
   });
 
-
   eventSource.onerror = (error) => {
-    console.error('SSE 오류:', error);
-
     if ((error as any).status === 401) {
       closeConnection();
       return;

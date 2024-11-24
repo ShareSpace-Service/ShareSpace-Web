@@ -13,7 +13,6 @@ import 'swiper/css/pagination';
 import { Label } from '@radix-ui/react-label';
 import { useMutation } from '@tanstack/react-query';
 import { fetchPlaceForm } from '@/api/Place';
-import { PlaceEditForm } from '@/interface/PlaceInterface';
 import { validatePeriod } from '@/lib/PeriodFormat';
 
 function HostEditForm() {
@@ -31,14 +30,13 @@ function HostEditForm() {
     originalImage,
     setOriginalImage,
   } = usePlaceEditStore();
-  // const [zoneCode, setZoneCode] = useState<string>('');
   const objectUrls = useRef<string[]>([]);
 
   const mutation = useMutation({
     mutationFn: (formData: FormData) => fetchPlaceForm(formData),
 
-    onSuccess: (data: PlaceEditForm) => {
-      console.log('장소가 정상적으로 수정되었습니다.', data);
+    onSuccess: () => {
+      // console.log('장소가 정상적으로 수정되었습니다.', data);
 
       // 성공 시 URL 객체들 정리
       objectUrls.current.forEach((url) => {
@@ -48,7 +46,7 @@ function HostEditForm() {
       setIsEdit(false);
     },
     onError: (error: Error) => {
-      console.error('장소 수정 중 오류가 발생했습니다.', error);
+      // console.error('장소 수정 중 오류가 발생했습니다.', error);
       alert(error.message || '장소 수정에 실패했습니다.');
     },
   });
@@ -73,7 +71,7 @@ function HostEditForm() {
     if (formData) {
       setFormData({ ...formData, location: fullAddress });
     }
-    // setZoneCode(addressData.zonecode);
+
     setIsOpen(false);
   };
 
@@ -102,15 +100,15 @@ function HostEditForm() {
   // 수정 모드 종료 시
   useEffect(() => {
     if (!isEdit) {
-      console.log('수정 모드 종료 - Cleanup 시작');
-      console.log('정리할 URL 목록:', objectUrls.current);
+      // console.log('수정 모드 종료 - Cleanup 시작');
+      // console.log('정리할 URL 목록:', objectUrls.current);
       // 수정 모드가 false가 되면
       // 생성된 모든 URL 객체 정리
       objectUrls.current.forEach((url) => {
         URL.revokeObjectURL(url);
       });
       objectUrls.current = [];
-      console.log('Cleanup 완료 - objectUrls 비워짐:', objectUrls.current);
+      // console.log('Cleanup 완료 - objectUrls 비워짐:', objectUrls.current);
     }
   }, [isEdit]); // isEdit으로 상태 변화 감지
 
@@ -119,7 +117,7 @@ function HostEditForm() {
     const files = e.target.files;
     if (!files || !formData) return; // files 또는 formData가 없으면 종료
 
-    console.log('이미지 추가 시작 - 현재 URL 목록:', objectUrls.current);
+    // console.log('이미지 추가 시작 - 현재 URL 목록:', objectUrls.current);
 
     // 이미지 최대 개수 제한
     if (currentImage.length + files.length > 10) {
@@ -156,7 +154,7 @@ function HostEditForm() {
     const newImageUrls = validFiles.map((file) => {
       const url = URL.createObjectURL(file);
       objectUrls.current.push(url); // 생성된 URL을 ref에 저장
-      console.log('새로운 URL 생성:', url);
+      // console.log('새로운 URL 생성:', url);
       return url;
     });
 
@@ -209,13 +207,13 @@ function HostEditForm() {
         // 기존 배열이 없으면 빈 배열을 생성하여 추가
       });
     }
-    console.log('이미지 삭제 완료');
+    // console.log('이미지 삭제 완료');
   };
 
   // 취소 버튼 클릭 시
   const handleCancelClick = () => {
-    console.log('취소 버튼 클릭 - Cleanup 시작');
-    console.log('정리할 URL 목록:', objectUrls.current);
+    // console.log('취소 버튼 클릭 - Cleanup 시작');
+    // console.log('정리할 URL 목록:', objectUrls.current);
 
     objectUrls.current.forEach((url) => {
       console.log('URL revoke:', url);
@@ -223,7 +221,6 @@ function HostEditForm() {
     });
     objectUrls.current = [];
 
-    console.log('Cleanup 완료 - objectUrls 비워짐:', objectUrls.current);
     if (originalData) {
       setFormData(originalData);
       setCurrentImage(originalImage);
@@ -233,7 +230,7 @@ function HostEditForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('수정 완료');
+
     if (formData && isEdit) {
       const formDataSubmit = new FormData();
       if (formData.title.length > 50) {

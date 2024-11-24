@@ -42,13 +42,12 @@ function GuestRentalModal() {
         placeId: placeId!,
         matchingId: matchingId!,
       }),
-    onSuccess: (data: MatchingRequestResult) => {
-      console.log('요청 성공', data);
+    onSuccess: () => {
       alert('대여 요청이 완료되었습니다.');
       handleSuccess();
     },
-    onError: (error: Error) => {
-      console.error('요청 실패', error);
+    onError: () => {
+      // console.error('요청 실패', error);
     },
   });
   if (isLoading) {

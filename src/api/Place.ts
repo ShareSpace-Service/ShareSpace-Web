@@ -20,10 +20,9 @@ import { ApiUpdateResponse } from '@/interface/MyPageInterface';
 export async function fetchProductList() {
   const result: ApiResponse = await getRequest(`${config.baseUrl}/place`);
   if (result.success && result.data) {
-    console.log('요청 성공', result.message);
     return result.data;
   } else {
-    console.error('API 요청 실패', result);
+    throw new Error(result.message);
   }
 }
 
@@ -40,11 +39,9 @@ export async function fetchPlaceList(matchingId: number): Promise<Place[]> {
     if (result.success && result.data) {
       return result.data;
     } else {
-      console.error('API 요청 실패', result);
       return [];
     }
   } catch (error) {
-    console.log('error fetch', error);
     return [];
   }
 }
@@ -63,7 +60,6 @@ export async function fetchPlaceDetailList({
     `${config.baseUrl}/place/placeDetail?placeId=${placeId}`
   );
   if (result.success) {
-    console.log('성공', result.message);
     return result.data;
   } else {
     throw new Error(result.message || '실패');
@@ -79,7 +75,6 @@ export async function fetchPlaceEdit(): Promise<PlaceEditData> {
     `${config.baseUrl}/place/edit`
   );
   if (result.success) {
-    console.log('성공', result.message);
     return result.data;
   } else {
     throw new Error(result.message || '실패');
@@ -103,7 +98,6 @@ export async function fetchPlaceForm(
   }
   const result: PlaceEditResponse = await response.json();
   if (response.ok && result.success) {
-    console.log('장소 수정이 성공하였습니다.', result.message);
     return result.data;
   } else {
     throw new Error(result.message || '장소 수정이 실패하였습니다.');
@@ -122,10 +116,9 @@ export async function fetchPlaceRegister(
     body: formData,
   });
   const result: ApiUpdateResponse = await response.json();
-  console.log('서버 응답:', result); // 응답 확인
+
   // 성공/실패 여부와 관계없이 result를 그대로 반환/throw
   if (!result.success) {
-    console.log('에러 응답:', result); // 에러 응답 확인
     throw result;
   }
 

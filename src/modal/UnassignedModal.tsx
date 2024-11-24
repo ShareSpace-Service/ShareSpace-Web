@@ -48,7 +48,6 @@ function UnassignedModal() {
   if (error) {
     return <div>에러 발생: {error.message}</div>; // 에러 발생 시 UI
   }
-  console.log('fetched places', data);
 
   return (
     <div className="w-full min-h-screen">

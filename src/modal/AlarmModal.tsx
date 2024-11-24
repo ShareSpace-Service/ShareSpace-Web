@@ -16,24 +16,23 @@ function AlarmModal({ closeModal }: { closeModal: () => void }) {
       resetUnreadCount();
       closeModal();
     } catch (error) {
-      console.error('알림 읽음 처리 실패:', error);
+      // console.error('알림 읽음 처리 실패:', error);
       closeModal();
     }
   };
 
   const handleDeleteAll = async () => {
     try {
-      setIsDeletingAll(true);  // 삭제 애니메이션 시작
-      
+      setIsDeletingAll(true); // 삭제 애니메이션 시작
+
       // 애니메이션을 위한 지연
       setTimeout(async () => {
         await fetchDeleteAllNotifications();
         resetUnreadCount();
         setIsDeletingAll(false);
-      }, 500);  // 애니메이션 시간과 맞춤
-      
+      }, 500); // 애니메이션 시간과 맞춤
     } catch (error) {
-      console.error('알림 전체 삭제 실패:', error);
+      // console.error('알림 전체 삭제 실패:', error);
       setIsDeletingAll(false);
     }
   };

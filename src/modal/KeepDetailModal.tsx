@@ -34,13 +34,12 @@ function KeepDetailModal() {
   const mutation = useMutation<Error, unknown, { matchingId: number }>({
     mutationFn: ({ matchingId }) => fetchMatchingComplete({ matchingId }),
     onSuccess: () => {
-      console.log('성공');
       alert('보관 완료 처리되었습니다. 이용해주셔서 감사합니다!');
       handleClose();
       // TODO: API 호출 성공 시 List 리랜더링 필요!
     },
-    onError: (error) => {
-      console.error('실패', error);
+    onError: () => {
+      // console.error('실패', error);
     },
   });
 

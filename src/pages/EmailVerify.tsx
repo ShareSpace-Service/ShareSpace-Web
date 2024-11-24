@@ -20,8 +20,6 @@ function EmailVerify() {
   const [modalMessage, setModalMessage] = useState<string>('');
   const navigate = useNavigate();
 
-  console.log('role', role);
-
   /**
    * 인증 상태를 업데이트하는 함수
    *

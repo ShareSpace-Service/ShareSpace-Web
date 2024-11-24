@@ -18,7 +18,6 @@ export async function fetchProfileUpdate(
   });
   const result: ApiUpdateResponse = await response.json();
   if (response.ok && result.success) {
-    console.log('성공', result.message);
     return result;
   } else {
     throw new Error(result.message || '실패');
@@ -32,11 +31,8 @@ export async function fetchProfileUpdate(
  */
 
 export async function fetchProfile(): Promise<ApiResponse> {
-  const result: ApiResponse = await getRequest(
-    `${config.baseUrl}/user/detail`
-  );
+  const result: ApiResponse = await getRequest(`${config.baseUrl}/user/detail`);
   if (result.success) {
-    console.log('성공', result.message);
     return result;
   } else {
     throw new Error(result.message || '실패');
@@ -50,7 +46,6 @@ export async function fetchProfile(): Promise<ApiResponse> {
 export async function fetchUserAddress(): Promise<AddressResponse> {
   const result = await getRequest(`${config.baseUrl}/user/place`);
   if (result.success) {
-    console.log('성공', result.message);
     return result;
   } else {
     throw new Error(result.message || '실패');
