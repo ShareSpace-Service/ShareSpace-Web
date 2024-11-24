@@ -4,7 +4,7 @@ interface Config {
 }
 
 // 개발 환경 기본값 설정
-const DEFAULT_BASE_URL = 'https://sharespace.store';
+const DEFAULT_BASE_URL = 'https://sharespace.store:8080';
 const DEFAULT_ENV = 'release';
 
 const config: Config = {
