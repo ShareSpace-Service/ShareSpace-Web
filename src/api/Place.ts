@@ -10,6 +10,7 @@ import {
 } from '@/interface/PlaceInterface';
 import { fetchWithToken, getRequest } from './Request';
 import config from '@/config/config';
+import { ApiUpdateResponse } from '@/interface/MyPageInterface';
 
 /**
  * 서버에서 Place 데이터를 GET 요청으로 불러오는 함수
@@ -107,4 +108,26 @@ export async function fetchPlaceForm(
   } else {
     throw new Error(result.message || '장소 수정이 실패하였습니다.');
   }
+}
+
+/**
+ * HOST 회원가입 시 장소 등록시 장소 정보를 서버에 전송하는 함수
+ *
+ */
+export async function fetchPlaceRegister(
+  formData: FormData
+): Promise<ApiUpdateResponse> {
+  const response = await fetch(`${config.baseUrl}/place/register`, {
+    method: 'POST',
+    body: formData,
+  });
+  const result: ApiUpdateResponse = await response.json();
+  console.log('서버 응답:', result); // 응답 확인
+  // 성공/실패 여부와 관계없이 result를 그대로 반환/throw
+  if (!result.success) {
+    console.log('에러 응답:', result); // 에러 응답 확인
+    throw result;
+  }
+
+  return result;
 }

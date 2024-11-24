@@ -2,10 +2,18 @@ import SignUpForm from '@/component/form/SignUpForm';
 import LoginTitle from '@/component/text/LoginTitle';
 import ButtonProps from '@/component/ui/ButtonProps';
 import HeaderBack from '@/layout/HeaderBack';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { registerUser } from '@/api/RegisterUser';
 import CustomModal from '@/component/ui/CustomModal';
+
+export interface SignUpFormData {
+  email: string;
+  password: string;
+  passwordValidate: string;
+  nickname: string;
+  location: string;
+}
 
 /**
  * 회원 정보 입력 페이지 컴포넌트
@@ -14,14 +22,16 @@ import CustomModal from '@/component/ui/CustomModal';
  */
 function SignInfo() {
   const { state } = useLocation();
-
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [passwordValidate, setPasswordValidate] = useState('');
-  const [nickname, setNickname] = useState('');
-  const [location, setLocation] = useState('');
   const [role] = useState(state.roleStatus); // 기본값 설정
   console.log('role', role);
+
+  const formRef = useRef<SignUpFormData>({
+    email: '',
+    password: '',
+    passwordValidate: '',
+    nickname: '',
+    location: '',
+  });
 
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState(''); // 모달에 표시할 오류 메시지
@@ -45,11 +55,26 @@ function SignInfo() {
     return regex.test(password);
   };
 
+  // 이메일 유효성 검사 함수 추가
+  const isEmailValid = (email: string) => {
+    const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    return regex.test(email);
+  };
+
+  const handleFormChange = (name: keyof SignUpFormData, value: string) => {
+    formRef.current = {
+      ...formRef.current,
+      [name]: value,
+    };
+  };
+
   /**
    * 'Next' 버튼 클릭 시 호출되는 함수
    * 유효성 검사 실패 시 모달로 오류 메시지 출력, 성공 시 회원가입 API 호출 후 이메일 인증 페이지로 이동
    */
   const handleNextClick = async () => {
+    const { email, password, passwordValidate, nickname, location } =
+      formRef.current;
     if (!email || !password || !passwordValidate || !nickname || !location) {
       setModalMessage('필수 입력 항목을 확인해주세요.');
       setShowModal(true);
@@ -111,14 +136,10 @@ function SignInfo() {
             subTitle="회원 가입에 필요한 정보를 입력해주세요"
           />
           <SignUpForm
-            setEmail={setEmail}
-            setPassword={setPassword}
-            setPasswordValidate={setPasswordValidate}
-            setNickname={setNickname}
-            setLocation={setLocation}
-            password={password}
-            passwordValidate={passwordValidate}
+            formData={formRef.current}
+            onFormChange={handleFormChange}
             isPasswordValid={isPasswordValid}
+            isEmailValid={isEmailValid}
           />
           <div className="flex justify-center my-8">
             <ButtonProps

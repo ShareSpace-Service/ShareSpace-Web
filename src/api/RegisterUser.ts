@@ -1,4 +1,4 @@
-import { EmailValidationRequest } from '@/interface/Email';
+import { EmailResponse, EmailValidationRequest } from '@/interface/Email';
 import { ApiUpdateResponse } from '@/interface/MyPageInterface';
 import config from '@/config/config';
 
@@ -40,7 +40,7 @@ export async function registerUser(body: any): Promise<any> {
 
 export async function validateEmail(
   request: EmailValidationRequest
-): Promise<ApiUpdateResponse> {
+): Promise<EmailResponse> {
   const response = await fetch(`${config.baseUrl}/user/validate`, {
     method: 'POST',
     headers: {
@@ -49,11 +49,11 @@ export async function validateEmail(
     body: JSON.stringify(request),
   });
 
-  const result: ApiUpdateResponse = await response.json();
+  const result: EmailResponse | ApiUpdateResponse = await response.json();
 
   if (!response.ok) {
-    throw result; // 서버에서 온 에러 메시지를 직접 던짐
+    throw result as ApiUpdateResponse; // 서버에서 온 에러 메시지를 직접 던짐
   }
 
-  return result;
+  return result as EmailResponse;
 }

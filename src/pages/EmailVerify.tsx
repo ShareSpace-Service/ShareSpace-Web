@@ -13,11 +13,11 @@ import { EmailBox } from '@/component/email/EmailVerifyBox';
  */
 function EmailVerify() {
   const location = useLocation();
-  const { userId } = location.state; // 회원가입 페이지에서 넘겨준 userId
-  const { role } = location.state;
-  const [isVerified, setIsVerified] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [modalMessage, setModalMessage] = useState('');
+  const { userId, role } = location.state; // 회원가입 페이지에서 넘겨준 userId, role
+  const [isVerified, setIsVerified] = useState<boolean>(false);
+  const [verifiedEmail, setVerifiedEmail] = useState<string>('');
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [modalMessage, setModalMessage] = useState<string>('');
   const navigate = useNavigate();
 
   console.log('role', role);
@@ -27,8 +27,9 @@ function EmailVerify() {
    *
    * @param {boolean} status - 인증 성공 여부
    */
-  const handleVerified = (status: boolean) => {
+  const handleVerified = (status: boolean, email: string) => {
     setIsVerified(status);
+    if (email) setVerifiedEmail(email);
   };
 
   /**
@@ -43,7 +44,11 @@ function EmailVerify() {
       return;
     }
 
-    navigate(role === 'ROLE_HOST' ? '/place-register' : '/login');
+    if (role === 'ROLE_HOST') {
+      navigate('/place-register', { state: { email: verifiedEmail } });
+    } else {
+      navigate('/login');
+    }
   };
 
   /**

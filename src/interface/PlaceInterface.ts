@@ -15,6 +15,15 @@ export interface ApiResponse {
   success: boolean;
 }
 
+// 장소 등록
+export interface PlaceRegister {
+  title: string;
+  category: string;
+  period: number;
+  imageUrl: string[];
+  description: string;
+}
+
 // 장소 상세 정보
 export interface PlaceData {
   placeId: number;
