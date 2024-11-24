@@ -4,8 +4,8 @@ interface Config {
 }
 
 // 개발 환경 기본값 설정
-const DEFAULT_BASE_URL = 'http://localhost:8080';
-const DEFAULT_ENV = 'dev';
+const DEFAULT_BASE_URL = 'https://sharespace.store/';
+const DEFAULT_ENV = 'release';
 
 const config: Config = {
   baseUrl: import.meta.env.VITE_BASE_URL ?? DEFAULT_BASE_URL,
@@ -16,4 +16,4 @@ const config: Config = {
 // console.log('Current Environment:', config.env);
 // console.log('Base URL:', config.baseUrl);
 
-export default config; 
+export default config;
