@@ -1,4 +1,3 @@
-import { useAuthStore } from '@/store/AuthStore';
 import config from '@/config/config';
 
 const NOTIFICATION_CHANNEL = 'notification-channel';
@@ -46,16 +45,16 @@ export function connectSSE(
     ) {
       closeConnection();
 
-    //   if (useAuthStore.getState().isAuthenticated) {
-    //     setTimeout(() => {
-    //       try {
-    //         connectSSE(onMessage);
-    //       } catch (reconnectError) {
-    //         console.error('재연결 실패:', reconnectError);
-    //       }
-    //     }, 5000);
-    //   }
-    // }
+      // if (useAuthStore.getState().isAuthenticated) {
+      //   setTimeout(() => {
+      //     try {
+      //       connectSSE(onMessage);
+      //     } catch (reconnectError) {
+      //       console.error('재연결 실패:', reconnectError);
+      //     }
+      //   }, 5000);
+      // }
+    }
   };
 
   return eventSource;
