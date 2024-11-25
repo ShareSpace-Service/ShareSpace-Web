@@ -46,16 +46,16 @@ export function connectSSE(
     ) {
       closeConnection();
 
-      if (useAuthStore.getState().isAuthenticated) {
-        setTimeout(() => {
-          try {
-            connectSSE(onMessage);
-          } catch (reconnectError) {
-            console.error('재연결 실패:', reconnectError);
-          }
-        }, 5000);
-      }
-    }
+    //   if (useAuthStore.getState().isAuthenticated) {
+    //     setTimeout(() => {
+    //       try {
+    //         connectSSE(onMessage);
+    //       } catch (reconnectError) {
+    //         console.error('재연결 실패:', reconnectError);
+    //       }
+    //     }, 5000);
+    //   }
+    // }
   };
 
   return eventSource;
