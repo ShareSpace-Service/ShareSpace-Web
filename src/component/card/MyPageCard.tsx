@@ -178,7 +178,7 @@ function MyPageCard() {
         )}
         {/* 히스토리, Question, 로그아웃 */}
         {titles
-          .filter((title) => title.label !== '장소 수정' || role === 'Host')
+          .filter((title) => title.label !== '장소 수정' || role === 'HOST')
           .map((title) =>
             title.label === 'Logout' ? (
               <div key={title.label} onClick={handleLogoutClick}>
