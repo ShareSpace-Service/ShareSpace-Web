@@ -14,6 +14,7 @@ import Note from '@/pages/Note';
 import GuestPlaceFilter from '@/guest/pages/GuestPlaceFilter';
 import ProductWrapper from '@/component/wrapper/ProductWrapper';
 import PlaceRegister from '@/pages/PlaceRegister';
+import HomeWrapper from '@/component/wrapper/HomeWrapper';
 
 const router = createBrowserRouter([
   {
@@ -50,7 +51,7 @@ const router = createBrowserRouter([
     path: '/home',
     element: (
       <Layout>
-        <GuestHome />
+        <HomeWrapper />
       </Layout>
     ),
     errorElement: <ErrorPage />,
