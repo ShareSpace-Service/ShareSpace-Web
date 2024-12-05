@@ -1,10 +1,7 @@
+import { useLayout } from '@/layout/Layout';
 import { useProductStore } from '@/store/ProductState';
 import { useRoleStore } from '@/store/Role';
 import clsx from 'clsx';
-
-export interface ProductStatusProps {
-  noPadding?: boolean;
-}
 
 export const getMenuTitle = (role: string | null) => [
   { title: '전체', status: '전체' },
@@ -15,9 +12,10 @@ export const getMenuTitle = (role: string | null) => [
   { title: '미배정', status: 'UNASSIGNED' },
 ];
 
-function ProductMenu({ noPadding }: ProductStatusProps) {
+function ProductMenu() {
   const { role } = useRoleStore();
   const { selectedMenu, setSelectedMenu } = useProductStore();
+  const { noPadding } = useLayout();
 
   const MenuTitle = getMenuTitle(role);
   return (

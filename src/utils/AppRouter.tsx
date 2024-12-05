@@ -5,7 +5,6 @@ import Login from '@/pages/Login';
 import SignUp from '@/pages/SignUp';
 import SignInfo from '@/pages/SignInfo';
 import EmailVerify from '@/pages/EmailVerify';
-import GuestHome from '@/guest/pages/GuestHome';
 import Layout from '@/layout/Layout';
 import GuestProductRegist from '@/guest/pages/GuestProductRegist';
 import GuestPlace from '@/guest/pages/GuestPlace';
@@ -48,63 +47,38 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
   },
   {
-    path: '/home',
-    element: (
-      <Layout>
-        <HomeWrapper />
-      </Layout>
-    ),
+    element: <Layout />,
     errorElement: <ErrorPage />,
-  },
-  {
-    path: '/productregist',
-    element: (
-      <Layout>
-        <GuestProductRegist />
-      </Layout>
-    ),
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: '/placelist',
-    element: (
-      <Layout>
-        <GuestPlace />
-      </Layout>
-    ),
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: '/matching/by-place',
-    element: (
-      <Layout>
-        <GuestPlaceFilter />
-      </Layout>
-    ),
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: '/profile',
-    element: (
-      <Layout>
-        <Profile />
-      </Layout>
-    ),
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: '/product',
-    element: <ProductWrapper />,
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: '/message',
-    element: (
-      <Layout>
-        <Note />
-      </Layout>
-    ),
-    errorElement: <ErrorPage />,
+    children: [
+      {
+        path: '/home',
+        element: <HomeWrapper />,
+      },
+      {
+        path: '/product',
+        element: <ProductWrapper />,
+      },
+      {
+        path: '/productregist',
+        element: <GuestProductRegist />,
+      },
+      {
+        path: '/placelist',
+        element: <GuestPlace />,
+      },
+      {
+        path: '/matching/by-place',
+        element: <GuestPlaceFilter />,
+      },
+      {
+        path: '/profile',
+        element: <Profile />,
+      },
+      {
+        path: '/message',
+        element: <Note />,
+      },
+    ],
   },
 ]);
 

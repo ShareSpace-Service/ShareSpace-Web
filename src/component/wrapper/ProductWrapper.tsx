@@ -1,5 +1,4 @@
 import HostProduct from '@/host/pages/HostProduct';
-import Layout from '@/layout/Layout';
 import Product from '@/pages/Product';
 import { useRoleStore } from '@/store/Role';
 
@@ -11,11 +10,7 @@ function ProductWrapper() {
     return <div>Loading...</div>; // 로딩 중을 표시
   }
 
-  return (
-    <Layout noPadding={true}>
-      {role === 'GUEST' ? <Product /> : <HostProduct />}
-    </Layout>
-  );
+  return role === 'GUEST' ? <Product /> : <HostProduct />;
 }
 
 export default ProductWrapper;

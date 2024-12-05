@@ -1,18 +1,26 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import Header from './Header';
 import Footer from './Footer';
 import clsx from 'clsx';
 import { useRoleStore } from '@/store/Role';
 import { useQuery } from '@tanstack/react-query';
 import { fetchProfile } from '@/api/UserProfile';
+import { Outlet, useLocation, useOutletContext } from 'react-router-dom';
 
-interface LayoutProps {
-  children: React.ReactNode;
-  noPadding?: boolean;
+// LayoutContext 타입 정의
+interface LayoutContext {
+  nickname?: string;
+  noPadding: boolean;
 }
 
-function Layout({ children, noPadding }: LayoutProps) {
+// useOutletContext를 위한 커스텀 훅
+export function useLayout() {
+  return useOutletContext<LayoutContext>();
+}
+
+function Layout() {
   const { setRole } = useRoleStore();
+  const { pathname } = useLocation();
 
   const { data } = useQuery({
     queryKey: ['profile'],
@@ -24,11 +32,13 @@ function Layout({ children, noPadding }: LayoutProps) {
     }
   }, [data, setRole]);
 
+  const noPadding = pathname === '/product';
+
   return (
     <div className="layoutContainer">
       <Header />
       <main className={clsx('contentContainer', { 'no-padding': noPadding })}>
-        {children}
+        <Outlet context={{ nickname: data?.data.nickName, noPadding }} />
       </main>
       <Footer />
     </div>
