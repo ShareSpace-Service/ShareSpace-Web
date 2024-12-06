@@ -93,3 +93,17 @@ export interface KeepProductDetails {
 export interface KeepPlaceDetails {
   title: string;
 }
+
+// 호스트 대시보드 항목별 개수 조회
+export interface MatchingCheck {
+  requestedCount: number;
+  pendingCount: number;
+  storedCount: number;
+}
+// 호스트 대시보드 항목별 개수 조회 Response
+export interface MatchingCheckResponse {
+  message: string;
+  status: string;
+  data: MatchingCheck;
+  success: boolean;
+}
