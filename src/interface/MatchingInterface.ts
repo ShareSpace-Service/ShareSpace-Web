@@ -93,3 +93,50 @@ export interface KeepProductDetails {
 export interface KeepPlaceDetails {
   title: string;
 }
+
+// 호스트 대시보드 항목별 개수 조회
+export interface MatchingCheck {
+  requestedCount: number;
+  pendingCount: number;
+  storedCount: number;
+}
+// 호스트 대시보드 항목별 개수 조회 Response
+export interface MatchingCheckResponse {
+  message: string;
+  status: string;
+  data: MatchingCheck;
+  success: boolean;
+}
+
+// 매칭 상태 유니온 타입
+type MatchingStatus =
+  | 'REQUESTED'
+  | 'PENDING'
+  | 'STORED'
+  | 'COMPLETED'
+  | 'CANCELED';
+
+// 물품 카테고리 타입
+type ItemCategory = 'SMALL' | 'MEDIUM' | 'LARGE';
+
+// 개별 매칭 아이템 인터페이스
+export interface MatchingItem {
+  matchingId: number;
+  title: string;
+  category: ItemCategory;
+  imageUrl: string[];
+  status: MatchingStatus;
+  distance: number;
+  remainingDays: number;
+}
+
+// API 응답 전체 인터페이스
+export interface ApiResponse<T> {
+  message: string;
+  status: string;
+  data: T;
+  success: boolean;
+}
+
+// 매칭 리스트 응답을 위한 타입
+export type MatchingListResponse = ApiResponse<MatchingItem[]>;
