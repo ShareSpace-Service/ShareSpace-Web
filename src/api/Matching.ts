@@ -5,6 +5,7 @@ import {
   MatchingApiResponse,
   MatchingCheckResponse,
   MatchingData,
+  MatchingListResponse,
   MatchingPlaceResponse,
   MatchingRequestResult,
 } from '@/interface/MatchingInterface';
@@ -349,5 +350,25 @@ export async function fetchMatchingCheck() {
   } catch (error) {
     console.error('Error fetching matching check:', error); // 에러 로그
     throw error; // 에러를 다시 던져
+  }
+}
+
+/**
+ * 호스트 대시보드 반납 3일 이내 물품 조회
+ */
+
+export async function fetchMatchingDashBoard() {
+  try {
+    const result: MatchingListResponse = await getRequest(
+      `${config.baseUrl}/matching/dashboard/upcome`
+    );
+    if (result.data) {
+      return result;
+    } else {
+      throw new Error(result.message);
+    }
+  } catch (error) {
+    console.error('데이터를 불러오는데 오류가 발생하였습니다', error);
+    throw error;
   }
 }

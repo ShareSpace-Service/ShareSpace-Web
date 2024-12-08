@@ -52,7 +52,7 @@ function Product() {
 
   return (
     <>
-      <ProductMenu noPadding={true} />
+      <ProductMenu />
       <div className="pt-4 px-4">
         {filteredData && filteredData.length > 0 ? (
           <ProductStatusList />
