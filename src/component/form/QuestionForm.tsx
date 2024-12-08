@@ -18,13 +18,11 @@ function QuestionForm({ setView }: QuestionFormProps) {
   const mutation = useMutation<QuestionResponse, Error, QuestionPost>({
     mutationKey: ['question'],
     mutationFn: (payload: QuestionPost) => fetchQuestionPost(payload),
-    onSuccess: (data) => {
-      console.log('문의하기 성공:', data);
+    onSuccess: () => {
       alert('요청사항이 정상적으로 접수되었습니다. 감사합니다!');
       setView(null);
     },
-    onError: (error) => {
-      console.error('문의하기 실패:', error);
+    onError: () => {
       alert('요청사항 전송에 실패하였습니다');
     },
   });

@@ -32,13 +32,12 @@ function HostRequestModal() {
     mutationFn: ({ matchingId, isAccepted }) =>
       fetchMatchingAccept({ matchingId, isAccepted }),
     onSuccess: (_data, variables) => {
-      console.log('수락 성공');
       alert(`요청이 ${variables.isAccepted ? '수락' : '거절'}되었습니다.`);
       queryClient.invalidateQueries({ queryKey: ['matching'] }); // 새로고침
       handleClose();
     },
-    onError: (error) => {
-      console.error('수락 실패', error);
+    onError: () => {
+      // console.error('수락 실패', error);
     },
   });
 

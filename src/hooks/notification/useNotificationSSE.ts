@@ -43,7 +43,7 @@ export const useNotificationSSE = () => {
       setUnreadCount(notificationCount);
       setUnreadNoteCount(noteCount.data.unreadCount);
     } catch (error) {
-      console.error('읽지 않은 알림/쪽지 개수 로드 실패:', error);
+      // console.error('읽지 않은 알림/쪽지 개수 로드 실패:', error);
     }
   };
 
@@ -85,7 +85,7 @@ export const useNotificationSSE = () => {
 
     const handleBroadcastMessage = (event: MessageEvent) => {
       if (!mounted) return;
-      
+
       switch (event.data.type) {
         case 'NOTIFICATION':
           showNotification(event.data.data);
@@ -108,7 +108,7 @@ export const useNotificationSSE = () => {
           showNotification(newNotification);
           loadUnreadCounts();
         } catch (parseError) {
-          console.error('SSE 메시지 파싱 실패:', parseError);
+          // console.error('SSE 메시지 파싱 실패:', parseError);
         }
       });
 

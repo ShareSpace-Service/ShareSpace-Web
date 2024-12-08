@@ -49,7 +49,7 @@ function AlarmList({
         setIsDeleting(false);
       }, 300);
     } catch (error) {
-      console.error('알림 삭제 중 오류 발생:', error);
+      // console.error('알림 삭제 중 오류 발생:', error);
       setDeletingId(null);
       setIsDeleting(false);
     }

@@ -20,20 +20,19 @@ function NoteSendForm({ closeModal }: { closeModal: () => void }) {
     queryKey: ['noteReceiver'],
     queryFn: fetchNoteReceiver,
   });
-  console.log('receiver', data);
 
   const mutation = useMutation<NoteSendRequest, Error, NoteSendRequest>({
     mutationFn: (noteData: NoteSendRequest) => fetchNoteSend(noteData),
-    onSuccess: (data) => {
-      console.log('Note sent successfully:', data);
+    onSuccess: () => {
+      // console.log('Note sent successfully:', data);
       alert('쪽지가 성공적으로 전송되었습니다!'); // 성공 여부 alert로 띄워주기
       setReceiverId(null);
       setTitle('');
       setContent('');
       closeModal(); // 쪽지 전송 후 받은 쪽지함으로 이동
     },
-    onError: (error) => {
-      console.error('Error sending note:', error);
+    onError: () => {
+      // console.error('Error sending note:', error);
       alert('쪽지 전송에 실패하였습니다!');
     },
   });

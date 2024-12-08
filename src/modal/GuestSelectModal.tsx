@@ -27,15 +27,14 @@ function GuestSelectModal({
   >({
     mutationFn: ({ placeId, matchingId }) =>
       fetchKeepRequest({ placeId, matchingId }),
-    onSuccess: (data) => {
-      console.log('요청 성공', data);
+    onSuccess: () => {
       refetch(); // 성공시 데이터 GuestPlaceFilter 데이터 새로고침
       alert('보관 요청이 완료되었습니다.');
       closeModal();
       navigate('/product');
     },
-    onError: (error) => {
-      console.error('요청 실패', error);
+    onError: () => {
+      // console.error('요청 실패', error);
     },
   });
 

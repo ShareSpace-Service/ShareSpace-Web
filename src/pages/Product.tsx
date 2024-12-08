@@ -42,19 +42,17 @@ function Product() {
 
   // 로딩 상태 처리
   if (isLoading) {
-    console.log('Loading state active'); // 로딩 중일 때의 UI
     return <div>로딩 중...</div>; // 로딩 중일 때의 UI
   }
 
   // 에러 처리
   if (error) {
-    console.log('Error state active:', error);
     return <div>에러 발생: {error.message}</div>; // 에러 발생 시 UI
   }
 
   return (
     <>
-      <ProductMenu noPadding={true} />
+      <ProductMenu />
       <div className="pt-4 px-4">
         {filteredData && filteredData.length > 0 ? (
           <ProductStatusList />

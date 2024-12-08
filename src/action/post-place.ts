@@ -12,7 +12,7 @@ export const usePlaceRegister = () => {
 
   return useMutation({
     mutationFn: (formData: FormData) => fetchPlaceRegister(formData),
-    onSuccess: async (data) => {
+    onSuccess: async () => {
       await new Promise<void>((resolve) => {
         alert('장소가 성공적으로 등록되었습니다.');
         resolve();

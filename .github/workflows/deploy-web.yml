@@ -1,0 +1,51 @@
+name: Build and Deploy Frontend
+
+on:
+  push:
+    branches: [ "release" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout the repository
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # 2. Set up Node.js 환경
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      # 3. Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # 4. Build the frontend
+      - name: Build frontend
+        run: npm run build
+
+      # 5. Deploy dist/ to the server using SCP
+      - name: Deploy to Nginx server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.HOST }}
+          username: ubuntu
+          key: ${{ secrets.KEY }}
+          source: "./dist/*" # FE 빌드 결과물 디렉토리
+          target: "/var/www/html" # Nginx 정적 파일 경로
+
+      # 6. Restart Nginx
+      - name: Restart Nginx
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ubuntu
+          key: ${{ secrets.KEY }}
+          script: |
+            sudo systemctl restart nginx

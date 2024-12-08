@@ -34,12 +34,11 @@ function WaitDetailModal() {
   >({
     mutationFn: ({ matchingId }) => fetchKeepAccept({ matchingId }),
     onSuccess: () => {
-      console.log('수락 성공');
       alert('요청이 수락되었습니다.');
       handleClose();
     },
-    onError: (error) => {
-      console.error('수락 실패', error);
+    onError: () => {
+      // console.error('수락 실패', error);
     },
   });
 
@@ -50,7 +49,6 @@ function WaitDetailModal() {
   >({
     mutationFn: () => fetchCancelRequest({ matchingId: matchingId as number }),
     onSuccess: () => {
-      console.log('요청 취소 성공');
       alert('요청이 취소되었습니다.');
       handleClose();
     },

@@ -17,7 +17,6 @@ import config from '@/config/config';
 export async function fetchNoteList() {
   const result: ApiNoteResponse = await getRequest(`${config.baseUrl}/note`);
   if (result.success) {
-    console.log('성공', result.message);
     return result;
   } else {
     throw new Error(result.message || '실패');
@@ -35,7 +34,6 @@ export async function fetchNoteDetail(noteId: number) {
     `${config.baseUrl}/note/noteDetail?noteId=${noteId}`
   );
   if (result.success) {
-    console.log('쪽지 디테일 불러오기 성공', result.message);
     return result;
   } else {
     throw new Error(result.message || '실패');
@@ -58,7 +56,6 @@ export async function fetchNoteDelete(noteId: number) {
   );
   const result = await response.json();
   if (response.ok && result.success) {
-    console.log('삭제 성공', result.message);
     return result;
   } else {
     throw new Error(result.message || '실패');
@@ -75,7 +72,6 @@ export async function fetchNoteReceiver() {
     `${config.baseUrl}/note/available`
   );
   if (result.success) {
-    console.log('성공', result.message);
     return result;
   } else {
     throw new Error(result.message || '실패');
@@ -94,7 +90,6 @@ export async function fetchNoteSend(
   });
   const result = await response.json();
   if (response.ok && result.success) {
-    console.log('쪽지 전송 성공', result.message);
     return result;
   } else {
     throw new Error(result.message || '실패');
@@ -122,7 +117,6 @@ export async function fetchNoteIsReadRequest(noteId: number) {
   );
   const result: NoteIsReadRequestResult = await response.json();
   if (response.ok && result.success) {
-    console.log('요청 성공', result.message);
     return result;
   } else {
     throw new Error(result.message || '요청 실패');
@@ -139,7 +133,6 @@ export async function fetchUnreadNoteCount() {
     `${config.baseUrl}/note/unreadNote`
   );
   if (result.success) {
-    console.log('읽지 않은 쪽지 개수 조회 성공', result.data.unreadCount);
     return result;
   } else {
     throw new Error(result.message || '실패');

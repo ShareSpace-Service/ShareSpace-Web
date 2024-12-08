@@ -27,7 +27,7 @@ function NoteList() {
       setNoteList(data.data);
     }
   }, [data]);
-  console.log('data', data);
+  // console.log('data', data);
 
   const mutation = useMutation<{ noteId: number }, unknown, { noteId: number }>(
     {
@@ -74,7 +74,7 @@ function NoteList() {
       // notes 쿼리 무효화 (선택적)
       queryClient.invalidateQueries({ queryKey: ['notes'] });
     } catch (error) {
-      console.error('읽지 않은 쪽지 개수 갱신 실패:', error);
+      // console.error('읽지 않은 쪽지 개수 갱신 실패:', error);
     }
   };
 

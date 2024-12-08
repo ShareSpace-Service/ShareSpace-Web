@@ -23,7 +23,6 @@ export interface SignUpFormData {
 function SignInfo() {
   const { state } = useLocation();
   const [role] = useState(state.roleStatus); // 기본값 설정
-  console.log('role', role);
 
   const formRef = useRef<SignUpFormData>({
     email: '',

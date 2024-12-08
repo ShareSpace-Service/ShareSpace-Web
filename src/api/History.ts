@@ -12,7 +12,6 @@ import config from '@/config/config';
 export async function fetchHistory(): Promise<ApiResponse> {
   const result: ApiResponse = await getRequest(`${config.baseUrl}/history`);
   if (result.success) {
-    console.log('성공했습니다.', result.status);
     return result;
   } else {
     throw new Error(result.message);
@@ -33,7 +32,6 @@ export async function fetchDetailHistory({
     `${config.baseUrl}/history/detail?matchingId=${matchingId}`
   );
   if (result.success) {
-    console.log('성공했습니다.', result.status);
     return result;
   } else {
     throw new Error(result.message);

@@ -22,7 +22,7 @@ function NoteDetailModal({
       return detailPromise;
     },
   });
-  console.log('detail', data);
+
   const noteDetail = data?.data;
 
   return (

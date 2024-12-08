@@ -43,7 +43,6 @@ function PlaceList() {
   if (error) {
     return <div>에러 발생: {error.message}</div>; // 에러 발생 시 UI
   }
-  console.log('fetched places', places);
 
   return (
     <div className="flex flex-col items-center gap-4">

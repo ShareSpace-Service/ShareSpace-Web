@@ -59,12 +59,12 @@ function GuestRegistForm() {
         alert('상품이 등록되었습니다.');
         openModal(); // 모달 열기
       } else {
-        console.error('newMatchingId response 실패', data);
+        // console.error('newMatchingId response 실패', data);
         alert('상품 등록에 실패했습니다.');
       }
     },
-    onError: (error) => {
-      console.error('Error:', error);
+    onError: () => {
+      // console.error('Error:', error);
       alert('상품 등록에 실패했습니다.');
     },
   });

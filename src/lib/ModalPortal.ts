@@ -7,7 +7,6 @@ interface ModalPortalProps {
 export const ModalPortal = ({ children }: ModalPortalProps) => {
   const el = document.getElementById('modal');
   if (!el) {
-    console.error('Modal element not found');
     return null;
   }
 
