@@ -101,6 +101,7 @@ function MyPageCard() {
     mutationFn: (formData: FormData) => fetchProfileUpdate(formData),
     onSuccess: () => {
       setIsEdit(false);
+      queryClient.invalidateQueries({ queryKey: ['address'] });
     },
     onError: () => {
       // console.error('Error updating profile:', error);
