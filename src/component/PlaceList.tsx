@@ -7,6 +7,7 @@ import { useMatchingIdStore } from '@/store/MatchingId';
 import { useModalStore } from '@/store/ModalState';
 import { usePlaceIdStore } from '@/store/PlaceId';
 import { useQuery } from '@tanstack/react-query';
+import { EmptyPlaceList } from './card/EmptyPlaceList';
 
 function PlaceList() {
   const { matchingId } = useMatchingIdStore();
@@ -42,6 +43,9 @@ function PlaceList() {
   // 에러 처리
   if (error) {
     return <div>에러 발생: {error.message}</div>; // 에러 발생 시 UI
+  }
+  if (!places || places.length === 0) {
+    return <EmptyPlaceList />;
   }
 
   return (

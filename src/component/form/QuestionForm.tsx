@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { FormGroup } from './GuestRegistForm';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import {
@@ -10,6 +9,7 @@ import {
 import { useMutation } from '@tanstack/react-query';
 import { fetchQuestionPost } from '@/api/Question';
 import ButtonProps from '../ui/ButtonProps';
+import { FormGroup } from './FormGroup';
 
 function QuestionForm({ setView }: QuestionFormProps) {
   const [title, setTitle] = useState<string>('');
