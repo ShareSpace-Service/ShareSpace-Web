@@ -1,4 +1,4 @@
-import MyPageCard from '@/component/card/MyPageCard';
+import ProfileContainer from '@/component/MyPage/container/ProfileContainer';
 
 function Profile() {
   return (
@@ -6,7 +6,7 @@ function Profile() {
       <div className="w-full pb-5">
         <h2 className="font-bold text-base">마이페이지</h2>
       </div>
-      <MyPageCard />
+      <ProfileContainer />
     </>
   );
 }

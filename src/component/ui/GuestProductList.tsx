@@ -5,6 +5,7 @@ import GuestKeepRequestModal from '@/modal/GuestKeepRequestModal';
 import { useModalStore } from '@/store/ModalState';
 import { usePlaceIdStore } from '@/store/PlaceId';
 import { useQuery } from '@tanstack/react-query';
+import { EmptyPlaceList } from '../card/EmptyPlaceList';
 
 function GuestProductList() {
   const { data, isLoading, error } = useQuery({
@@ -26,6 +27,9 @@ function GuestProductList() {
 
   if (error) {
     return <div>Error fetching data: {error.message}</div>;
+  }
+  if (!data || data.length === 0) {
+    return <EmptyPlaceList />;
   }
 
   return (
