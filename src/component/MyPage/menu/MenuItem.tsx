@@ -18,7 +18,7 @@ function MenuItem({ label, onClick }: MenuItemProps) {
         'shadow-md hover:shadow-lg',
         'transition-all duration-300',
         'cursor-pointer',
-        'hover:border-primary/20' // primary 색상 사용
+        'hover:border-primary/20'
       )}
     >
       <h2 className="font-extrabold text-xl text-gray-800 group-hover:text-primary">
