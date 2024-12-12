@@ -6,8 +6,9 @@ import Modal from '@/modal/ProfileModal';
 import { MenuItem as MenuItemType } from '@/constants/menu';
 import { LogoutModal } from './LogoutModal';
 import { MENU_ITEMS } from './MenuList';
+import { ModalPortal } from '@/lib/ModalPortal';
 
-function TitlesList() {
+function TitleList() {
   const [modalContent, setModalContent] = useState<React.ReactNode | null>(
     null
   );
@@ -34,7 +35,7 @@ function TitlesList() {
   return (
     <div className="flex flex-col gap-4 pt-5">
       {MENU_ITEMS.filter(
-        (title) => title.label !== '장소 수정' || role === 'HOST'
+        (title) => title.label !== '장소수정' || role === 'HOST'
       ).map((title) => (
         <MenuItem
           key={title.label}
@@ -55,10 +56,12 @@ function TitlesList() {
       )}
 
       {modalContent && (
-        <Modal onClose={() => setModalContent(null)}>{modalContent}</Modal>
+        <ModalPortal>
+          <Modal onClose={() => setModalContent(null)}>{modalContent}</Modal>
+        </ModalPortal>
       )}
     </div>
   );
 }
 
-export default TitlesList;
+export default TitleList;
