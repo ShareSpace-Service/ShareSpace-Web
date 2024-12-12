@@ -89,7 +89,7 @@ export async function fetchPlaceEdit(): Promise<PlaceEditData> {
 export async function fetchPlaceForm(
   formData: FormData
 ): Promise<PlaceEditForm> {
-  const response = await fetchWithToken(`${config.baseUrl}`, {
+  const response = await fetchWithToken(`${config.baseUrl}/place`, {
     method: 'PUT',
     body: formData,
   });
