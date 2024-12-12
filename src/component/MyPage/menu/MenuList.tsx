@@ -5,11 +5,11 @@ import { MenuItem } from '@/constants/menu';
 
 export const MENU_ITEMS: MenuItem[] = [
   {
-    label: 'History',
+    label: '이용내역',
     component: ({ label }) => <History title={label} />,
   },
   {
-    label: 'Question',
+    label: '문의하기',
     component: ({ label, setModalContent }) => {
       if (setModalContent) {
         return <Question title={label} setView={setModalContent} />;
@@ -18,7 +18,7 @@ export const MENU_ITEMS: MenuItem[] = [
     },
   },
   {
-    label: '장소 수정',
+    label: '장소수정',
     component: ({ label }) => <PlaceEdit title={label} />,
   },
   {

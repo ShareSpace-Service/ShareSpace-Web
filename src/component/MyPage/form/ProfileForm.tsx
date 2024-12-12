@@ -31,7 +31,7 @@ function ProfileForm({ data }: { data: ProfileFormProps }) {
   const { email, role } = data?.data;
 
   return (
-    <form className="flex flex-col gap-10" onSubmit={handleSubmit}>
+    <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
       <ProfileEdit
         isEdit={isEdit}
         onEditClick={startEdit}
