@@ -1,14 +1,17 @@
 import { EmailResponse, EmailValidationRequest } from '@/interface/Email';
 import { ApiUpdateResponse } from '@/interface/MyPageInterface';
 import config from '@/config/config';
+import { RegisterUserRequest, RegisterUserResponse } from '@/pages/SignInfo';
 
 /**
  * 임시 회원가입 요청 + 이메읿 발송을 처리하는 함수
- * @param {any} body - 회원가입 시 전송할 데이터
- * @returns {Promise<any>} 서버로부터의 응답 데이터를 포함한 Promise
+ * @param {RegisterUserRequest} body - 회원가입 시 전송할 데이터
+ * @returns {Promise<RegisterUserResponse>} 서버로부터의 응답 데이터를 포함한 Promise
  * @throws {Error} - 요청 실패 시 에러 발생
  */
-export async function registerUser(body: any): Promise<any> {
+export async function registerUser(
+  body: RegisterUserRequest
+): Promise<RegisterUserResponse> {
   const response = await fetch(`${config.baseUrl}/user/register`, {
     method: 'POST',
     headers: {
@@ -17,7 +20,7 @@ export async function registerUser(body: any): Promise<any> {
     body: JSON.stringify(body),
   });
 
-  const result = await response.json();
+  const result: RegisterUserResponse = await response.json();
 
   if (!response.ok) {
     throw result; // 서버에서 온 에러 메시지를 직접 던짐
@@ -34,7 +37,7 @@ export async function registerUser(body: any): Promise<any> {
  *
  * @param {number} userId - 인증할 사용자의 고유 ID
  * @param {number} validationNumber - 사용자가 입력한 인증 번호
- * @returns {Promise<any>} - 서버 응답의 JSON 데이터
+ * @returns {Promise<EmailResponse>} - 서버 응답의 JSON 데이터
  * @throws {Error} - 응답이 성공적이지 않을 경우 에러 메시지를 포함한 예외를 던짐
  */
 

@@ -15,6 +15,21 @@ export interface SignUpFormData {
   location: string;
 }
 
+// API 요청 데이터 인터페이스
+export interface RegisterUserRequest extends SignUpFormData {
+  role: string;
+}
+
+// API 응답 데이터 인터페이스
+export interface RegisterUserResponse {
+  message: string;
+  status: string;
+  data: {
+    userId: number;
+  };
+  success: boolean;
+}
+
 /**
  * 회원 정보 입력 페이지 컴포넌트
  *
@@ -101,7 +116,7 @@ function SignInfo() {
     }
 
     try {
-      const userData = {
+      const userData: RegisterUserRequest = {
         email,
         role,
         password,
@@ -109,7 +124,7 @@ function SignInfo() {
         location,
         nickname,
       };
-      const response = await registerUser(userData);
+      const response: RegisterUserResponse = await registerUser(userData);
       const userId = response.data.userId;
       navigate('/emailverify', { state: { userId, role } });
     } catch (err: any) {
