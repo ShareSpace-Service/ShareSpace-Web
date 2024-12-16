@@ -16,7 +16,7 @@ function HistoryList() {
   const { data, error, isLoading } = useHistory();
 
   if (isLoading) return <LoadingState />;
-  if (error) return <ErrorState />;
+  if (error) return <ErrorState error={error} />;
   if (!data?.data) return <EmptyState />;
 
   const handleClick = (matchingId: number) => {

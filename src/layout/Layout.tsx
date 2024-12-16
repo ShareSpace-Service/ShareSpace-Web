@@ -19,18 +19,22 @@ export function useLayout() {
 }
 
 function Layout() {
-  const { setRole } = useRoleStore();
+  const setRole = useRoleStore((state) => state.setRole);
   const { pathname } = useLocation();
 
   const { data } = useQuery({
     queryKey: ['profile'],
     queryFn: fetchProfile,
+    select: (data) => ({
+      role: data.data.role,
+      nickName: data.data.nickName,
+    }),
   });
   useEffect(() => {
-    if (data?.data.role) {
-      setRole(data.data.role.toUpperCase());
+    if (data?.role) {
+      setRole(data.role.toUpperCase());
     }
-  }, [data, setRole]);
+  }, [data?.role, setRole]);
 
   const noPadding = pathname === '/product';
 
@@ -38,7 +42,7 @@ function Layout() {
     <div className="layoutContainer">
       <Header />
       <main className={clsx('contentContainer', { 'no-padding': noPadding })}>
-        <Outlet context={{ nickname: data?.data.nickName, noPadding }} />
+        <Outlet context={{ nickname: data?.nickName, noPadding }} />
       </main>
       <Footer />
     </div>

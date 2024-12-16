@@ -19,7 +19,7 @@ export function LoadingState() {
   );
 }
 
-export function ErrorState() {
+export function ErrorState({ error }: { error: Error }) {
   return (
     <StateLayout>
       <div className="flex flex-col items-center gap-6 animate-fadeIn">
@@ -27,10 +27,11 @@ export function ErrorState() {
         <div className="flex flex-col items-center gap-2 text-center">
           <p className="text-xl font-semibold text-gray-700">죄송합니다</p>
           <p className="text-gray-500">
-            데이터를 불러오는 중 문제가 발생했습니다
+            데이터를 불러오는 중 문제가 발생했습니다.
             <br />
             잠시 후 다시 시도해 주세요
           </p>
+          <p className="text-red-500 font-bold">{error.message}</p>
         </div>
       </div>
     </StateLayout>
@@ -46,11 +47,7 @@ export function EmptyState() {
           <p className="text-xl font-semibold text-gray-700">
             표시할 내용이 없습니다
           </p>
-          <p className="text-gray-500">
-            아직 등록된 데이터가 없습니다
-            <br />
-            새로운 내용을 추가해 보세요
-          </p>
+          <p className="text-gray-500">아직 등록된 데이터가 없습니다</p>
         </div>
       </div>
     </StateLayout>
