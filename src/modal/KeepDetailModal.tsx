@@ -2,6 +2,7 @@ import { fetchKeepModal, fetchMatchingComplete } from '@/api/Matching';
 import ButtonProps from '@/component/ui/ButtonProps';
 import CompletedToast from '@/component/ui/CompletedToast';
 import ModalHeader from '@/component/ui/ModalHeader';
+import { MatchingRequestResult } from '@/interface/MatchingInterface';
 import { useMatchingIdStore } from '@/store/MatchingId';
 import { useStatusStore } from '@/store/ProductStatus';
 import { useRoleStore } from '@/store/Role';
@@ -31,7 +32,11 @@ function KeepDetailModal() {
   });
 
   // 물품 보관 완료 처리 API 호출
-  const mutation = useMutation<Error, unknown, { matchingId: number }>({
+  const mutation = useMutation<
+    MatchingRequestResult,
+    Error,
+    { matchingId: number }
+  >({
     mutationFn: ({ matchingId }) => fetchMatchingComplete({ matchingId }),
     onSuccess: () => {
       alert('보관 완료 처리되었습니다. 이용해주셔서 감사합니다!');

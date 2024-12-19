@@ -11,7 +11,7 @@ interface SelectProps {
   value: string;
   onChange: (newValue: string) => void;
   disabled?: boolean;
-  className: string;
+  className?: string;
 }
 
 function SelectProps({ value, onChange, disabled, className }: SelectProps) {
