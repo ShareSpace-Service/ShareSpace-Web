@@ -1,9 +1,8 @@
-import { FormGroup } from '@/component/form/GuestRegistForm';
 import { Input } from '@/components/ui/input';
-
 import SelectProps from '../SelectProps';
 import { Textarea } from '@/components/ui/textarea';
 import { useProductRegisterStore } from '@/store/ProductRegister';
+import { FormGroup } from '@/component/form/FormGroup';
 
 function FormField() {
   const {

@@ -13,6 +13,8 @@ function Address() {
   const { data } = useQuery<AddressResponse>({
     queryKey: ['address'],
     queryFn: fetchUserAddress,
+    staleTime: 1000 * 60 * 60, // 1시간 동안은 유지
+    gcTime: 1000 * 60 * 60 * 24, // 24시간이 지나면 가비지 컬렉션 전까지 캐시 유지
   });
   console.log('data', data);
   return (

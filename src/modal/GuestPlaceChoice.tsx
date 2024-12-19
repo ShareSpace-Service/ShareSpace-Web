@@ -2,7 +2,7 @@ import ButtonProps from '@/component/ui/ButtonProps';
 import { useMatchingIdStore } from '@/store/MatchingId';
 import { useModalStore } from '@/store/ModalState';
 import { useProductRegisterStore } from '@/store/ProductRegister';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 /**
  * '네'를 클릭한 경우 장소 선택 페이지로 이동
@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom';
  */
 
 function GuestPlaceChoice() {
+  const navigate = useNavigate();
   const { clearMatchingId } = useMatchingIdStore();
   const { title, clearForm } = useProductRegisterStore();
   const { closeModal } = useModalStore();
@@ -17,8 +18,11 @@ function GuestPlaceChoice() {
   const handleClick = (isYes: boolean) => {
     closeModal();
     clearForm();
-    if (!isYes) {
+    if (isYes) {
+      navigate('/placelist');
+    } else {
       clearMatchingId();
+      navigate('/home');
     }
   };
 
@@ -33,12 +37,18 @@ function GuestPlaceChoice() {
             <p className="text-gray-300 font-bold text-center">{title}</p>
           </div>
           <div className="flex items-center gap-3 justify-around">
-            <Link to={`/placelist`} onClick={() => handleClick(true)}>
-              <ButtonProps title="네" size="check" variant="custom" />
-            </Link>
-            <Link to="/home" onClick={() => handleClick(false)}>
-              <ButtonProps title="아니요" size="check" variant="custom" />
-            </Link>
+            <ButtonProps
+              title="네"
+              size="check"
+              variant="custom"
+              onClick={() => handleClick(true)}
+            />
+            <ButtonProps
+              title="아니요"
+              size="check"
+              variant="custom"
+              onClick={() => handleClick(false)}
+            />
           </div>
         </div>
       </div>

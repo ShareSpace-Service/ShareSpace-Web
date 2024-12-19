@@ -1,12 +1,11 @@
-import MyPageCard from '@/component/card/MyPageCard';
+import ProfileContainer from '@/component/MyPage/container/ProfileContainer';
+import PageTitle from '@/component/text/PageTitle';
 
 function Profile() {
   return (
     <>
-      <div className="w-full pb-5">
-        <h2 className="font-bold text-base">마이페이지</h2>
-      </div>
-      <MyPageCard />
+      <PageTitle title="마이페이지" />
+      <ProfileContainer />
     </>
   );
 }

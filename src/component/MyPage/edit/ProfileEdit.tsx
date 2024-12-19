@@ -1,26 +1,12 @@
-import { useMyPageStore } from '@/store/MyPageState';
-import ButtonProps from '../ui/ButtonProps';
+import ButtonProps from '@/component/ui/ButtonProps';
 
-function ProfileEdit() {
-  const {
-    isEdit,
-    setIsEdit,
-    formData,
-    setFormData,
-    initialFormData,
-    setInitialFormData,
-  } = useMyPageStore();
+interface ProfileEditProps {
+  isEdit: boolean;
+  onEditClick: () => void;
+  onCancelClick: () => void;
+}
 
-  const handleEditClick = () => {
-    setInitialFormData(formData);
-    setIsEdit(true);
-  };
-
-  const handleCancelEdit = () => {
-    setFormData(initialFormData);
-    setIsEdit(false);
-  };
-
+function ProfileEdit({ isEdit, onEditClick, onCancelClick }: ProfileEditProps) {
   return (
     <div className="flex items-center justify-end">
       {!isEdit && (
@@ -29,7 +15,7 @@ function ProfileEdit() {
           variant="custom"
           title="수정"
           type="button"
-          onClick={handleEditClick}
+          onClick={onEditClick}
         />
       )}
       {/* 수정 버튼 클릭시 저장 , 취소 버튼 등장 */}
@@ -40,7 +26,7 @@ function ProfileEdit() {
             variant="custom"
             title="취소"
             type="button"
-            onClick={handleCancelEdit}
+            onClick={onCancelClick}
           />
           <ButtonProps size="sm" variant="custom" title="저장" type="submit" />
         </div>

@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
-interface FormState {
+export interface FormState {
   title: string;
   category: string;
   period: string;
@@ -38,6 +38,8 @@ export const useProductRegisterStore = create<FormState>()(
           category: '',
           period: '',
           description: '',
+          files: [],
+          showImages: [],
         }),
     }),
     { name: 'ProductRegisterStore' }

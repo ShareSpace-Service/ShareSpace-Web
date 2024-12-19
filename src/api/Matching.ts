@@ -308,13 +308,13 @@ export async function fetchMatchingUploadImage(
 /**
  * 물품 보관 완료 처리하는 API
  * @param {number} matchingId - 매칭 ID
- * @returns {Promise<any>} 서버로부터의 응답 데이터를 포함한 Promise
+ * @returns {Promise<MatchingRequestResult>} 서버로부터의 응답 데이터를 포함한 Promise
  */
 export async function fetchMatchingComplete({
   matchingId,
 }: {
   matchingId: number;
-}) {
+}): Promise<MatchingRequestResult> {
   const response = await fetchWithToken(
     `${config.baseUrl}/matching/completeStorage`,
     {
@@ -325,7 +325,7 @@ export async function fetchMatchingComplete({
       body: JSON.stringify({ matchingId }),
     }
   );
-  const result = await response.json();
+  const result: MatchingRequestResult = await response.json();
   if (response.ok && result.success) {
     return result;
   } else {

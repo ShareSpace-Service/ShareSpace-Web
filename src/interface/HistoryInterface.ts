@@ -2,8 +2,8 @@ export interface MatchingItem {
   matchingId: number;
   title: string;
   category: string;
-  imageUrl: string;
-  distance: number;
+  imageUrl: string[] | null;
+  distance: number | null;
 }
 export interface ApiResponse {
   message: string;

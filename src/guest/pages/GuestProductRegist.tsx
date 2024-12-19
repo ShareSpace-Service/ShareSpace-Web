@@ -1,4 +1,4 @@
-import GuestRegistForm from '@/component/form/GuestRegistForm';
+import GuestRegistForm from '@/component/form/GuestRegisterForm';
 function GuestProductRegist() {
   return (
     <>

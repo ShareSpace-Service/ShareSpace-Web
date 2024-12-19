@@ -1,5 +1,4 @@
 import { Input } from '@/components/ui/input';
-import { FormGroup } from './GuestRegistForm';
 import { Textarea } from '@/components/ui/textarea';
 import NoteSelect from '../ui/NoteSelect';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -10,6 +9,7 @@ import {
 import { fetchNoteReceiver, fetchNoteSend } from '@/api/Note';
 import { useState } from 'react';
 import ButtonProps from '../ui/ButtonProps';
+import { FormGroup } from './FormGroup';
 
 function NoteSendForm({ closeModal }: { closeModal: () => void }) {
   const [title, setTitle] = useState<string>('');

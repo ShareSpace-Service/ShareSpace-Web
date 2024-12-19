@@ -1,7 +1,11 @@
 import { useRoleStore } from '@/store/Role';
-import { ProductStatusProps } from './ProductMenu';
-import { useProductStore } from '@/store/ProductState';
 import clsx from 'clsx';
+import { useLayout } from '@/layout/Layout';
+
+interface HostProductMenuProps {
+  selectedMenu: string;
+  setSelectedMenu: (status: string) => void;
+}
 
 export const hostMenuTitle = (role: string | null) => [
   { title: '전체', status: '전체' },
@@ -10,10 +14,13 @@ export const hostMenuTitle = (role: string | null) => [
   { title: role === 'HOST' ? '요청옴' : '요청됨', status: 'REQUESTED' },
 ];
 
-function HostProductMenu({ noPadding }: ProductStatusProps) {
-  const { role } = useRoleStore();
-  const { selectedMenu, setSelectedMenu } = useProductStore();
+function HostProductMenu({
+  selectedMenu,
+  setSelectedMenu,
+}: HostProductMenuProps) {
+  const role = useRoleStore((state) => state.role);
 
+  const { noPadding } = useLayout();
   const MenuTitle = hostMenuTitle(role);
 
   return (
