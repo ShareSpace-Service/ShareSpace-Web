@@ -32,7 +32,7 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
   },
   {
-    path: '/createaccount',
+    path: '/join',
     element: <SignInfo />,
     errorElement: <ErrorPage />,
   },
