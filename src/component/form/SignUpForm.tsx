@@ -2,7 +2,7 @@ import { useState } from 'react';
 import DaumPost from '@/api/DaumPost';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { SignUpFormData } from '@/pages/SignInfo';
+import { SignUpFormData } from '@/interface/AuthInterface';
 
 interface SignUpFormProps {
   formData: SignUpFormData;
